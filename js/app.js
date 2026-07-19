@@ -892,6 +892,18 @@ function renderPrivacy() {
   </div>`);
 }
 
+/* ---------------- big-text mode (ก+) — for comfortable reading at any age ---------------- */
+function applyTextSize() {
+  document.body.classList.toggle("big", !!state.bigText);
+  const b = $("#sizeBtn");
+  if (b) { b.textContent = state.bigText ? "ก−" : "ก+"; b.style.fontWeight = "700"; }
+}
+function toggleTextSize() {
+  state.bigText = !state.bigText; save();
+  applyTextSize();
+  toast(state.bigText ? "เปิดตัวอักษรใหญ่แล้ว" : "กลับเป็นตัวอักษรปกติ");
+}
+
 /* ---------------- language toggle (partial EN, prototype) ---------------- */
 function toggleLang() {
   state.lang = state.lang === "th" ? "en" : "th"; save();
@@ -903,4 +915,5 @@ function toggleLang() {
 
 /* ---------------- boot ---------------- */
 initLiff();   // real LIFF init when LIFF_ID is set (js/liff-config.js); browser fallback otherwise
+applyTextSize();
 route();

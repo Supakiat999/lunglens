@@ -31,6 +31,24 @@ body {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+/* ---------- big-text mode (ก+) — easy reading for all ages ---------- */
+body.big { font-size: 19px; }
+body.big .btn { font-size: 19px; min-height: 58px; }
+body.big .btn-sm { font-size: 17px; min-height: 48px; }
+body.big .opt { font-size: 18px; min-height: 58px; padding: 15px 16px; }
+body.big .q-title { font-size: 23px; }
+body.big .card h2 { font-size: 22px; }
+body.big .hero h1 { font-size: 30px; }
+body.big .hero p, body.big .muted { font-size: 17px; }
+body.big .q-note, body.big .tiny { font-size: 15px; }
+body.big .factor h4 { font-size: 18px; }
+body.big .fac h4 { font-size: 18px; }
+body.big nav.bottom a { font-size: 13px; }
+body.big nav.bottom a .ic { font-size: 24px; }
+body.big .field input, body.big .field select, body.big .field textarea { font-size: 18px; min-height: 52px; }
+body.big .progress-txt { font-size: 15px; }
+body.big .chip { font-size: 14px; padding: 4px 12px; }
+
 /* ---------- header ---------- */
 header.app {
   position: sticky; top: 0; z-index: 30;
