@@ -6,4 +6,4 @@
    The LIFF ID is public by design (it appears in every LIFF URL) —
    real secrets (channel secret / access token) belong on a server only.
    ===================================================================== */
-const LIFF_ID = "";
+const LIFF_ID = "2010756823-yiuPlaT0";
