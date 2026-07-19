@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>รู้ทันปอด (LungLens) — แบบประเมินความเสี่ยงเบื้องต้น</title>
+  <meta name="description" content="ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง — รู้ความเสี่ยงก่อนมีอาการ และรับคำแนะนำที่เหมาะกับคุณ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- LIFF startup splash — initLiff() in js/liff.js replaces or removes this -->
+  <div id="splash" role="status">
+    <div class="lung">🫁</div>
+    <div style="font-size:18px;font-weight:700">กำลังเปิดรู้ทันปอด…</div>
+    <div class="spin" aria-hidden="true"></div>
+    <div style="font-size:12px;opacity:.75">LINE LIFF · แบบประเมินความเสี่ยงเบื้องต้น</div>
+  </div>
+
+  <header class="app">
+    <div class="logo">🫁 รู้ทันปอด<small>LungLens — แบบประเมินความเสี่ยงเบื้องต้น</small></div>
+    <div class="spacer"></div>
+    <span class="demo-badge">PROTOTYPE · ข้อมูลจำลอง</span>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()" aria-label="เปลี่ยนภาษา">EN</button>
+  </header>
+
+  <main id="view" aria-live="polite"></main>
+
+  <nav class="bottom" aria-label="เมนูหลัก">
+    <a href="#home"><span class="ic">🏠</span>หน้าแรก</a>
+    <a href="#assess" onclick="if(!state.consent){location.hash='#begin';return false}"><span class="ic">📋</span>ประเมิน</a>
+    <a href="#result"><span class="ic">📊</span>ผลของฉัน</a>
+    <a href="#education"><span class="ic">📚</span>ความรู้</a>
+    <a href="#clinics"><span class="ic">🏥</span>สถานพยาบาล</a>
+    <a href="#profile"><span class="ic">👤</span>ของฉัน</a>
+  </nav>
+
+  <!-- LINE LIFF SDK (official CDN). If it fails to load, the app falls back
+       to browser mode — window.liff is simply undefined. -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="js/liff-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/liff.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

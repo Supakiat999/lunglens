@@ -1,0 +1,87 @@
+{
+  "_note": "Flex Message templates for the LINE Messaging API. Privacy rule: no health details, risk bands, or symptoms in any message or notification preview. All copy below follows that rule. Replace {{APP_URL}} with the LIFF URL: https://liff.line.me/{LIFF_ID}?p=<route> (e.g. ?p=begin, ?p=result, ?p=referral) — js/liff.js maps ?p= to the app route.",
+  "welcome": {
+    "type": "flex",
+    "altText": "ยินดีต้อนรับสู่รู้ทันปอด",
+    "contents": {
+      "type": "bubble",
+      "hero": { "type": "box", "layout": "vertical", "backgroundColor": "#155e75", "paddingAll": "20px",
+        "contents": [
+          { "type": "text", "text": "🫁 รู้ทันปอด", "color": "#ffffff", "weight": "bold", "size": "xl" },
+          { "type": "text", "text": "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง", "color": "#a5f3fc", "size": "sm", "margin": "sm" }
+        ] },
+      "body": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "text", "wrap": true, "size": "sm",
+          "text": "ยินดีต้อนรับสู่รู้ทันปอด เครื่องมือที่ช่วยให้คุณเข้าใจปัจจัยเสี่ยงสุขภาพปอดของตนเองได้ง่ายขึ้น ใช้เวลาเพียง 2–3 นาที" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "primary", "color": "#0e7490",
+          "action": { "type": "uri", "label": "ประเมินความเสี่ยง 2–3 นาที", "uri": "{{APP_URL}}#begin" } } ] }
+    }
+  },
+  "assessment_invitation": {
+    "type": "flex",
+    "altText": "ลองเช็กปัจจัยเสี่ยงสุขภาพปอดของคุณ",
+    "contents": { "type": "bubble", "body": { "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "text": "เช็กปัจจัยเสี่ยงสุขภาพปอด", "weight": "bold" },
+      { "type": "text", "wrap": true, "size": "sm", "margin": "sm",
+        "text": "อายุ ประวัติครอบครัว อาชีพ และสิ่งแวดล้อม อาจมีส่วนต่อความเสี่ยง ลองประเมินเบื้องต้นใน 2–3 นาที (ไม่ใช่การวินิจฉัย)" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "primary", "color": "#0e7490",
+          "action": { "type": "uri", "label": "เริ่มแบบประเมิน", "uri": "{{APP_URL}}#begin" } } ] } }
+  },
+  "assessment_completed_result_ready": {
+    "type": "flex",
+    "altText": "ผลการประเมินของคุณพร้อมแล้ว",
+    "contents": { "type": "bubble", "body": { "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "text": "ผลการประเมินของคุณพร้อมแล้ว", "weight": "bold", "wrap": true },
+      { "type": "text", "wrap": true, "size": "sm", "margin": "sm",
+        "text": "แตะเพื่อดูรายละเอียดอย่างปลอดภัย" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "primary", "color": "#0e7490",
+          "action": { "type": "uri", "label": "ดูผลของฉัน", "uri": "{{APP_URL}}#result" } } ] } }
+  },
+  "referral_confirmation": {
+    "type": "flex",
+    "altText": "ได้รับคำขอของคุณแล้ว",
+    "contents": { "type": "bubble", "body": { "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "text": "✅ ได้รับคำขอของคุณแล้ว", "weight": "bold" },
+      { "type": "text", "wrap": true, "size": "sm", "margin": "sm",
+        "text": "เจ้าหน้าที่จะติดต่อกลับตามช่องทางที่คุณเลือก ติดตามสถานะได้ทุกเมื่อ" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "secondary",
+          "action": { "type": "uri", "label": "ดูสถานะคำขอ", "uri": "{{APP_URL}}#referral" } } ] } }
+  },
+  "appointment_reminder": {
+    "type": "flex",
+    "altText": "แจ้งเตือนนัดหมายของคุณ",
+    "contents": { "type": "bubble", "body": { "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "text": "🗓 แจ้งเตือนนัดหมาย", "weight": "bold" },
+      { "type": "text", "wrap": true, "size": "sm", "margin": "sm",
+        "text": "คุณมีนัดหมายเร็ว ๆ นี้ แตะเพื่อดูรายละเอียดอย่างปลอดภัย" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "primary", "color": "#0e7490",
+          "action": { "type": "uri", "label": "ดูรายละเอียด", "uri": "{{APP_URL}}#referral" } } ] } }
+  },
+  "resume_reminder": {
+    "type": "flex",
+    "altText": "ทำแบบประเมินต่อเมื่อสะดวก",
+    "contents": { "type": "bubble", "body": { "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "wrap": true, "size": "sm",
+        "text": "คุณได้บันทึกแบบประเมินสุขภาพปอดไว้ แตะเพื่อทำต่อเมื่อสะดวก" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "primary", "color": "#0e7490",
+          "action": { "type": "uri", "label": "ทำต่อ", "uri": "{{APP_URL}}#assess" } } ] } }
+  },
+  "education_campaign_card": {
+    "type": "flex",
+    "altText": "ความรู้เรื่องปอด: ไม่สูบ ≠ ไม่เสี่ยง",
+    "contents": { "type": "bubble", "body": { "type": "box", "layout": "vertical", "contents": [
+      { "type": "text", "text": "📚 ไม่สูบ ≠ ไม่เสี่ยง", "weight": "bold" },
+      { "type": "text", "wrap": true, "size": "sm", "margin": "sm",
+        "text": "มะเร็งปอดไม่ได้เกิดเฉพาะกับผู้สูบบุหรี่ เรียนรู้ปัจจัยเสี่ยงที่หลายคนมองข้าม" } ] },
+      "footer": { "type": "box", "layout": "vertical", "contents": [
+        { "type": "button", "style": "secondary",
+          "action": { "type": "uri", "label": "อ่านบทความ", "uri": "{{APP_URL}}#education" } } ] } }
+  },
+  "chatbot_fallback_text": "ระบบนี้ให้ข้อมูลทั่วไปและไม่สามารถวินิจฉัยโรคได้ หากคุณมีอาการผิดปกติ ควรปรึกษาแพทย์หรือบุคลากรทางการแพทย์"
+}
