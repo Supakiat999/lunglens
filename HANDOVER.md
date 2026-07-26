@@ -50,6 +50,8 @@ those.** Full rules in [CLAUDE.md](CLAUDE.md).
 | 🔧 LINE OA Manager | https://manager.line.biz/ |
 | LINE provider name | **Longview** (id `2005248450`) — shared with the owner's other bot |
 | LINE Login channel | **LungLens**, id `2010756823` — status **Published** |
+| LINE Official Account | **LungLens**, Basic ID `@794hkqhs` — free plan |
+| Messaging API channel | **LungLens**, id `2010852424` — provider **Longview** |
 | LIFF ID | `2010756823-yiuPlaT0` (Full size · scopes `openid`+`profile` · shareTargetPicker on) |
 | Hosting | GitHub Pages, branch `main`, root `/` — deploys ~1 min after push |
 
@@ -57,7 +59,7 @@ The GitHub Pages URL is a public, no-login entry point. Visitors do not need a L
 account; LINE login remains an optional enhancement for profile and native sharing.
 
 **Deep links** (used by the rich-menu buttons) — append `?p=` to the LIFF URL:
-`begin` (assessment) · `result` · `education` · `clinics` · `profile` · `demo-story`
+`begin` (assessment) · `result` · `education` · `clinics` · `profile` · `home`
 Example: `https://liff.line.me/2010756823-yiuPlaT0?p=clinics`
 
 **Secrets:** there are none in this repo, by design. The LIFF ID is public (it appears in
@@ -82,41 +84,24 @@ and passed as an environment variable at run time. **Never write it into a file.
 - **Complete public Thai/English UI** — the language switch covers landing, consent,
   assessment, results, education, clinics, referral, profile, privacy, LIFF states and
   safe sharing. Stored answers remain canonical Thai values so rules do not change.
-- **Official Account kit, built and ready** — the 6-button menu image plus a one-command
-  installer, tested end-to-end apart from the account itself. Menu labels are bilingual
-  (large Thai + concise English).
+- **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
+  under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
+  greeting, and the bilingual 6-button rich menu installed as the default.
 
-## 5. 🟡 What's left — the one blocked step
+## 5. LINE Official Account status
 
-**The LINE Official Account has not been created yet.** That's the account people "add as
-a friend" so the 6 buttons appear at the bottom of their chat.
+The Official Account setup is complete:
 
-**Why it's blocked:** LINE has no API for creating an Official Account, and their signup
-site cannot be automated. It requires the account owner to log in personally. This cannot
-be delegated to a script or an assistant — only the owner can do it.
+- Account name: **LungLens** · Basic ID: `@794hkqhs`
+- Category: **Health / Health (Other)** · country: Thailand
+- Messaging API: enabled under provider **Longview** · channel id `2010852424`
+- Auto-response: **OFF** · greeting message: bilingual and non-diagnostic
+- Rich menu: 2500×1686 bilingual 3×2 menu installed and set as the default
+- Public browser access: no LINE login required
 
-**How to finish it** — the full guide is [`line/OA-SETUP.md`](line/OA-SETUP.md). Summary:
-
-1. Go to **https://manager.line.biz/** → log in → create an Official Account
-   named **รู้ทันปอด**, category **Health**
-   *(Or from the phone: LINE app → Home → Services → LINE Official Account)*
-2. In OA Manager: **Settings → Messaging API → Enable** → choose provider **Longview**
-3. In OA Manager: **Settings → Response settings → Auto-response = OFF**
-   ⚠️ Critical — auto-response steals the reply token and silently breaks webhooks later
-4. Go to https://developers.line.biz/console/ → the new **รู้ทันปอด** channel →
-   **Messaging API** tab → **Issue** a channel access token → copy it
-5. Run the installer:
-   ```powershell
-   cd "C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\line"
-   $env:LINE_CHANNEL_ACCESS_TOKEN = "<paste the token>"
-   node setup-richmenu.mjs
-   ```
-   This creates the menu, uploads `rich-menu.png`, and sets it as the default for every
-   user. Expect three lines of output ending in "Done".
-6. Open the รู้ทันปอด chat on a phone → the 6 buttons appear. Share the OA's
-   **add-friend link** (`https://lin.ee/…`, found in OA Manager → Home → Add friends tools).
-
-Optional but recommended: set the greeting message (text provided in `OA-SETUP.md`).
+One physical-device check remains operational rather than a code change: add the OA as a
+friend on a phone and confirm all six menu tiles are comfortably readable and open their
+intended live routes.
 
 ## 6. How to work on the code
 

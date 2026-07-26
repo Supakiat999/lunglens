@@ -3,10 +3,9 @@
 Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs real infra ·
 🩺 needs clinical/legal review
 
-> **👉 Current blocker:** the LINE Official Account has not been created yet — an
-> owner-only step (LINE provides no API for it and their signup cannot be automated).
-> Everything else in Phase 2 is built and waiting on it.
-> How to finish: [`line/OA-SETUP.md`](line/OA-SETUP.md) · context: [HANDOVER.md](HANDOVER.md)
+> **Current status:** the public bilingual app, LINE Official Account, Messaging API,
+> greeting, and 6-button rich menu are live. The remaining production gates require
+> clinical, legal, content, and facility review.
 
 ## Phase 0 — Prototype ✅
 
@@ -36,7 +35,8 @@ Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs
 - [ ] Review-before-submit screen (spec §40: user can change answers before submitting)
 - [ ] Accessibility pass: screen-reader labels on all inputs, focus management on route change, keyboard testing
 - [ ] Offline queue message ("การเชื่อมต่ออินเทอร์เน็ตไม่เสถียร…") + retry logic
-- [ ] Unit tests for engine.js (persona fixtures 1–4, incomplete, exclusive options) — engine already exports for Node
+- ✅ Regression tests for engine.js (persona fixtures 1–4, unchanged bands, incomplete,
+  exclusive options) plus an English-coverage check for public canonical data
 
 ## Phase 2 — Real LINE integration 🧱
 
@@ -48,8 +48,9 @@ Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs
 - ✅ Bilingual rich-menu image (`line/rich-menu.png`, large Thai labels + concise English)
   + one-command installer
   (`line/setup-richmenu.mjs`) + Thai setup guide (`line/OA-SETUP.md`)
-- 🟡 **Create the Official Account, then run the installer** — owner-only, see the blocker
-  note at the top of this file
+- ✅ LINE Official Account **LungLens** (`@794hkqhs`) created under Health; Messaging API
+  channel `2010852424` enabled under **Longview**; Auto-response OFF; bilingual greeting set
+- ✅ Bilingual 6-button rich menu installed and set as the default
 - [ ] Server-side ID-token verification endpoint (never trust client profile)
 - [ ] Webhook: signature verification, idempotency (webhook_events table), follow/unfollow/message/postback handlers
 - [ ] Chatbot intents (start assessment, explain factors, view result, find provider, reminders, privacy, help) + the fixed non-diagnostic fallback reply

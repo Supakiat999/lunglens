@@ -11,13 +11,13 @@ focused initially on Asian women who have never smoked but may have other risk f
 
 ## 📍 Status — last updated 2026-07-26
 
-**The app is live and usable inside LINE today.** One owner-only step remains.
+**The bilingual app and its LINE Official Account are live today.**
 
 | | |
 |---|---|
 | 🟢 **Open in LINE** | https://liff.line.me/2010756823-yiuPlaT0 |
 | 🟢 **Open in browser** | https://supakiat999.github.io/lunglens/ |
-| 🟡 **Remaining step** | Create the LINE Official Account (needs owner login — see [`line/OA-SETUP.md`](line/OA-SETUP.md)) |
+| 🟢 **LINE Official Account** | **LungLens** · Basic ID `@794hkqhs` |
 
 The browser link is public and does **not** require a LINE account or LINE login.
 LINE sign-in is optional and is used only for LINE-specific profile and sharing features.
@@ -26,7 +26,7 @@ LINE sign-in is optional and is used only for LINE-specific profile and sharing 
 |---|---|
 | 1 · Public MVP (landing → consent → assessment → result → education → privacy) | ✅ done |
 | 2 · LINE integration — LIFF SDK, login, profile, share, deep links, published channel | ✅ done |
-| 2b · Official Account + 6-button rich menu | 🟡 kit built & tested; **blocked on OA creation** |
+| 2b · Official Account + bilingual 6-button rich menu | ✅ live |
 | 3 · Backend (Next.js + Supabase, real referrals, versioned rules) | ⬜ not started |
 | 4 · Analytics, provider ops, automated tests | ⬜ demo-level only |
 

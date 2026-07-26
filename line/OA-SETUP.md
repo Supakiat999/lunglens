@@ -1,7 +1,21 @@
-# สร้าง LINE Official Account "รู้ทันปอด" + เมนูปุ่มกด
+# LungLens LINE Official Account + เมนูปุ่มกด
 
 Goal: an OA people add as a friend; the chat shows **6 big buttons** (rich menu)
 that open each part of the app directly. Everything below is **free**.
+
+## Current live setup — completed 2026-07-26
+
+- Account name: **LungLens**
+- Basic ID: `@794hkqhs`
+- Category: Health / Health (Other), Thailand
+- Messaging API channel: `2010852424`, provider **Longview**
+- Auto-response: OFF
+- Bilingual greeting: installed
+- Bilingual rich menu: installed and set as default
+- Public no-login URL: https://supakiat999.github.io/lunglens/
+
+The steps below are retained as a recovery/reinstallation guide. Never commit a channel
+secret or access token.
 
 ## ขั้นที่ 1 — สร้าง Official Account (ทำเองครั้งเดียว ~3 นาที)
 
@@ -12,17 +26,17 @@ business-signup site, by LINE's design).
    ใช้ไม่ได้แล้ว ขึ้น 404) · หรือทำจากมือถือ: แอป LINE → หน้าหลัก → บริการ → LINE Official Account
 2. Log in with the same LINE Business ID you already use for **Stock Report**.
 3. Create account:
-   - **Account name:** รู้ทันปอด
+   - **Account name:** LungLens
    - **Industry:** Health / Medical (หมวดสุขภาพ)
    - Email: your email · everything else default → Create.
 4. เสร็จแล้วจะเข้า **LINE Official Account Manager** (manager.line.biz) อัตโนมัติ
 
 ## ขั้นที่ 2 — เปิด Messaging API + ออก token (~2 นาที)
 
-1. ใน OA Manager ของบัญชี "รู้ทันปอด": **Settings (ตั้งค่า) → Messaging API → Enable**
+1. ใน OA Manager ของบัญชี "LungLens": **Settings (ตั้งค่า) → Messaging API → Enable**
    - เลือก provider: **Longview** (อันเดียวกับ Stock Report)
 2. สำคัญ: **Settings → Response settings → Auto-response = OFF** (บทเรียนจาก Stock Report)
-3. ไปที่ https://developers.line.biz/console/ → channel ใหม่ "รู้ทันปอด" (Messaging API)
+3. ไปที่ https://developers.line.biz/console/ → channel "LungLens" (Messaging API)
    → แท็บ **Messaging API** → **Channel access token → Issue** → copy
 
 ## ขั้นที่ 3 — ติดตั้งเมนูปุ่มกด (คำสั่งเดียว)
@@ -57,18 +71,12 @@ template 3×2 → upload `rich-menu.png` → ใส่ลิงก์ทั้�
 
 OA Manager → **Greeting message** ใส่:
 
-> ยินดีต้อนรับสู่รู้ทันปอด 🫁
-> "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง"
-> แตะปุ่ม ✅ ประเมินความเสี่ยง ด้านล่าง เพื่อเช็กปัจจัยของคุณใน 2–3 นาที
-> (แบบประเมินนี้ไม่ใช่การวินิจฉัยโรค)
+> Welcome to LungLens
+> Review your lung-health factors in 2–3 minutes. This awareness tool is not a diagnosis.
+> No LINE login required: https://supakiat999.github.io/lunglens/
 >
-> Welcome to LungLens 🫁
-> "Not smoking does not mean no risk."
-> Tap ✅ Assess risk below to review your factors in 2–3 minutes.
-> (This assessment is not a diagnosis.)
->
-> เปิดผ่านเว็บได้โดยไม่ต้องเข้าสู่ระบบ LINE / No LINE login required:
-> https://supakiat999.github.io/lunglens/
+> ยินดีต้อนรับสู่ LungLens
+> ทบทวนปัจจัยสุขภาพปอดของคุณใน 2–3 นาที เครื่องมือนี้ไม่ใช่การวินิจฉัยโรค
 
 ## เช็กลิสต์ความปลอดภัย
 
