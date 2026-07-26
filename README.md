@@ -9,6 +9,26 @@ focused initially on Asian women who have never smoked but may have other risk f
 > autonomous clinical decision-making.** ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
 > All facilities, cases, analytics, and rules in this repo are **ข้อมูลจำลอง (demo data)**.
 
+## 📍 Status — last updated 2026-07-26
+
+**The app is live and usable inside LINE today.** One owner-only step remains.
+
+| | |
+|---|---|
+| 🟢 **Open in LINE** | https://liff.line.me/2010756823-yiuPlaT0 |
+| 🟢 **Open in browser** | https://supakiat999.github.io/lunglens/ |
+| 🟡 **Remaining step** | Create the LINE Official Account (needs owner login — see [`line/OA-SETUP.md`](line/OA-SETUP.md)) |
+
+| Phase | State |
+|---|---|
+| 1 · Public MVP (landing → consent → assessment → result → education → privacy) | ✅ done |
+| 2 · LINE integration — LIFF SDK, login, profile, share, deep links, published channel | ✅ done |
+| 2b · Official Account + 6-button rich menu | 🟡 kit built & tested; **blocked on OA creation** |
+| 3 · Backend (Next.js + Supabase, real referrals, versioned rules) | ⬜ not started |
+| 4 · Analytics, provider ops, automated tests | ⬜ demo-level only |
+
+Full picture for a new person → **[HANDOVER.md](HANDOVER.md)** · backlog → [TASKS.md](TASKS.md)
+
 ## What it is / is not
 
 | Is | Is not |
@@ -31,31 +51,45 @@ Key safety invariants baked into the code:
 (key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), works offline after load,
 and is deliberately structured so each layer maps 1:1 onto the target production stack.
 
+Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
+
 ```
 lunglens/
-├── index.html            App shell, mock LIFF splash, bottom nav
-├── css/styles.css        Design system (teal trust palette, WCAG-aware, reduced-motion)
-├── js/data.js            Questions (STEPS), risk rules (RULES), bands, demo facilities,
-│                         articles, personas, provider demo data  ← "database + config"
-├── js/engine.js          Explainable rule engine + symptom pathway  ← "risk service"
-├── js/app.js             Router + all screens + mock LIFF + local state  ← "frontend"
-├── line/flex-messages.json  Flex Message JSON templates (privacy-safe copy)
-├── .env.example          Env vars for the future LIFF/Next.js build (no secrets)
-├── README.md             This file
-└── TASKS.md              Prioritized backlog to finish the real build
+├── index.html                  App shell, LIFF splash, bottom nav, ก+ text-size toggle
+├── css/styles.css              Design system (teal palette, WCAG-aware, big-text mode)
+├── js/data.js                  Questions (STEPS), risk rules (RULES), bands, demo
+│                               facilities, articles, personas   ← "database + config"
+├── js/engine.js                Explainable rule engine + symptom pathway ← "risk service"
+├── js/app.js                   Router + every screen + local state       ← "frontend"
+├── js/liff.js                  LINE layer: init, login, profile, share, ?p= deep links
+├── js/liff-config.js           LIFF_ID (public by design — safe to commit)
+├── line/OA-SETUP.md            ▶ How to create the Official Account + install the menu
+├── line/setup-richmenu.mjs     One-command rich-menu installer (needs Node 18+)
+├── line/rich-menu.png          The 6-button menu image (large Thai labels)
+├── line/richmenu-labels.json   Button wording — edit here, then regenerate the PNG
+├── line/make-richmenu-image.ps1  Regenerates rich-menu.png (ASCII-only script)
+├── line/flex-messages.json     Flex Message templates (privacy-safe copy)
+├── .env.example                Env vars for the future backend (no secrets)
+├── HANDOVER.md                 ▶ Status, all links/IDs, next steps — start here
+├── CLAUDE.md                   Operating guide + safety invariants for AI sessions
+├── README.md                   This file
+└── TASKS.md                    Prioritized backlog
 ```
 
 ### Run it
 
-Any static server works:
+Serve from the **parent** folder so the URL keeps the `/lunglens/` path the live site uses:
 
 ```bash
-# from the repo root (Claude preview uses this)
+cd "C:\Users\ASUS\OneDrive\Desktop\Astra Project"
 python -m http.server 8099
 # → http://localhost:8099/lunglens/
 ```
 
-No build step, no dependencies, no cost.
+`Astra Project/.claude/launch.json` runs exactly this for the Claude preview server.
+
+No build step, no dependencies, no cost. Note: real LINE login needs HTTPS, so on
+localhost the app runs in browser/demo mode — use the live URL to test inside LINE.
 
 ### Screens implemented
 

@@ -8,7 +8,8 @@ that open each part of the app directly. Everything below is **free**.
 LINE requires a human for this step (Claude's automation is blocked on their
 business-signup site, by LINE's design).
 
-1. เปิด https://entry.line.biz/start/jp/ (หรือค้นหา "LINE Official Account สมัคร")
+1. เปิด **https://manager.line.biz/** (ยืนยันแล้วว่าใช้งานได้ — ลิงก์ `entry.line.biz/start/th/`
+   ใช้ไม่ได้แล้ว ขึ้น 404) · หรือทำจากมือถือ: แอป LINE → หน้าหลัก → บริการ → LINE Official Account
 2. Log in with the same LINE Business ID you already use for **Stock Report**.
 3. Create account:
    - **Account name:** รู้ทันปอด
@@ -26,9 +27,10 @@ business-signup site, by LINE's design).
 
 ## ขั้นที่ 3 — ติดตั้งเมนูปุ่มกด (คำสั่งเดียว)
 
-PowerShell ในโฟลเดอร์ `lunglens/line/`:
+เปิด PowerShell แล้วรัน (ต้องมี Node 18+ · token อยู่กับเจ้าของเท่านั้น ไม่ถูกบันทึกลงไฟล์ใด):
 
 ```powershell
+cd "C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\line"
 $env:LINE_CHANNEL_ACCESS_TOKEN = "<วาง token ตรงนี้>"
 node setup-richmenu.mjs
 ```

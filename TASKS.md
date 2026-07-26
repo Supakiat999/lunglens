@@ -1,8 +1,14 @@
 # TASKS.md — LungLens / รู้ทันปอด backlog
 
-Status legend: ✅ done in prototype · 🔜 next · 🧱 needs real infra · 🩺 needs clinical/legal review
+Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs real infra ·
+🩺 needs clinical/legal review
 
-## Phase 0 — Prototype (this session) ✅
+> **👉 Current blocker:** the LINE Official Account has not been created yet — an
+> owner-only step (LINE provides no API for it and their signup cannot be automated).
+> Everything else in Phase 2 is built and waiting on it.
+> How to finish: [`line/OA-SETUP.md`](line/OA-SETUP.md) · context: [HANDOVER.md](HANDOVER.md)
+
+## Phase 0 — Prototype ✅
 
 - ✅ Static SPA shell, teal design system, mobile-first, bottom nav, reduced-motion support
 - ✅ Landing page (hero, benefits, disclaimer, storyboard modal, persona quick-fill)
@@ -17,6 +23,8 @@ Status legend: ✅ done in prototype · 🔜 next · 🧱 needs real infra · �
 - ✅ Provider dashboard demo (3 roles, case list/detail, referrals, rules table, funnel analytics)
 - ✅ /demo-story presentation mode (5 slides)
 - ✅ Flex Message JSON samples, .env.example, README
+- ✅ Big-text mode (ก+) — scales fonts and tap targets app-wide, persists (all-ages access)
+- ✅ Moved into its own home (`Astra Project\lunglens\`) + own GitHub repo; handover docs written
 
 ## Phase 1 — Finish the public MVP 🔜
 
@@ -33,9 +41,14 @@ Status legend: ✅ done in prototype · 🔜 next · 🧱 needs real infra · �
 
 - ✅ Real LIFF SDK wired in (`js/liff.js`): `liff.init()`, in-client detection, LINE Login,
   `getProfile()`, `shareTargetPicker`, `?p=` deep-link routing, retry/open-in-browser fallback
-- [ ] Create LINE Login channel + LIFF app in the console; paste LIFF ID into `js/liff-config.js`; deploy to HTTPS (GitHub Pages)
+- ✅ LINE Login channel **LungLens** (id 2010756823) created and **Published**; LIFF app
+  `2010756823-yiuPlaT0` registered (Full · openid+profile · shareTargetPicker on)
+- ✅ Deployed to HTTPS — GitHub Pages at `supakiat999.github.io/lunglens/`
+- ✅ Rich-menu image (`line/rich-menu.png`, large Thai labels) + one-command installer
+  (`line/setup-richmenu.mjs`) + Thai setup guide (`line/OA-SETUP.md`)
+- 🟡 **Create the Official Account, then run the installer** — owner-only, see the blocker
+  note at the top of this file
 - [ ] Server-side ID-token verification endpoint (never trust client profile)
-- [ ] Messaging API channel + OA; rich menu with 6 areas (ประเมินความเสี่ยง / ผลของฉัน / ความรู้ / นัดหมาย / แจ้งเตือน / ช่วยเหลือ) — chatBarText ≤ 14 chars
 - [ ] Webhook: signature verification, idempotency (webhook_events table), follow/unfollow/message/postback handlers
 - [ ] Chatbot intents (start assessment, explain factors, view result, find provider, reminders, privacy, help) + the fixed non-diagnostic fallback reply
 - [ ] Wire Flex templates from line/flex-messages.json (privacy-safe previews only)
