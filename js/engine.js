@@ -93,3 +93,9 @@ const NOT_ASSESSED = [
   "ผลตรวจทางการแพทย์หรือภาพถ่ายรังสีใด ๆ",
   "ประวัติการรักษาโดยละเอียด"
 ];
+
+if (typeof module !== "undefined") {
+  module.exports = {
+    REQUIRED_STEPS, assessmentComplete, symptomPathway, evaluateRisk, NOT_ASSESSED
+  };
+}

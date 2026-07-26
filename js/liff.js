@@ -68,6 +68,7 @@ function showLiffError() {
     <button class="btn btn-sm" style="background:#fff;color:var(--brand-deep);width:220px" onclick="location.reload()">ลองอีกครั้ง</button>
     <button class="btn btn-sm btn-ghost" style="border-color:rgba(255,255,255,.5);color:#fff;width:220px"
       onclick="LIFF_STATE.mode='browser';hideSplash()">เปิดในเบราว์เซอร์</button>`;
+  localizeSubtree(splash);
 }
 
 /* Login / link — real LINE Login when SDK is live, demo toggle otherwise.

@@ -36,7 +36,7 @@ function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;"
 
 function toast(msg) {
   const el = document.createElement("div");
-  el.className = "toast"; el.textContent = msg;
+  el.className = "toast"; el.textContent = tr(msg);
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2600);
 }
@@ -49,6 +49,7 @@ function modal(html, { closable = true } = {}) {
     ${closable ? '<button class="btn btn-ghost mt" onclick="closeModal()">ปิด</button>' : ""}</div>`;
   if (closable) back.addEventListener("click", e => { if (e.target === back) closeModal(); });
   document.body.appendChild(back);
+  if (!isThaiOnlyRoute()) localizeSubtree(back);
 }
 function closeModal() { $("#modalBack")?.remove(); }
 
@@ -87,7 +88,35 @@ function route() {
 }
 window.addEventListener("hashchange", route);
 
-function view(html) { $("#view").innerHTML = html; }
+function isThaiOnlyRoute() {
+  const routeName = (location.hash || "#home").slice(1).split("=")[0].replace(/^\//, "");
+  return routeName === "provider" || routeName === "demo-story";
+}
+
+function applyLocale() {
+  const lang = state.lang === "en" ? "en" : "th";
+  document.documentElement.lang = lang;
+  document.title = lang === "en"
+    ? t("document_title")
+    : "รู้ทันปอด (LungLens) — แบบประเมินความเสี่ยงเบื้องต้น";
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.content = lang === "en"
+    ? t("document_description")
+    : "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง — รู้ความเสี่ยงก่อนมีอาการ และรับคำแนะนำที่เหมาะกับคุณ";
+  ["header.app", "nav.bottom", "#splash"].forEach(sel => localizeSubtree($(sel), lang));
+  if (!isThaiOnlyRoute()) localizeSubtree($("#view"), lang);
+  const langBtn = $("#langBtn");
+  if (langBtn) {
+    langBtn.textContent = lang === "th" ? "EN" : "ไทย";
+    langBtn.setAttribute("aria-label", lang === "th" ? "เปลี่ยนภาษา" : "Switch to Thai");
+  }
+  applyTextSize();
+}
+
+function view(html) {
+  $("#view").innerHTML = html;
+  if (!isThaiOnlyRoute()) localizeSubtree($("#view"));
+}
 
 /* =====================================================================
    SCREEN: landing
@@ -284,14 +313,14 @@ function renderAssess() {
       return `<div class="field"><label>${esc(f.label)}</label>
         <select onchange="answerGroup('${step.id}','${f.key}', this.value)">
           <option value="">— เลือก —</option>
-          ${f.options.map(o => `<option ${cur[f.key] === o ? "selected" : ""}>${esc(o)}</option>`).join("")}
+          ${f.options.map(o => `<option value="${esc(o)}" ${cur[f.key] === o ? "selected" : ""}>${esc(o)}</option>`).join("")}
         </select></div>`;
     }).join("");
   } else if (step.type === "province") {
     body = `<div class="field"><label>จังหวัด</label>
       <select onchange="answerChoice('PROVINCE', this.value)">
         <option value="">— เลือกจังหวัด —</option>
-        ${PROVINCES.map(p => `<option ${a.PROVINCE === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
+        ${PROVINCES.map(p => `<option value="${esc(p)}" ${a.PROVINCE === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
       </select></div>
       <div class="field"><label>อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)</label>
         <input type="text" value="${esc(a.DISTRICT || "")}" onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>`;
@@ -435,7 +464,7 @@ function renderResult() {
     return;
   }
   const b = r.band;
-  const dt = new Date(r.generated_at).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" });
+  const dt = formatDate(r.generated_at);
   view(`
   ${r.symptom_pathway !== "standard" ? `<div class="band band-urgent">
     <b>มีอาการที่ควรปรึกษาแพทย์</b>
@@ -507,8 +536,15 @@ function shareCard() {
       <div>คุณก็ใช้เวลาเพียง 2–3 นาทีได้เช่นกัน</div>
       <div class="mt" style="background:#fff;color:var(--brand-deep);border-radius:999px;padding:8px 16px;display:inline-block;font-weight:700">เช็กความเสี่ยงเบื้องต้น</div>
     </div>
-    <button class="btn btn-secondary" onclick="liffShare('ฉันเช็กปัจจัยเสี่ยงสุขภาพปอดแล้ว 🫁 คุณก็ใช้เวลาเพียง 2–3 นาทีได้เช่นกัน — เช็กความเสี่ยงเบื้องต้นได้ที่: ' + location.origin + location.pathname)">${'แชร์ผ่าน LINE / คัดลอกข้อความ'}</button>
+    <button class="btn btn-secondary" onclick="shareInvite()">${'แชร์ผ่าน LINE / คัดลอกข้อความ'}</button>
     <button class="btn btn-ghost mt" onclick="confirmDetailShare()">🔗 ส่งผลโดยละเอียดให้บุคลากรทางการแพทย์</button>`);
+}
+function shareInvite() {
+  const url = location.origin + location.pathname;
+  const text = state.lang === "en"
+    ? `I reviewed my lung-health risk factors 🫁 You can do it in just 2–3 minutes too — review your risk factors at: ${url}`
+    : `ฉันเช็กปัจจัยเสี่ยงสุขภาพปอดแล้ว 🫁 คุณก็ใช้เวลาเพียง 2–3 นาทีได้เช่นกัน — เช็กความเสี่ยงเบื้องต้นได้ที่: ${url}`;
+  liffShare(text);
 }
 function confirmDetailShare() {
   modal(`<h3>ยืนยันการสร้างลิงก์ผลโดยละเอียด</h3>
@@ -576,7 +612,7 @@ function renderClinics() {
     <div class="row mt">
       <select onchange="clinicFilter.province=this.value;renderClinics()">
         <option value="">ทุกจังหวัด</option>
-        ${[...new Set(FACILITIES.map(f => f.province))].map(p => `<option ${clinicFilter.province === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
+        ${[...new Set(FACILITIES.map(f => f.province))].map(p => `<option value="${esc(p)}" ${clinicFilter.province === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
       </select>
       <button class="chip ${clinicFilter.ldct ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.ldct=!clinicFilter.ldct;renderClinics()">มี LDCT</button>
       <button class="chip ${clinicFilter.publicOnly ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.publicOnly=!clinicFilter.publicOnly;renderClinics()">รัฐเท่านั้น</button>
@@ -617,11 +653,11 @@ function startReferral(facilityId) {
   modal(`<h3>ขอให้เจ้าหน้าที่ติดต่อ</h3>
     <p class="tiny">${esc(f.name)} · ไม่ต้องกรอกข้อมูลสุขภาพซ้ำ — ระบบใช้ผลประเมินที่คุณยินยอมแชร์</p>
     <div class="field"><label>ช่องทางที่สะดวก</label>
-      <select id="rf-contact"><option>LINE</option><option>โทรศัพท์</option></select></div>
+      <select id="rf-contact"><option value="LINE">LINE</option><option value="โทรศัพท์">โทรศัพท์</option></select></div>
     <div class="field"><label>วันที่สะดวก</label>
-      <select id="rf-days"><option>จันทร์–ศุกร์</option><option>เสาร์–อาทิตย์</option><option>ได้ทุกวัน</option></select></div>
+      <select id="rf-days"><option value="จันทร์–ศุกร์">จันทร์–ศุกร์</option><option value="เสาร์–อาทิตย์">เสาร์–อาทิตย์</option><option value="ได้ทุกวัน">ได้ทุกวัน</option></select></div>
     <div class="field"><label>ช่วงเวลาที่สะดวก</label>
-      <select id="rf-time"><option>เช้า (9:00–12:00)</option><option>บ่าย (13:00–16:00)</option><option>เย็น (16:00–18:00)</option></select></div>
+      <select id="rf-time"><option value="เช้า (9:00–12:00)">เช้า (9:00–12:00)</option><option value="บ่าย (13:00–16:00)">บ่าย (13:00–16:00)</option><option value="เย็น (16:00–18:00)">เย็น (16:00–18:00)</option></select></div>
     <div class="field"><label>ความต้องการด้านการเข้าถึง / หมายเหตุ (ไม่บังคับ)</label>
       <textarea id="rf-note" rows="2" placeholder="เช่น ต้องการล่าม ต้องการทางลาด"></textarea></div>
     <button class="btn btn-primary" onclick="submitReferral('${facilityId}')">ส่งคำขอ</button>`);
@@ -681,7 +717,7 @@ function renderProfile() {
     ${state.history.length === 0 ? `<p class="muted">ยังไม่มีประวัติ</p>` :
       state.history.map(h => `<div class="factor" style="border-left-color:var(--brand)">
         <b style="font-size:14px">${esc(h.bandLabel)}</b>
-        <p class="tiny">${new Date(h.at).toLocaleString("th-TH")} · ${esc(h.engine)}${h.pathway !== "standard" ? " · มีเส้นทางอาการ" : ""}</p>
+        <p class="tiny">${formatDate(h.at, { dateTime: true })} · ${esc(h.engine)}${h.pathway !== "standard" ? " · มีเส้นทางอาการ" : ""}</p>
       </div>`).join("")}
   </div>
 
@@ -693,7 +729,7 @@ function renderProfile() {
     <div class="row mt">
       <div class="field"><label>เวลา</label><input type="text" value="${esc(state.reminders.time)}" onchange="state.reminders.time=this.value;save()"></div>
       <div class="field"><label>ความถี่</label><select onchange="state.reminders.freq=this.value;save()">
-        ${["รายเดือน","ราย 3 เดือน","รายปี (ประเมินซ้ำ)"].map(o => `<option ${state.reminders.freq === o ? "selected" : ""}>${o}</option>`).join("")}
+        ${["รายเดือน","ราย 3 เดือน","รายปี (ประเมินซ้ำ)"].map(o => `<option value="${esc(o)}" ${state.reminders.freq === o ? "selected" : ""}>${o}</option>`).join("")}
       </select></div>
     </div>
     <button class="btn btn-ghost btn-sm" onclick="toggleRemind(false)">หยุดการแจ้งเตือนทั้งหมด</button>` : ""}
@@ -702,7 +738,7 @@ function renderProfile() {
 
   <div class="card"><h3>ความยินยอม</h3>
     ${!c ? `<p class="muted">ยังไม่ได้ให้ความยินยอม</p>` : `
-    <p class="tiny">เวอร์ชัน ${esc(c.version)} · ให้ไว้เมื่อ ${new Date(c.at).toLocaleString("th-TH")}</p>
+    <p class="tiny">เวอร์ชัน ${esc(c.version)} · ให้ไว้เมื่อ ${formatDate(c.at, { dateTime: true })}</p>
     <div class="opts mt">
       ${[["history","บันทึกประวัติการประเมิน"],["remind","รับการแจ้งเตือนผ่าน LINE"],["contact","ให้เจ้าหน้าที่ติดต่อได้"],["research","ข้อมูลไม่ระบุตัวตนเพื่อวิจัย"],["loc","ใช้ตำแหน่งโดยประมาณ"]].map(([k, lbl]) => `
       <label class="opt ${c.optional[k] ? "sel" : ""}">
@@ -896,7 +932,12 @@ function renderPrivacy() {
 function applyTextSize() {
   document.body.classList.toggle("big", !!state.bigText);
   const b = $("#sizeBtn");
-  if (b) { b.textContent = state.bigText ? "ก−" : "ก+"; b.style.fontWeight = "700"; }
+  if (b) {
+    b.textContent = state.lang === "en"
+      ? (state.bigText ? "A−" : "A+")
+      : (state.bigText ? "ก−" : "ก+");
+    b.style.fontWeight = "700";
+  }
 }
 function toggleTextSize() {
   state.bigText = !state.bigText; save();
@@ -904,16 +945,17 @@ function toggleTextSize() {
   toast(state.bigText ? "เปิดตัวอักษรใหญ่แล้ว" : "กลับเป็นตัวอักษรปกติ");
 }
 
-/* ---------------- language toggle (partial EN, prototype) ---------------- */
+/* ---------------- complete Thai / English presentation toggle ---------------- */
 function toggleLang() {
   state.lang = state.lang === "th" ? "en" : "th"; save();
-  toast(state.lang === "en"
-    ? "English UI is partial in this prototype — see TASKS.md"
-    : "กลับเป็นภาษาไทยแล้ว");
-  $("#langBtn").textContent = state.lang === "th" ? "EN" : "ไทย";
+  closeModal();
+  applyLocale();
+  route();
+  toast(state.lang === "en" ? t("language_changed_en") : t("language_changed_th"));
 }
 
 /* ---------------- boot ---------------- */
+applyLocale();
 initLiff();   // real LIFF init when LIFF_ID is set (js/liff-config.js); browser fallback otherwise
 applyTextSize();
 route();

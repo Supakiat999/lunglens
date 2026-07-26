@@ -31,8 +31,9 @@ business-signup site, by LINE's design).
 
 ```powershell
 cd "C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\line"
-$env:LINE_CHANNEL_ACCESS_TOKEN = "<วาง token ตรงนี้>"
+$env:LINE_CHANNEL_ACCESS_TOKEN = Read-Host "Paste channel access token"
 node setup-richmenu.mjs
+Remove-Item Env:LINE_CHANNEL_ACCESS_TOKEN
 ```
 
 สคริปต์จะสร้างเมนู 6 ปุ่ม (ภาพ `rich-menu.png` — ตัวอักษรใหญ่ อ่านง่ายทุกวัย),
@@ -40,12 +41,12 @@ node setup-richmenu.mjs
 
 | ปุ่ม | เปิดหน้า |
 |---|---|
-| ✅ ประเมินความเสี่ยง | แบบประเมิน 2–3 นาที |
-| 📊 ผลของฉัน | ผลล่าสุด |
-| 📚 ความรู้ | บทความอ่านง่าย |
-| 🏥 สถานพยาบาล | ค้นหาใกล้บ้าน |
-| 🔔 แจ้งเตือน | ตั้งค่าการแจ้งเตือน |
-| ❓ ช่วยเหลือ | หน้าแรก |
+| ✅ ประเมินความเสี่ยง / Assess risk | แบบประเมิน 2–3 นาที |
+| 📊 ผลของฉัน / My result | ผลล่าสุด |
+| 📚 ความรู้ / Learn | บทความอ่านง่าย |
+| 🏥 สถานพยาบาล / Clinics | ค้นหาใกล้บ้าน |
+| 🔔 แจ้งเตือน / Reminders | ตั้งค่าการแจ้งเตือน |
+| ❓ ช่วยเหลือ / Help | หน้าแรก |
 
 (ถ้าอยากทำผ่านหน้าเว็บแทน: OA Manager → Home → Rich menu → Create →
 template 3×2 → upload `rich-menu.png` → ใส่ลิงก์ทั้ง 6 ช่องตามตาราง
@@ -60,6 +61,14 @@ OA Manager → **Greeting message** ใส่:
 > "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง"
 > แตะปุ่ม ✅ ประเมินความเสี่ยง ด้านล่าง เพื่อเช็กปัจจัยของคุณใน 2–3 นาที
 > (แบบประเมินนี้ไม่ใช่การวินิจฉัยโรค)
+>
+> Welcome to LungLens 🫁
+> "Not smoking does not mean no risk."
+> Tap ✅ Assess risk below to review your factors in 2–3 minutes.
+> (This assessment is not a diagnosis.)
+>
+> เปิดผ่านเว็บได้โดยไม่ต้องเข้าสู่ระบบ LINE / No LINE login required:
+> https://supakiat999.github.io/lunglens/
 
 ## เช็กลิสต์ความปลอดภัย
 

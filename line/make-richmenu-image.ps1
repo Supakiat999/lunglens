@@ -25,7 +25,7 @@ $white = [System.Drawing.Brushes]::White
 $soft  = New-Object System.Drawing.SolidBrush ([System.Drawing.ColorTranslator]::FromHtml("#a5f3fc"))
 
 $fEmoji = New-Object System.Drawing.Font("Segoe UI Emoji", 110, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
-$fLabel = New-Object System.Drawing.Font("Leelawadee UI", 92, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
+$fLabel = New-Object System.Drawing.Font("Leelawadee UI", 82, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
 $fSub   = New-Object System.Drawing.Font("Leelawadee UI", 56, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
 
 $center = New-Object System.Drawing.StringFormat

@@ -1,12 +1,12 @@
 {
   "title": "รู้ทันปอด",
-  "subtitle": "แตะปุ่มเพื่อเริ่มใช้งาน",
+  "subtitle": "แตะปุ่มเพื่อเริ่มใช้งาน · Tap to begin",
   "tiles": [
-    { "emoji": "✅", "label": "ประเมินความเสี่ยง", "sub": "2-3 นาที" },
-    { "emoji": "📊", "label": "ผลของฉัน", "sub": "ดูผลล่าสุด" },
-    { "emoji": "📚", "label": "ความรู้", "sub": "อ่านง่าย" },
-    { "emoji": "🏥", "label": "สถานพยาบาล", "sub": "ใกล้บ้านคุณ" },
-    { "emoji": "🔔", "label": "แจ้งเตือน", "sub": "ตั้งค่าได้" },
-    { "emoji": "❓", "label": "ช่วยเหลือ", "sub": "เริ่มต้นที่นี่" }
+    { "emoji": "✅", "label": "ประเมินความเสี่ยง", "sub": "Assess risk" },
+    { "emoji": "📊", "label": "ผลของฉัน", "sub": "My result" },
+    { "emoji": "📚", "label": "ความรู้", "sub": "Learn" },
+    { "emoji": "🏥", "label": "สถานพยาบาล", "sub": "Clinics" },
+    { "emoji": "🔔", "label": "แจ้งเตือน", "sub": "Reminders" },
+    { "emoji": "❓", "label": "ช่วยเหลือ", "sub": "Help" }
   ]
 }

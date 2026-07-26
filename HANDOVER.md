@@ -53,6 +53,9 @@ those.** Full rules in [CLAUDE.md](CLAUDE.md).
 | LIFF ID | `2010756823-yiuPlaT0` (Full size · scopes `openid`+`profile` · shareTargetPicker on) |
 | Hosting | GitHub Pages, branch `main`, root `/` — deploys ~1 min after push |
 
+The GitHub Pages URL is a public, no-login entry point. Visitors do not need a LINE
+account; LINE login remains an optional enhancement for profile and native sharing.
+
 **Deep links** (used by the rich-menu buttons) — append `?p=` to the LIFF URL:
 `begin` (assessment) · `result` · `education` · `clinics` · `profile` · `demo-story`
 Example: `https://liff.line.me/2010756823-yiuPlaT0?p=clinics`
@@ -76,8 +79,12 @@ and passed as an environment variable at run time. **Never write it into a file.
   picker, `?p=` deep links, and a graceful "open in browser" fallback if LINE fails
 - **Accessibility for all ages** — the `ก+` button in the header scales the entire UI
   (fonts + tap targets) and remembers the choice
+- **Complete public Thai/English UI** — the language switch covers landing, consent,
+  assessment, results, education, clinics, referral, profile, privacy, LIFF states and
+  safe sharing. Stored answers remain canonical Thai values so rules do not change.
 - **Official Account kit, built and ready** — the 6-button menu image plus a one-command
-  installer, tested end-to-end apart from the account itself
+  installer, tested end-to-end apart from the account itself. Menu labels are bilingual
+  (large Thai + concise English).
 
 ## 5. 🟡 What's left — the one blocked step
 

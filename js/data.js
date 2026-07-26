@@ -493,5 +493,9 @@ const PROVIDER_ROLES = [
 ];
 
 if (typeof module !== "undefined") {
-  module.exports = { STEPS, RULES, BANDS, PM25_DEMO, PERSONAS, packYears };
+  module.exports = {
+    PROVINCES, STEPS, RULES, BANDS, PM25_DEMO, FACILITIES,
+    EDU_CATEGORIES, ARTICLES, PERSONAS, packYears,
+    ENGINE_VERSION, STORE_KEY
+  };
 }

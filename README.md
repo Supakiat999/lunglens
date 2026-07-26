@@ -19,6 +19,9 @@ focused initially on Asian women who have never smoked but may have other risk f
 | 🟢 **Open in browser** | https://supakiat999.github.io/lunglens/ |
 | 🟡 **Remaining step** | Create the LINE Official Account (needs owner login — see [`line/OA-SETUP.md`](line/OA-SETUP.md)) |
 
+The browser link is public and does **not** require a LINE account or LINE login.
+LINE sign-in is optional and is used only for LINE-specific profile and sharing features.
+
 | Phase | State |
 |---|---|
 | 1 · Public MVP (landing → consent → assessment → result → education → privacy) | ✅ done |
@@ -195,7 +198,9 @@ Messaging-API webhook (Phase 2):
 
 ## Known limitations
 
-- English UI is partial (toggle shows notice); content is Thai-first.
+- Public user journeys support complete Thai/English switching. Thai remains the canonical
+  stored-answer language so switching languages cannot alter rule-engine outcomes.
+- The provider dashboard demo and presentation-only route remain Thai-first.
 - PM2.5 area data is a seeded demo list, clearly labelled — not real measurements.
 - All "call / map / detailed share / provider write actions" open labelled prototype popups.
 - No real persistence beyond the device (localStorage), no accounts, no real LINE session.

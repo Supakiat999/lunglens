@@ -28,7 +28,8 @@ Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs
 
 ## Phase 1 — Finish the public MVP 🔜
 
-- [ ] Full EN translation dictionary (currently partial; toggle shows notice)
+- ✅ Full EN translation dictionary for every public user journey; Thai remains canonical
+  for stored answers and risk-rule evaluation (provider dashboard + presentation mode stay Thai)
 - [ ] Write the remaining 8 education articles (drafts exist as category placeholders) 🩺
 - [ ] Real province list (77) + district picker; postcode validation
 - [ ] Inconsistent-answer checks (e.g. "ไม่เคยสูบ" + pack-years entered)
@@ -44,7 +45,8 @@ Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs
 - ✅ LINE Login channel **LungLens** (id 2010756823) created and **Published**; LIFF app
   `2010756823-yiuPlaT0` registered (Full · openid+profile · shareTargetPicker on)
 - ✅ Deployed to HTTPS — GitHub Pages at `supakiat999.github.io/lunglens/`
-- ✅ Rich-menu image (`line/rich-menu.png`, large Thai labels) + one-command installer
+- ✅ Bilingual rich-menu image (`line/rich-menu.png`, large Thai labels + concise English)
+  + one-command installer
   (`line/setup-richmenu.mjs`) + Thai setup guide (`line/OA-SETUP.md`)
 - 🟡 **Create the Official Account, then run the installer** — owner-only, see the blocker
   note at the top of this file
