@@ -5,7 +5,7 @@
    ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
    ===================================================================== */
 
-const APP_VERSION = "prototype_0.1.0";
+const APP_VERSION = "prototype_0.2.0";
 const ENGINE_VERSION = "prototype_rules_v1";
 const STORE_KEY = "lunglens-v1";
 
@@ -496,6 +496,6 @@ if (typeof module !== "undefined") {
   module.exports = {
     PROVINCES, STEPS, RULES, BANDS, PM25_DEMO, FACILITIES,
     EDU_CATEGORIES, ARTICLES, PERSONAS, packYears,
-    ENGINE_VERSION, STORE_KEY
+    APP_VERSION, ENGINE_VERSION, STORE_KEY
   };
 }

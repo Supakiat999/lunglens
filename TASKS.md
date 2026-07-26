@@ -32,6 +32,12 @@ Status legend:
 - ✅ Thai canonical stored answers preserved so language changes cannot alter risk results
 - ✅ Landing → consent → assessment → symptom pathway → result journey
 - ✅ Assessment autosave, resume, four demo personas, and big-text mode
+- ✅ v0.2 review-before-submit screen with per-question editing
+- ✅ v0.2 grouped-field and numeric-range validation with hidden-answer cleanup
+- ✅ v0.2 skip link, route-heading focus, modal focus restoration, progress ARIA,
+  accessible factor controls, active-navigation state, and stronger visible focus
+- ✅ v0.2 safer saved-state hydration, non-destructive storage-error handling, and cache busting
+- ✅ v0.2 responsive phone header verified at 375px and desktop width
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -98,12 +104,13 @@ Status legend:
 
 ## 3 — Public assessment improvements
 
-- [ ] 🔜 Add a review-before-submit screen so users can inspect and change every answer.
-- [ ] 🔜 Add inconsistent-answer checks, for example:
-  - [ ] “Never smoked” together with pack-years greater than zero
-  - [ ] Mutually exclusive exposure answers selected together
+- [x] ✅ Add a review-before-submit screen so users can inspect and change every answer.
+- [ ] 🔜 Expand inconsistent-answer checks:
+  - [x] ✅ Remove hidden smoking, second-hand-smoke, and occupational details when the
+    controlling answer changes
+  - [x] ✅ Enforce mutually exclusive multi-select options and validate required grouped fields
   - [ ] End year earlier than start year
-  - [ ] Age, duration, or quantity outside a reasonable input range
+  - [x] ✅ Reject numeric smoking details outside their configured ranges
 - [ ] 🔜 Add clear inline validation messages in both languages.
 - [ ] 🔜 Improve numeric inputs for age, years, cigarettes per day, and duration.
 - [ ] 🔜 Add the full list of 77 Thai provinces.
@@ -269,15 +276,15 @@ Status legend:
 
 - [ ] 🔜 Test every public route with keyboard-only navigation.
 - [ ] 🔜 Test with at least one Windows and one mobile screen reader.
-- [ ] 🔜 Move focus to the page heading after route changes and modal transitions.
-- [ ] 🔜 Add or verify accessible names for every button, icon, form field, alert, and modal.
+- [x] ✅ Move focus to the page heading after route changes and restore focus after modals.
+- [ ] 🔜 Add or verify accessible names for every remaining button, icon, form field, alert, and modal.
 - [ ] 🔜 Verify error messages are announced and linked to their inputs.
 - [ ] 🔜 Verify color contrast in normal and big-text modes.
 - [ ] 🔜 Verify 200% zoom, text reflow, landscape mode, and narrow phone widths.
 - [ ] 🔜 Verify tap targets and spacing for older users and users with limited dexterity.
 - [ ] 🔜 Verify reduced-motion behavior.
 - [ ] 🔜 Ensure Thai and English screen-reader pronunciation is reasonable.
-- [ ] 🟡 Add a visible skip link and clearer focus indicators.
+- [x] ✅ Add a visible-on-focus skip link and clearer focus indicators.
 - [ ] 🟡 Test with slow connections, older devices, and high-latency LINE WebViews.
 - [ ] 🟡 Conduct usability sessions with people from the actual target audience.
 
@@ -285,9 +292,9 @@ Status legend:
 
 - [ ] 🔜 Add a visible offline/unstable-connection state and retry controls.
 - [ ] 🔜 Prevent data loss when the browser or LIFF view closes unexpectedly.
-- [ ] 🔜 Add safe cache-busting/versioning so users do not receive stale JavaScript.
+- [x] ✅ Add safe cache-busting/versioning so users do not receive stale JavaScript.
 - [ ] 🔜 Define behavior when local storage is disabled, full, corrupted, or cleared.
-- [ ] 🔜 Add recovery for invalid or old `lunglens-v1` data.
+- [x] ✅ Hydrate valid older `lunglens-v1` data safely and avoid overwriting unreadable data.
 - [ ] 🔜 Add graceful handling for LIFF SDK timeouts and blocked third-party scripts.
 - [ ] 🟡 Optimize initial load, image weight, and JavaScript execution for low-cost phones.
 - [ ] 🟡 Measure Core Web Vitals at phone and desktop sizes.
@@ -302,9 +309,9 @@ Status legend:
 - ✅ English canonical-data coverage test.
 - ✅ JavaScript syntax checks.
 - [ ] 🔜 Add unit tests for every risk rule boundary and conditional question.
-- [ ] 🔜 Add tests proving symptoms never affect the prototype score.
+- [x] ✅ Add tests proving symptoms never affect the prototype score or factor band.
 - [ ] 🔜 Add tests proving language switching never changes canonical answers or bands.
-- [ ] 🔜 Add tests for corrupted, old, empty, and partially complete local-storage state.
+- [ ] 🔜 Add browser tests for corrupted, old, empty, and partially complete local-storage state.
 - [ ] 🔜 Add end-to-end tests for every public route in Thai and English.
 - [ ] 🔜 Add end-to-end tests for consent, urgent symptoms, result modals, clinics,
   referrals, profile, export, delete, reminders, big-text mode, and deep links.

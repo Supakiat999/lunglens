@@ -33,5 +33,14 @@ assert.deepEqual([...missing].sort(), [], `Missing English translations:\n${[...
 assert.ok(I18N_UI.en.document_title);
 assert.ok(I18N_UI.en.document_description);
 assert.ok(I18N_UI.en.language_changed_en);
+[
+  "ข้ามไปยังเนื้อหาหลัก",
+  "ตรวจทานคำตอบ",
+  "ตรวจทานคำตอบก่อนดูผล",
+  "โปรดตรวจสอบคำตอบของคุณ คุณสามารถแก้ไขได้ก่อนสร้างผลประเมินเบื้องต้น",
+  "ยืนยันคำตอบและดูผล",
+  "ความคืบหน้าแบบประเมิน",
+  "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้"
+].forEach(source => assert.ok(EN_TRANSLATIONS[source], `Missing public UI translation: ${source}`));
 
 console.log(`English coverage passed: ${Object.keys(EN_TRANSLATIONS).length} translated source strings.`);

@@ -84,6 +84,10 @@ and passed as an environment variable at run time. **Never write it into a file.
 - **Complete public Thai/English UI** — the language switch covers landing, consent,
   assessment, results, education, clinics, referral, profile, privacy, LIFF states and
   safe sharing. Stored answers remain canonical Thai values so rules do not change.
+- **Prototype v0.2 usability and safety checks** — review-before-submit, grouped-field and
+  number-range validation, hidden conditional-answer cleanup, safer saved-state loading,
+  cache busting, a responsive phone header, accessible factor controls, route-heading
+  focus, modal focus restoration, and stronger ARIA/focus states.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
@@ -124,6 +128,7 @@ buttons — each fills the questionnaire instantly and lands on a different resu
 Where things live:
 - `js/data.js` — all questions, risk rules, demo facilities, articles, personas
   *(edit rules here; each has a code, weight, explanation, evidence label)*
+- `js/validation.js` — questionnaire completeness/range checks; never clinical scoring
 - `js/engine.js` — the rule evaluation + symptom pathway (the safety-critical logic)
 - `js/app.js` — router and every screen
 - `js/liff.js` — everything LINE-related
@@ -133,12 +138,13 @@ Deploying = `git push`. Nothing else.
 
 ## 7. Where to go next
 
-[TASKS.md](TASKS.md) holds the phased backlog. The highest-value next items:
+[TASKS.md](TASKS.md) holds the detailed roadmap. The highest-value next items:
 
-1. Finish the OA (section 5 above) — unblocks the whole "add friend → tap button" flow
-2. Have a clinician review the 18 rules and the four result bands 🩺
-3. Write the remaining 8 education articles with a medical reviewer 🩺
-4. Replace demo facilities with verified real ones
+1. Complete the real-phone OA greeting/rich-menu test and collect the add-friend link/QR
+2. Decide whether first visit defaults to Thai, English, or the device language
+3. Have a clinician review the 18 rules and the four result bands 🩺
+4. Write the remaining 8 education articles with a medical reviewer 🩺
+5. Replace demo facilities with verified real ones
 5. Then Phase 3 — real backend (Next.js + Supabase) so results persist server-side and
    referrals reach actual staff
 

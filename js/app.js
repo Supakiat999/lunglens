@@ -11,6 +11,7 @@ const DEFAULT_STATE = {
   consent: null,            // { required:true, optional:{...}, version, at, lang }
   answers: {},
   stepIndex: 0,
+  returnToReview: false,
   inProgress: false,
   result: null,
   history: [],              // [{at, bandKey, bandLabel, score, pathway}]
@@ -18,17 +19,57 @@ const DEFAULT_STATE = {
   reminders: { enabled: false, time: "09:00", freq: "รายเดือน" },
   events: []                // privacy-conscious analytics event names only
 };
+let storageIssue = null;
+let storageIssueShown = false;
 let state = load();
+
+function hydrateState(saved) {
+  if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+    throw new Error("Invalid saved state");
+  }
+  const next = Object.assign(structuredClone(DEFAULT_STATE), saved);
+  next.lang = saved.lang === "en" ? "en" : "th";
+  next.answers = saved.answers && typeof saved.answers === "object" && !Array.isArray(saved.answers)
+    ? saved.answers : {};
+  next.history = Array.isArray(saved.history) ? saved.history.slice(0, 20) : [];
+  next.referrals = Array.isArray(saved.referrals) ? saved.referrals : [];
+  next.events = Array.isArray(saved.events) ? saved.events : [];
+  next.reminders = Object.assign({}, DEFAULT_STATE.reminders,
+    saved.reminders && typeof saved.reminders === "object" ? saved.reminders : {});
+  next.stepIndex = Number.isInteger(saved.stepIndex) && saved.stepIndex >= 0 ? saved.stepIndex : 0;
+  next.returnToReview = saved.returnToReview === true;
+  next.consent = saved.consent && typeof saved.consent === "object" ? saved.consent : null;
+  pruneInactiveAnswers(next.answers);
+  return next;
+}
 
 function load() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return Object.assign(structuredClone(DEFAULT_STATE), JSON.parse(raw));
-  } catch (e) {}
+    if (raw) return hydrateState(JSON.parse(raw));
+  } catch (e) {
+    storageIssue = "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้";
+  }
   return structuredClone(DEFAULT_STATE);
 }
-function save() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+function save() {
+  if (storageIssue) return false;
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    return true;
+  } catch (e) {
+    storageIssue = "ไม่สามารถบันทึกข้อมูลบนอุปกรณ์นี้ได้ โปรดเปิดหน้านี้ไว้จนกว่าจะทำเสร็จ";
+    showStorageIssue();
+    return false;
+  }
+}
 function track(ev) { state.events.push({ ev, at: new Date().toISOString() }); save(); }
+
+function showStorageIssue() {
+  if (!storageIssue || storageIssueShown || !document.body) return;
+  storageIssueShown = true;
+  setTimeout(() => toast(storageIssue), 0);
+}
 
 /* ---------------- tiny helpers ---------------- */
 const $ = sel => document.querySelector(sel);
@@ -36,22 +77,43 @@ function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;"
 
 function toast(msg) {
   const el = document.createElement("div");
-  el.className = "toast"; el.textContent = tr(msg);
+  el.className = "toast"; el.setAttribute("role", "status"); el.setAttribute("aria-live", "polite");
+  el.textContent = tr(msg);
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2600);
 }
 
+let modalReturnFocus = null;
 function modal(html, { closable = true } = {}) {
   closeModal();
+  modalReturnFocus = document.activeElement;
   const back = document.createElement("div");
   back.className = "modal-back"; back.id = "modalBack";
-  back.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}
+  back.innerHTML = `<div class="modal" role="dialog" aria-modal="true" tabindex="-1">${html}
     ${closable ? '<button class="btn btn-ghost mt" onclick="closeModal()">ปิด</button>' : ""}</div>`;
   if (closable) back.addEventListener("click", e => { if (e.target === back) closeModal(); });
   document.body.appendChild(back);
+  const dialog = back.querySelector(".modal");
+  const heading = dialog.querySelector("h1,h2,h3");
+  if (heading) {
+    heading.id = "modal-title";
+    dialog.setAttribute("aria-labelledby", heading.id);
+  } else {
+    dialog.setAttribute("aria-label", tr("ข้อมูลเพิ่มเติม"));
+  }
+  back.addEventListener("keydown", e => {
+    if (closable && e.key === "Escape") closeModal();
+  });
   if (!isThaiOnlyRoute()) localizeSubtree(back);
+  (dialog.querySelector("button,a,input,select,textarea") || dialog).focus();
 }
-function closeModal() { $("#modalBack")?.remove(); }
+function closeModal() {
+  const back = $("#modalBack");
+  if (!back) return;
+  back.remove();
+  if (modalReturnFocus?.isConnected) modalReturnFocus.focus();
+  modalReturnFocus = null;
+}
 
 /* Prototype popup for not-yet-real features */
 function protoPopup(feature, detail) {
@@ -64,7 +126,7 @@ function protoPopup(feature, detail) {
 /* ---------------- router ---------------- */
 const ROUTES = {
   home: renderHome, begin: renderBegin, consent: renderConsent, assess: renderAssess,
-  symptom: renderSymptomPathway, result: renderResult, education: renderEducation,
+  review: renderReview, symptom: renderSymptomPathway, result: renderResult, education: renderEducation,
   clinics: renderClinics, referral: renderReferral, profile: renderProfile,
   provider: renderProvider, "demo-story": renderStory, privacy: renderPrivacy
 };
@@ -79,12 +141,22 @@ function route() {
   }
   const hash = (raw || "#home").slice(1);
   const [name, arg] = hash.split("=");
-  const fn = ROUTES[name.replace(/^\//, "")] || renderHome;
+  const routeName = name.replace(/^\//, "");
+  if (state.returnToReview && routeName !== "assess" && routeName !== "review") {
+    state.returnToReview = false;
+    save();
+  }
+  const fn = ROUTES[routeName] || renderHome;
   window.scrollTo(0, 0);
   fn(arg);
   document.querySelectorAll("nav.bottom a").forEach(a => {
-    a.classList.toggle("active", a.getAttribute("href") === "#" + name);
+    const active = a.getAttribute("href") === "#" + name;
+    a.classList.toggle("active", active);
+    if (active) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
   });
+  focusRouteHeading();
+  showStorageIssue();
 }
 window.addEventListener("hashchange", route);
 
@@ -103,7 +175,7 @@ function applyLocale() {
   if (desc) desc.content = lang === "en"
     ? t("document_description")
     : "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง — รู้ความเสี่ยงก่อนมีอาการ และรับคำแนะนำที่เหมาะกับคุณ";
-  ["header.app", "nav.bottom", "#splash"].forEach(sel => localizeSubtree($(sel), lang));
+  [".skip-link", "header.app", "nav.bottom", "#splash"].forEach(sel => localizeSubtree($(sel), lang));
   if (!isThaiOnlyRoute()) localizeSubtree($("#view"), lang);
   const langBtn = $("#langBtn");
   if (langBtn) {
@@ -116,6 +188,14 @@ function applyLocale() {
 function view(html) {
   $("#view").innerHTML = html;
   if (!isThaiOnlyRoute()) localizeSubtree($("#view"));
+  focusRouteHeading();
+}
+
+function focusRouteHeading() {
+  const heading = $("#view h1, #view h2, #view .q-title");
+  if (!heading) return;
+  if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+  heading.focus({ preventScroll: true });
 }
 
 /* =====================================================================
@@ -267,7 +347,7 @@ function acceptConsent() {
     },
     version: "consent_v1", at: new Date().toISOString(), lang: state.lang, source: "liff"
   };
-  state.inProgress = true; state.stepIndex = 0;
+  state.inProgress = true; state.stepIndex = 0; state.returnToReview = false;
   save(); track("consent_completed"); track("assessment_started");
   location.hash = "#assess";
 }
@@ -288,7 +368,9 @@ function renderAssess() {
   let body = "";
   if (step.type === "choice") {
     body = `<div class="opts">${step.options.map(o => `
-      <button class="opt ${a[step.id] === o ? "sel" : ""}" onclick="answerChoice('${step.id}', this.dataset.v)" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+      <button type="button" class="opt ${a[step.id] === o ? "sel" : ""}"
+        aria-pressed="${a[step.id] === o}" onclick="answerChoice('${step.id}', this.dataset.v)"
+        data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
   } else if (step.type === "multi" || step.type === "symptoms") {
     const cur = a[step.id] || [];
     body = `<div class="opts">${step.options.map(o => `
@@ -298,8 +380,8 @@ function renderAssess() {
   } else if (step.type === "numbers") {
     const cur = a[step.id] || {};
     body = step.fields.map(f => `
-      <div class="field"><label>${esc(f.label)}</label>
-        <input type="number" inputmode="numeric" min="${f.min}" max="${f.max}" value="${cur[f.key] ?? ""}"
+      <div class="field"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
+        <input id="${step.id}-${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" value="${cur[f.key] ?? ""}"
           onchange="answerNum('${step.id}','${f.key}', this.value)"></div>`).join("");
   } else if (step.type === "group") {
     const cur = a[step.id] || {};
@@ -307,23 +389,26 @@ function renderAssess() {
       if (f.type === "multi") {
         const sel = cur[f.key] || [];
         return `<div class="field"><label>${esc(f.label)}</label><div class="chips">
-          ${f.options.map(o => `<button class="chip ${sel.includes(o) ? "on" : ""}" onclick="answerGroupMulti('${step.id}','${f.key}', this.dataset.v)" data-v="${esc(o)}">${esc(o)}</button>`).join("")}
+          ${f.options.map(o => `<button type="button" class="chip ${sel.includes(o) ? "on" : ""}"
+            aria-pressed="${sel.includes(o)}" onclick="answerGroupMulti('${step.id}','${f.key}', this.dataset.v)"
+            data-v="${esc(o)}">${esc(o)}</button>`).join("")}
         </div></div>`;
       }
-      return `<div class="field"><label>${esc(f.label)}</label>
-        <select onchange="answerGroup('${step.id}','${f.key}', this.value)">
+      return `<div class="field"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
+        <select id="${step.id}-${f.key}" onchange="answerGroup('${step.id}','${f.key}', this.value)">
           <option value="">— เลือก —</option>
           ${f.options.map(o => `<option value="${esc(o)}" ${cur[f.key] === o ? "selected" : ""}>${esc(o)}</option>`).join("")}
         </select></div>`;
     }).join("");
   } else if (step.type === "province") {
-    body = `<div class="field"><label>จังหวัด</label>
-      <select onchange="answerChoice('PROVINCE', this.value)">
+    body = `<div class="field"><label for="province-select">จังหวัด</label>
+      <select id="province-select" onchange="answerChoice('PROVINCE', this.value)">
         <option value="">— เลือกจังหวัด —</option>
         ${PROVINCES.map(p => `<option value="${esc(p)}" ${a.PROVINCE === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
       </select></div>
-      <div class="field"><label>อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)</label>
-        <input type="text" value="${esc(a.DISTRICT || "")}" onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>`;
+      <div class="field"><label for="district-input">อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)</label>
+        <input id="district-input" type="text" value="${esc(a.DISTRICT || "")}"
+          onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>`;
   } else if (step.type === "info") {
     const p = a.PROVINCE;
     const lvl = PM25_DEMO.elevated.includes(p) ? "สูง (ควรให้ความสำคัญ)" : PM25_DEMO.moderate.includes(p) ? "ปานกลาง" : "ไม่พบข้อมูลระดับสูงในชุดสาธิต";
@@ -339,21 +424,23 @@ function renderAssess() {
   view(`
   <div class="progress-wrap">
     <div class="progress-txt"><span>ข้อ ${n} จาก ${total}</span><span>${esc(step.section)}</span></div>
-    <div class="progress-bar"><div style="width:${Math.round(n / total * 100)}%"></div></div>
+    <div class="progress-bar" role="progressbar" aria-label="ความคืบหน้าแบบประเมิน"
+      aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}">
+      <div style="width:${Math.round(n / total * 100)}%"></div></div>
   </div>
   <div class="card">
     <span class="section-tag">${esc(step.section)}</span>
-    <div class="q-title">${esc(step.title)}</div>
+    <h1 class="q-title">${esc(step.title)}</h1>
     ${step.note ? `<div class="q-note">${esc(step.note)}</div>` : ""}
     ${isSymptoms ? `<div class="q-note" style="background:var(--brand-soft)">อาการเหล่านี้อาจเกิดจากหลายสาเหตุและไม่ได้หมายความว่าคุณเป็นมะเร็ง แต่ควรได้รับการประเมินจากบุคลากรทางการแพทย์โดยเร็ว</div>` : ""}
     ${body}
     ${step.why ? `<button class="why-btn" onclick="modal('<h3>ทำไมเราจึงถามคำถามนี้</h3><p class=muted>${esc(step.why)}</p>')">ทำไมเราจึงถามคำถามนี้</button>` : ""}
   </div>
   <div class="assess-nav">
-    <button class="btn btn-ghost" onclick="stepBack()" ${n === 1 ? "disabled" : ""}>ย้อนกลับ</button>
-    <button class="btn btn-primary" onclick="stepNext()">${n === total ? "ดูผลและคำแนะนำ" : "ถัดไป"}</button>
+    <button type="button" class="btn btn-ghost" onclick="stepBack()" ${n === 1 ? "disabled" : ""}>ย้อนกลับ</button>
+    <button type="button" class="btn btn-primary" onclick="stepNext()">${n === total ? "ตรวจทานคำตอบ" : "ถัดไป"}</button>
   </div>
-  <button class="btn btn-ghost mt" onclick="saveExit()">บันทึกและกลับมาทำต่อภายหลัง</button>`);
+  <button type="button" class="btn btn-ghost mt" onclick="saveExit()">บันทึกและกลับมาทำต่อภายหลัง</button>`);
 }
 
 function askGeo() {
@@ -362,7 +449,13 @@ function askGeo() {
     <button class="btn btn-secondary mt" onclick="closeModal(); toast('โหมดต้นแบบ: ใช้จังหวัดที่เลือกแทนตำแหน่งจริง')">อนุญาต (จำลอง)</button>`);
 }
 
-function answerChoice(id, v) { state.answers[id] = v; save(); if (id !== "DISTRICT" && id !== "PROVINCE") stepNext(); else renderAssess(); }
+function answerChoice(id, v) {
+  state.answers[id] = v;
+  pruneInactiveAnswers(state.answers);
+  save();
+  if (id !== "DISTRICT" && id !== "PROVINCE") stepNext();
+  else renderAssess();
+}
 function answerMulti(id, v, on) {
   const step = STEPS.find(s => s.id === id);
   let cur = state.answers[id] || [];
@@ -392,24 +485,135 @@ function answerGroupMulti(id, key, v) {
 }
 
 function stepBack() { if (state.stepIndex > 0) { state.stepIndex--; save(); renderAssess(); } }
+function validationMessage(issue) {
+  if (!issue) return "";
+  if (state.lang === "en") {
+    if (issue.code === "province_required") return "Choose a province.";
+    if (issue.code === "group_field_required") return `Please answer “${tr(issue.fieldLabel, "en")}”.`;
+    if (issue.code === "number_range") {
+      return `Enter “${tr(issue.fieldLabel, "en")}” between ${issue.min} and ${issue.max}.`;
+    }
+    return "Choose an answer or select “Not sure”.";
+  }
+  if (issue.code === "province_required") return "กรุณาเลือกจังหวัด";
+  if (issue.code === "group_field_required") return `กรุณาตอบหัวข้อ “${issue.fieldLabel}”`;
+  if (issue.code === "number_range") {
+    return `กรุณาใส่ “${issue.fieldLabel}” ระหว่าง ${issue.min} ถึง ${issue.max}`;
+  }
+  return "กรุณาเลือกคำตอบ หรือเลือก “ไม่แน่ใจ”";
+}
+
+function goToValidationIssue(issue) {
+  const steps = visibleSteps();
+  const index = steps.findIndex(step => step.id === issue.stepId);
+  state.stepIndex = index >= 0 ? index : 0;
+  state.returnToReview = true;
+  save();
+  toast(validationMessage(issue));
+  if (location.hash === "#assess") renderAssess();
+  else location.hash = "#assess";
+}
+
 function stepNext() {
+  pruneInactiveAnswers(state.answers);
   const steps = visibleSteps();
   const step = steps[state.stepIndex];
-  const v = state.answers[step.id];
-  const optional = ["SMOKE_DETAIL", "AREA_INFO", "PROVINCE"];
-  if (!optional.includes(step.id) && step.type !== "info") {
-    if (v == null || (Array.isArray(v) && v.length === 0)) { toast("กรุณาเลือกคำตอบ หรือเลือก “ไม่แน่ใจ”"); return; }
-  }
-  if (step.id === "PROVINCE" && !state.answers.PROVINCE) { toast("กรุณาเลือกจังหวัด"); return; }
+  const issue = validateAssessmentStep(step, state.answers);
+  if (issue) { toast(validationMessage(issue)); return; }
   track("assessment_section_completed");
-  if (state.stepIndex >= visibleSteps().length - 1) { submitAssessment(); return; }
+  if (state.returnToReview) {
+    state.returnToReview = false;
+    save();
+    location.hash = "#review";
+    return;
+  }
+  if (state.stepIndex >= steps.length - 1) {
+    save();
+    location.hash = "#review";
+    return;
+  }
   state.stepIndex++;
   save(); renderAssess();
 }
 
-function saveExit() { save(); toast("บันทึกคำตอบแล้ว กลับมาทำต่อได้ทุกเมื่อ"); location.hash = "#home"; }
+function saveExit() {
+  state.returnToReview = false;
+  save();
+  toast("บันทึกคำตอบแล้ว กลับมาทำต่อได้ทุกเมื่อ");
+  location.hash = "#home";
+}
+
+function formatReviewAnswer(step) {
+  const value = state.answers[step.id];
+  if (step.type === "province") {
+    return [state.answers.PROVINCE, state.answers.DISTRICT].filter(Boolean).map(esc).join(" · ");
+  }
+  if (step.type === "numbers") {
+    const current = value || {};
+    return step.fields.map(field =>
+      `<span><b>${esc(field.label)}:</b> ${current[field.key] ?? "ไม่ได้ระบุ"}</span>`
+    ).join("<br>");
+  }
+  if (step.type === "group") {
+    const current = value || {};
+    return step.fields.map(field => {
+      const answer = Array.isArray(current[field.key]) ? current[field.key].join(", ") : current[field.key];
+      return `<span><b>${esc(field.label)}:</b> ${esc(answer || "ไม่ได้ระบุ")}</span>`;
+    }).join("<br>");
+  }
+  if (Array.isArray(value)) return value.map(esc).join(", ");
+  return esc(value || "ไม่ได้ระบุ");
+}
+
+function renderReview() {
+  if (!state.consent) { location.hash = "#begin"; return; }
+  pruneInactiveAnswers(state.answers);
+  const issues = validateAssessment(state.answers);
+  if (issues.length) { goToValidationIssue(issues[0]); return; }
+  const steps = visibleSteps().filter(step => step.type !== "info");
+  view(`<div class="card">
+    <h2>ตรวจทานคำตอบก่อนดูผล</h2>
+    <p class="muted">โปรดตรวจสอบคำตอบของคุณ คุณสามารถแก้ไขได้ก่อนสร้างผลประเมินเบื้องต้น</p>
+  </div>
+  <div class="review-list">${steps.map(step => `
+    <section class="review-item">
+      <div>
+        <h3>${esc(step.title)}</h3>
+        <p>${formatReviewAnswer(step)}</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm"
+        aria-label="แก้ไข: ${esc(step.title)}"
+        onclick="editReviewAnswer('${step.id}')">แก้ไข</button>
+    </section>`).join("")}</div>
+  <div class="disclaimer">
+    แบบประเมินนี้เป็นเครื่องมือให้ความรู้และประเมินความเสี่ยงเบื้องต้น ไม่ใช่การวินิจฉัยโรค และไม่สามารถใช้แทนคำแนะนำจากแพทย์
+  </div>
+  <div class="assess-nav">
+    <button type="button" class="btn btn-ghost" onclick="backToLastQuestion()">ย้อนกลับ</button>
+    <button type="button" class="btn btn-primary" onclick="submitAssessment()">ยืนยันคำตอบและดูผล</button>
+  </div>`);
+}
+
+function editReviewAnswer(stepId) {
+  const index = visibleSteps().findIndex(step => step.id === stepId);
+  state.stepIndex = index >= 0 ? index : 0;
+  state.returnToReview = true;
+  save();
+  location.hash = "#assess";
+}
+
+function backToLastQuestion() {
+  state.stepIndex = Math.max(0, visibleSteps().length - 1);
+  state.returnToReview = false;
+  save();
+  location.hash = "#assess";
+}
 
 function submitAssessment() {
+  state.returnToReview = false;
+  pruneInactiveAnswers(state.answers);
+  const issues = validateAssessment(state.answers);
+  if (issues.length) { goToValidationIssue(issues[0]); return; }
   state.result = evaluateRisk(state.answers);
   state.inProgress = false;
   pushHistory();
@@ -480,11 +684,11 @@ function renderResult() {
     <h2>ทำไมจึงได้ผลนี้</h2>
     <p class="tiny">แตะแต่ละปัจจัยเพื่อดูคำอธิบาย · ปัจจัยไม่ใช่การวินิจฉัย</p>
     ${r.factors.map((f, i) => `
-      <div class="factor" onclick="factorDetail(${i})" style="cursor:pointer">
+      <button type="button" class="factor" onclick="factorDetail(${i})">
         <h4>${esc(f.name)}</h4>
         <p class="muted" style="font-size:13.5px">${esc(f.explain)}</p>
         <span class="ev">หลักฐาน: ${esc(f.evidence)}</span>
-      </div>`).join("")}
+      </button>`).join("")}
   </div>` : `<div class="card">
     <h2>ทำไมจึงได้ผลนี้</h2>
     <p class="muted">จากคำตอบของคุณ ระบบยังไม่พบปัจจัยที่เข้าเงื่อนไขกฎต้นแบบรุ่นปัจจุบัน อย่างไรก็ตาม แบบประเมินนี้ประเมินได้เพียงบางปัจจัยเท่านั้น</p>
@@ -523,7 +727,8 @@ function factorDetail(i) {
 }
 
 function retake() {
-  state.answers = {}; state.stepIndex = 0; state.inProgress = true; state.result = null;
+  state.answers = {}; state.stepIndex = 0; state.returnToReview = false;
+  state.inProgress = true; state.result = null;
   save(); location.hash = "#consent";
 }
 

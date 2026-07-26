@@ -54,6 +54,12 @@ Key safety invariants baked into the code:
 (key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), works offline after load,
 and is deliberately structured so each layer maps 1:1 onto the target production stack.
 
+Current app version: **`prototype_0.2.0`**. This release adds a review-before-submit
+screen, reusable questionnaire validation, hidden conditional-answer cleanup, safer
+saved-state hydration, cache busting, a responsive phone header, accessible factor
+controls, and improved keyboard/focus behavior. The risk engine and its bands remain
+unchanged at `prototype_rules_v1`.
+
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
 ```
@@ -62,6 +68,7 @@ lunglens/
 ├── css/styles.css              Design system (teal palette, WCAG-aware, big-text mode)
 ├── js/data.js                  Questions (STEPS), risk rules (RULES), bands, demo
 │                               facilities, articles, personas   ← "database + config"
+├── js/validation.js            Completeness/range checks only; no clinical scoring
 ├── js/engine.js                Explainable rule engine + symptom pathway ← "risk service"
 ├── js/app.js                   Router + every screen + local state       ← "frontend"
 ├── js/liff.js                  LINE layer: init, login, profile, share, ?p= deep links
@@ -101,6 +108,7 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
 - **#assess** — 15-step wizard: profile, smoking (+pack-years), second-hand smoke, family/medical,
   occupational, household cooking, area PM2.5 (demo data), symptom safety check.
   Autosave per answer, "บันทึกและกลับมาทำต่อภายหลัง", resume card on home.
+- **#review** — bilingual answer summary with per-question editing before result creation
 - **#symptom** — symptom pathway interstitial (urgent = red + 1669 guidance; never diagnostic)
 - **#result** — band, "ทำไมจึงได้ผลนี้" factor cards (tap → why/next/evidence/rule code),
   not-assessed list, privacy-safe share card, detailed-share confirm, retake

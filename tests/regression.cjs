@@ -4,6 +4,8 @@ const data = require("../js/data.js");
 Object.assign(global, data);
 const engine = require("../js/engine.js");
 
+assert.equal(data.APP_VERSION, "prototype_0.2.0");
+
 const expected = {
   P1: { band: "professional_review", pathway: "standard" },
   P2: { band: "attention_recommended", pathway: "standard" },
@@ -20,6 +22,16 @@ for (const persona of data.PERSONAS) {
   assert.equal(result.clinical_validation_status, "not_clinically_validated");
 }
 
+const symptomFree = structuredClone(data.PERSONAS.find(persona => persona.id === "P3").answers);
+const symptomUrgent = structuredClone(symptomFree);
+symptomUrgent.SYMPTOMS = ["ไอเป็นเลือด"];
+const standardResult = engine.evaluateRisk(symptomFree);
+const urgentResult = engine.evaluateRisk(symptomUrgent);
+assert.equal(urgentResult.score, standardResult.score, "Symptoms must never change the factor score");
+assert.equal(urgentResult.band.key, standardResult.band.key, "Symptoms must never change the factor band");
+assert.equal(standardResult.symptom_pathway, "standard");
+assert.equal(urgentResult.symptom_pathway, "urgent");
+
 const incomplete = engine.evaluateRisk({});
 assert.equal(incomplete.assessment_status, "incomplete");
 assert.ok(incomplete.missing.length > 0);
@@ -35,4 +47,4 @@ for (const step of data.STEPS.filter(step => step.type === "group")) {
   }
 }
 
-console.log("Regression checks passed: personas, incomplete assessment, exclusive-option schemas.");
+console.log("Regression checks passed: personas, symptom separation, incomplete assessment, exclusive-option schemas.");
