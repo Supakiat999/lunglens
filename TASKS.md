@@ -1,91 +1,385 @@
-# TASKS.md — LungLens / รู้ทันปอด backlog
+# TASKS.md — LungLens / รู้ทันปอด roadmap
 
-Status legend: ✅ done · 🟡 blocked / in progress · 🔜 next · 🧱 needs real infra ·
-🩺 needs clinical/legal review
+Last reviewed: **2026-07-26**
 
-> **Current status:** the public bilingual app, LINE Official Account, Messaging API,
-> greeting, and 6-button rich menu are live. The remaining production gates require
-> clinical, legal, content, and facility review.
+Status legend:
 
-## Phase 0 — Prototype ✅
+- ✅ Completed and verified
+- 📱 Needs a real LINE phone/device check
+- 🔜 Recommended next product work
+- 🟡 Improvement or polish
+- 🧱 Requires backend or operational infrastructure
+- 🩺 Requires clinical, legal, privacy, or content-owner approval
+- 💡 Optional future idea
 
-- ✅ Static SPA shell, teal design system, mobile-first, bottom nav, reduced-motion support
-- ✅ Landing page (hero, benefits, disclaimer, storyboard modal, persona quick-fill)
-- ✅ Before-you-begin + layered consent (required/optional split, nothing pre-checked, versioned record)
-- ✅ 15-step assessment wizard with conditional steps, autosave, save-and-resume, progress "ข้อ X จาก Y"
-- ✅ Explainable rule engine (18 rules, weights, evidence labels, 4 bands + symptom override)
-- ✅ Symptom safety check separated from scoring; urgent pathway with 1669 guidance
-- ✅ Result page: factor cards, not-assessed list, privacy-safe share card, retake
-- ✅ Education centre: 4 drafted Thai articles + 12-category grid (placeholders labelled)
-- ✅ Clinic finder (6 demo facilities, filters) + referral form + status timeline
-- ✅ Profile: history, reminders, consent withdrawal, JSON export, full delete
-- ✅ Provider dashboard demo (3 roles, case list/detail, referrals, rules table, funnel analytics)
-- ✅ /demo-story presentation mode (5 slides)
-- ✅ Flex Message JSON samples, .env.example, README
-- ✅ Big-text mode (ก+) — scales fonts and tap targets app-wide, persists (all-ages access)
-- ✅ Moved into its own home (`Astra Project\lunglens\`) + own GitHub repo; handover docs written
+> **Current position:** LungLens is a working bilingual prototype, not a production
+> healthcare service. The public website, LIFF app, Official Account, Messaging API,
+> bilingual greeting, and six-button rich menu are live. Medical rules, facilities,
+> referrals, provider operations, and several content areas are still demonstrations.
 
-## Phase 1 — Finish the public MVP 🔜
+## What is already live ✅
 
-- ✅ Full EN translation dictionary for every public user journey; Thai remains canonical
-  for stored answers and risk-rule evaluation (provider dashboard + presentation mode stay Thai)
-- [ ] Write the remaining 8 education articles (drafts exist as category placeholders) 🩺
-- [ ] Real province list (77) + district picker; postcode validation
-- [ ] Inconsistent-answer checks (e.g. "ไม่เคยสูบ" + pack-years entered)
-- [ ] Review-before-submit screen (spec §40: user can change answers before submitting)
-- [ ] Accessibility pass: screen-reader labels on all inputs, focus management on route change, keyboard testing
-- [ ] Offline queue message ("การเชื่อมต่ออินเทอร์เน็ตไม่เสถียร…") + retry logic
-- ✅ Regression tests for engine.js (persona fixtures 1–4, unchanged bands, incomplete,
-  exclusive options) plus an English-coverage check for public canonical data
+- ✅ Public GitHub Pages website: https://supakiat999.github.io/lunglens/
+- ✅ Public browser access without a LINE account or LINE login
+- ✅ LIFF app: `2010756823-yiuPlaT0`
+- ✅ LINE Official Account **LungLens**, Basic ID `@794hkqhs`
+- ✅ Messaging API channel `2010852424` under provider **Longview**
+- ✅ Auto-response is OFF
+- ✅ English-first bilingual greeting with a non-diagnostic disclaimer
+- ✅ 2500×1686 bilingual rich menu installed and set as the default
+- ✅ All six rich-menu URLs respond successfully
+- ✅ Complete Thai/English switching for every public user route
+- ✅ Thai canonical stored answers preserved so language changes cannot alter risk results
+- ✅ Landing → consent → assessment → symptom pathway → result journey
+- ✅ Assessment autosave, resume, four demo personas, and big-text mode
+- ✅ Explainable prototype risk engine with symptoms kept outside scoring
+- ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
+- ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
+- ✅ JavaScript syntax checks
+- ✅ Regression checks for all four personas, incomplete answers, exclusive options,
+  model version, clinical-validation status, and unchanged result bands
+- ✅ English-coverage test for public canonical data and interface copy
+- ✅ Source and documentation pushed to GitHub `main`
 
-## Phase 2 — Real LINE integration 🧱
+## Recommended order of work
 
-- ✅ Real LIFF SDK wired in (`js/liff.js`): `liff.init()`, in-client detection, LINE Login,
-  `getProfile()`, `shareTargetPicker`, `?p=` deep-link routing, retry/open-in-browser fallback
-- ✅ LINE Login channel **LungLens** (id 2010756823) created and **Published**; LIFF app
-  `2010756823-yiuPlaT0` registered (Full · openid+profile · shareTargetPicker on)
-- ✅ Deployed to HTTPS — GitHub Pages at `supakiat999.github.io/lunglens/`
-- ✅ Bilingual rich-menu image (`line/rich-menu.png`, large Thai labels + concise English)
-  + one-command installer
-  (`line/setup-richmenu.mjs`) + Thai setup guide (`line/OA-SETUP.md`)
-- ✅ LINE Official Account **LungLens** (`@794hkqhs`) created under Health; Messaging API
-  channel `2010852424` enabled under **Longview**; Auto-response OFF; bilingual greeting set
-- ✅ Bilingual 6-button rich menu installed and set as the default
-- [ ] Server-side ID-token verification endpoint (never trust client profile)
-- [ ] Webhook: signature verification, idempotency (webhook_events table), follow/unfollow/message/postback handlers
-- [ ] Chatbot intents (start assessment, explain factors, view result, find provider, reminders, privacy, help) + the fixed non-diagnostic fallback reply
-- [ ] Wire Flex templates from line/flex-messages.json (privacy-safe previews only)
-- [ ] Reminder scheduler honouring opt-in, time, frequency, pause/stop (LINE free tier: replies free, ~300 pushes/mo — design reply-first)
+1. 📱 Complete the real-phone LINE check and collect the add-friend link/QR code.
+2. 🔜 Decide whether the public app should continue to open in Thai or open in English.
+3. 🔜 Fix the remaining public-app usability and accessibility gaps.
+4. 🩺 Obtain clinical, content, facility, privacy, and legal review.
+5. 🧱 Build the backend, real referrals, secure LINE webhook, and provider authentication.
+6. 🔜 Run a controlled pilot before any public healthcare promotion.
 
-## Phase 3 — Backend & data 🧱
+## 1 — Immediate LINE and launch checks
 
-- [ ] Next.js (App Router, TS, Tailwind, shadcn/ui) port of the SPA screens
-- [ ] Supabase project; migrations for the 17 entities (users, consents, assessments, assessment_answers, risk_results, risk_rules, referrals, referral_events, facilities, provider_users, provider_notes, content_articles, message_preferences, message_events, webhook_events, audit_logs) — schema is in the original spec §32
-- [ ] RLS policies + provider RBAC (Navigator / Clinical reviewer / Content editor / Programme manager / Super admin)
-- [ ] Move RULES into risk_rules table with versioning workflow (draft → clinical review → approved → inactive); results keep generating version; audit every change
-- [ ] Encrypted provider notes (DATA_ENCRYPTION_KEY), audit_logs on all provider actions
-- [ ] Real referral status machine (11 statuses per spec §24) + notifications gated on consent
-- [ ] Historical PM2.5 ingestion per district (replace PM25_DEMO); label source + date
-- [ ] Analytics events → privacy-conscious pipeline (event names already emitted in app.js `track()`); low-count suppression
+- [ ] 📱 Add `@794hkqhs` as a friend on a real phone.
+- [ ] 📱 Confirm the bilingual greeting appears for a newly added friend.
+- [ ] 📱 Confirm the rich menu opens automatically and remains readable on a small phone.
+- [ ] 📱 Tap all six rich-menu tiles inside LINE:
+  - [ ] Assess risk → `?p=begin`
+  - [ ] My result → `?p=result`
+  - [ ] Learn → `?p=education`
+  - [ ] Clinics → `?p=clinics`
+  - [ ] Reminders → `?p=profile`
+  - [ ] Help → `?p=home`
+- [ ] 📱 Confirm LIFF login, browser fallback, back navigation, and reopening the chat.
+- [ ] 📱 Confirm no assessment result or health detail appears in a LINE share preview.
+- [ ] 📱 Confirm Thai and English text on the menu is readable without zooming.
+- [ ] 📱 Test the account on both iOS and Android if possible.
+- [ ] 🔜 Create or collect the permanent add-friend URL (`https://lin.ee/...`).
+- [ ] 🔜 Export and save the Official Account QR code for campaign materials.
+- [ ] 🟡 Add a polished OA profile image that matches the LungLens visual identity.
+- [ ] 🟡 Add an English-first status message and concise account description.
+- [ ] 🟡 Add the public website and privacy-page links to the OA business profile.
+- [ ] 🟡 Review the OA profile, greeting, rich menu, and business profile as a new user.
+- [ ] 🟡 Consider applying for LINE account verification only after governance review.
+- [ ] 🔜 Record who owns the OA, who can administer it, and how access is recovered.
+- [ ] 🔜 Establish a safe schedule for rotating the Messaging API token.
 
-## Phase 4 — Provider ops & polish 🧱🩺
+## 2 — Language and content experience
 
-- [ ] Provider auth (org accounts, session expiry), /provider/* routes per spec §29
-- [ ] Content management with clinical-review workflow; medical reviewer sign-off fields 🩺
-- [ ] Admin rules-config UI (currently read-only table) with approval workflow 🩺
-- [ ] Demo mode reset control; 20 sample assessments / 8 referrals seeding script
-- [ ] E2E tests (8 journeys per spec §41), small-screen + keyboard tests
-- [ ] Campaign asset exports (story/square/horizontal/broadcast card/QR poster/CHW handout)
+- [ ] 🔜 Decide the default-language rule:
+  - [ ] Keep Thai as the default, matching the original product plan; or
+  - [ ] Make English the default, matching the newer account preference; or
+  - [ ] Use the browser/LINE locale on first visit and remember the user's choice.
+- [ ] 🔜 Add a visible first-visit language choice if automatic detection is not used.
+- [ ] 🔜 Review every English screen for natural, consistent international English.
+- [ ] 🔜 Review every Thai screen for clarity, tone, spelling, and health literacy.
+- [ ] 🔜 Create a terminology guide for repeated words such as risk factor, result,
+  assessment, referral, clinic, symptom, consent, and reminder.
+- [ ] 🔜 Confirm English date, number, province, and time formatting on every public route.
+- [ ] 🔜 Confirm language switching in the middle of an assessment never loses answers.
+- [ ] 🔜 Confirm language switching preserves consent, result, filters, referral state,
+  reminder settings, big-text mode, and deep-link destination.
+- [ ] 🟡 Translate the provider dashboard after its workflows and terminology are approved.
+- [ ] 🟡 Translate the presentation-only route if it will be used with English-speaking partners.
+- [ ] 🟡 Add a content-version field and last-reviewed date to public medical content.
+- [ ] 🟡 Add reviewer names/roles only after real reviewers approve publication.
 
-## Gates before ANY production use 🩺
+## 3 — Public assessment improvements
 
-- [ ] Clinical validation of rules, weights, thresholds — ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
-- [ ] Legal review of consent, privacy notice, disclaimers (PDPA)
-- [ ] Medical review + real references for every article
-- [ ] Verified facility data (no mock facilities presented as active services)
-- [ ] Governance for any AI-assisted explanation (templates, logging, no invented facts)
+- [ ] 🔜 Add a review-before-submit screen so users can inspect and change every answer.
+- [ ] 🔜 Add inconsistent-answer checks, for example:
+  - [ ] “Never smoked” together with pack-years greater than zero
+  - [ ] Mutually exclusive exposure answers selected together
+  - [ ] End year earlier than start year
+  - [ ] Age, duration, or quantity outside a reasonable input range
+- [ ] 🔜 Add clear inline validation messages in both languages.
+- [ ] 🔜 Improve numeric inputs for age, years, cigarettes per day, and duration.
+- [ ] 🔜 Add the full list of 77 Thai provinces.
+- [ ] 🔜 Add district/subdistrict selection where operationally necessary.
+- [ ] 🔜 Add Thai postcode validation and province/postcode consistency checks.
+- [ ] 🔜 Explain why location data is requested before the user enters it.
+- [ ] 🔜 Add an explicit “I do not know” path for questions where uncertainty is common.
+- [ ] 🔜 Review every exclusive option and conditional step with real users.
+- [ ] 🔜 Add a clear progress estimate and remaining-question count.
+- [ ] 🟡 Allow users to return to the previous question without losing conditional answers.
+- [ ] 🟡 Add a compact answer summary when resuming an unfinished assessment.
+- [ ] 🟡 Add a safe timeout/session-expiry explanation for shared devices.
+- [ ] 🟡 Improve recovery after a browser refresh, failed LIFF initialization, or lost connection.
+- [ ] 🟡 Add optional print-friendly results without exposing sensitive data by default.
+- [ ] 🩺 Review the urgent symptom list and the Thailand 1669 wording with a clinician.
+- [ ] 🩺 Review whether any answer should trigger advice independently of the prototype score.
 
-## Future research modules (disabled placeholders — spec §36)
+## 4 — Results and safety communication
 
-- [ ] Cough-audio research (separate consent, "อยู่ระหว่างการวิจัย", no diagnostic output)
-- [ ] Breath VOC / blood biomarker / CXR-AI / LDCT-AI — provider-side, roadmap page only
+- [ ] 🩺 Clinically review all 18 rules, prototype weights, thresholds, and result bands.
+- [ ] 🩺 Confirm that every rule explanation accurately matches its evidence.
+- [ ] 🩺 Confirm the “what to do next” guidance is appropriate and non-diagnostic.
+- [ ] 🩺 Review age, smoking, family-history, occupational, household, and PM2.5 wording.
+- [ ] 🩺 Confirm Band B never reassures users that they are “safe” or “low risk.”
+- [ ] 🩺 Confirm no result implies cancer probability, diagnosis, or automatic LDCT eligibility.
+- [ ] 🩺 Confirm symptoms remain separate from the risk calculation.
+- [ ] 🔜 Add a visible model/rule version and content-review date to exported results.
+- [ ] 🔜 Make “not assessed” factors easier to understand without causing alarm.
+- [ ] 🔜 Add a clearer path from each factor to relevant education and clinic information.
+- [ ] 🔜 Add a user-friendly explanation of why a result can change after new information.
+- [ ] 🟡 Improve the factor modal layout on very small screens.
+- [ ] 🟡 Add print and screen-reader checks for result explanations.
+- [ ] 🟡 Add a safe “questions to ask a healthcare professional” section.
+
+## 5 — Education centre
+
+- [ ] 🩺 Medically review the four existing drafted articles.
+- [ ] 🩺 Replace placeholder references with real, current, authoritative sources.
+- [ ] 🩺 Write and review the remaining eight education articles.
+- [ ] 🩺 Add named medical-review roles, review dates, and content versions.
+- [ ] 🩺 Define a process for revising or withdrawing outdated medical content.
+- [ ] 🔜 Add search across article titles, summaries, and topics.
+- [ ] 🔜 Add useful topic filters and clearer placeholder labels.
+- [ ] 🔜 Link assessment factors to the most relevant reviewed articles.
+- [ ] 🔜 Add a “last medically reviewed” field to each complete article.
+- [ ] 🟡 Add reading-time estimates.
+- [ ] 🟡 Add font-size, line-height, and long-article readability testing.
+- [ ] 🟡 Add a source list that remains understandable to non-specialists.
+- [ ] 🟡 Add simple illustrations only after their medical meaning is reviewed.
+- [ ] 🟡 Consider audio or read-aloud support for users with lower literacy.
+
+## 6 — Clinics and healthcare navigation
+
+- [ ] 🩺 Replace all six demo facilities with verified real facilities.
+- [ ] 🩺 Confirm each facility's official name, type, address, province, and coordinates.
+- [ ] 🩺 Confirm phone numbers, opening hours, referral requirements, and service availability.
+- [ ] 🩺 Verify whether LDCT or lung-health services are actually offered before displaying them.
+- [ ] 🩺 Define who is responsible for rechecking facility data and how often.
+- [ ] 🔜 Add the full province/district coverage needed for the intended pilot.
+- [ ] 🔜 Add real call and map actions with clear user confirmation.
+- [ ] 🔜 Add travel/accessibility information where verified.
+- [ ] 🔜 Add filters for public/private status, service type, accessibility, and referral needs.
+- [ ] 🔜 Add “information last verified” dates.
+- [ ] 🔜 Provide a correction/reporting path for inaccurate facility information.
+- [ ] 🟡 Add distance sorting only with explicit location permission.
+- [ ] 🟡 Add alternatives when no suitable facility is found nearby.
+- [ ] 🟡 Add a plain-language explanation that listing does not equal endorsement.
+
+## 7 — Referrals and reminders
+
+- [ ] 🧱 Replace the demo referral form with a real secure submission endpoint.
+- [ ] 🧱 Decide which organization receives referrals and who is accountable for follow-up.
+- [ ] 🧱 Implement the approved referral status workflow and status history.
+- [ ] 🧱 Add assignment, acknowledgement, escalation, cancellation, and closure rules.
+- [ ] 🧱 Add safe user notifications that never reveal health details in previews.
+- [ ] 🧱 Add consent checks before every referral or reminder message.
+- [ ] 🧱 Implement reminders with opt-in, frequency, time, pause, resume, and stop controls.
+- [ ] 🧱 Design reminders around replies and menu taps to respect LINE's free-tier quota.
+- [ ] 🧱 Add retry, dead-letter, duplicate-prevention, and delivery-status handling.
+- [ ] 🔜 Define expected response times and what users should do if nobody contacts them.
+- [ ] 🔜 Add a clear emergency disclaimer so referrals are never used for urgent care.
+- [ ] 🔜 Add user-visible cancellation and correction flows.
+- [ ] 🩺 Review referral eligibility, wording, escalation, and duty-of-care responsibilities.
+- [ ] 🩺 Review reminder content for clinical safety and privacy.
+
+## 8 — LINE bot and Messaging API
+
+- [ ] 🧱 Build a server-side LINE webhook endpoint.
+- [ ] 🧱 Verify `X-Line-Signature` for every webhook request.
+- [ ] 🧱 Store and deduplicate `webhookEventId` values.
+- [ ] 🧱 Handle follow, unfollow, message, postback, redelivery, and error events.
+- [ ] 🧱 Add server-side LINE ID-token verification; never trust the client profile alone.
+- [ ] 🧱 Implement approved intents for assessment, result, education, clinics, reminders,
+  privacy, help, and contact support.
+- [ ] 🧱 Add a fixed non-diagnostic fallback response for unsupported questions.
+- [ ] 🧱 Connect the privacy-safe Flex Message templates.
+- [ ] 🧱 Add quota monitoring, rate limits, retry rules, and alerting.
+- [ ] 🧱 Store tokens and channel secrets in a managed secret store, not source files.
+- [ ] 🧱 Add separate development/staging and production LINE configurations.
+- [ ] 🔜 Document token rotation, revocation, incident response, and administrator removal.
+- [ ] 🩺 Approve every automated health-related reply before enabling it.
+- [ ] 🩺 Prohibit open-ended AI-generated medical advice unless a reviewed governance model exists.
+
+## 9 — Backend, accounts, and data
+
+- [ ] 🧱 Confirm the production architecture and hosting responsibilities.
+- [ ] 🧱 Port the static SPA to the selected maintainable application framework if needed.
+- [ ] 🧱 Create the production database and version-controlled migrations.
+- [ ] 🧱 Implement users, consent records, assessments, answers, versioned results, referrals,
+  facilities, provider users, provider notes, content, message preferences/events,
+  webhook events, organizations, and audit logs.
+- [ ] 🧱 Add row-level security and organization isolation.
+- [ ] 🧱 Add provider authentication, session expiry, account recovery, and MFA.
+- [ ] 🧱 Implement roles for Navigator, Clinical reviewer, Content editor,
+  Programme manager, and Super admin.
+- [ ] 🧱 Keep old results tied to the exact rules and content version that generated them.
+- [ ] 🧱 Encrypt sensitive provider notes and secrets.
+- [ ] 🧱 Add database backups, restore testing, and migration rollback procedures.
+- [ ] 🧱 Add data retention, deletion, pseudonymisation, and legal-hold rules.
+- [ ] 🧱 Add structured audit logs for every sensitive provider action.
+- [ ] 🧱 Add monitoring for application errors, webhook failures, and referral delays.
+- [ ] 🧱 Add privacy-conscious analytics with low-count suppression.
+- [ ] 🧱 Separate demo data from staging and production data.
+- [ ] 🧱 Add environment-specific configuration and secret management.
+- [ ] 🔜 Remove or consolidate duplicate root-level helper/test assets after confirming
+  which copies are authoritative.
+
+## 10 — Provider dashboard and operations
+
+- [ ] 🧱 Replace the demo role switcher with real provider authentication.
+- [ ] 🧱 Add organization-scoped case and referral queues.
+- [ ] 🧱 Add assignment, owner, priority, due date, and escalation controls.
+- [ ] 🧱 Add safe provider notes with edit history and audit trails.
+- [ ] 🧱 Add a real referral-status workflow with permitted transitions.
+- [ ] 🧱 Add search, filters, pagination, and export permissions.
+- [ ] 🧱 Add content-management workflow: draft → medical review → approved → published → retired.
+- [ ] 🧱 Add risk-rule workflow: draft → clinical review → approved → active → inactive.
+- [ ] 🧱 Add two-person approval for safety-critical rule changes.
+- [ ] 🧱 Add dashboards with privacy-preserving aggregation and low-count suppression.
+- [ ] 🔜 Define provider onboarding, training, access review, and offboarding procedures.
+- [ ] 🔜 Define support ownership and escalation for user complaints or safety concerns.
+- [ ] 🟡 Translate the provider dashboard after its operational terminology is finalized.
+
+## 11 — Privacy, consent, legal, and governance
+
+- [ ] 🩺 Obtain legal/PDPA review of consent, privacy notice, disclaimers, and data controls.
+- [ ] 🩺 Identify the data controller, processors, purposes, lawful bases, and contact channel.
+- [ ] 🩺 Create a data inventory and data-flow map.
+- [ ] 🩺 Define retention periods for assessments, referrals, messages, logs, and backups.
+- [ ] 🩺 Define consent withdrawal consequences and operational handling.
+- [ ] 🩺 Review export and deletion flows for legal and safety requirements.
+- [ ] 🩺 Create terms of use and an accessible privacy notice for production.
+- [ ] 🩺 Create a breach-response and user-notification process.
+- [ ] 🩺 Define governance for rule, content, facility, and message changes.
+- [ ] 🩺 Define an adverse-event or unsafe-content reporting process.
+- [ ] 🩺 Complete a privacy/security impact assessment before a real pilot.
+- [ ] 🔜 Add version numbers and effective dates to consent and privacy documents.
+- [ ] 🔜 Add a real privacy/support contact instead of prototype placeholders.
+- [ ] 🔜 Document which data stays only on the device and which data leaves it.
+- [ ] 🔜 Confirm analytics never collect assessment answers or identifiable health information.
+
+## 12 — Accessibility and inclusive design
+
+- [ ] 🔜 Test every public route with keyboard-only navigation.
+- [ ] 🔜 Test with at least one Windows and one mobile screen reader.
+- [ ] 🔜 Move focus to the page heading after route changes and modal transitions.
+- [ ] 🔜 Add or verify accessible names for every button, icon, form field, alert, and modal.
+- [ ] 🔜 Verify error messages are announced and linked to their inputs.
+- [ ] 🔜 Verify color contrast in normal and big-text modes.
+- [ ] 🔜 Verify 200% zoom, text reflow, landscape mode, and narrow phone widths.
+- [ ] 🔜 Verify tap targets and spacing for older users and users with limited dexterity.
+- [ ] 🔜 Verify reduced-motion behavior.
+- [ ] 🔜 Ensure Thai and English screen-reader pronunciation is reasonable.
+- [ ] 🟡 Add a visible skip link and clearer focus indicators.
+- [ ] 🟡 Test with slow connections, older devices, and high-latency LINE WebViews.
+- [ ] 🟡 Conduct usability sessions with people from the actual target audience.
+
+## 13 — Reliability, performance, and offline behavior
+
+- [ ] 🔜 Add a visible offline/unstable-connection state and retry controls.
+- [ ] 🔜 Prevent data loss when the browser or LIFF view closes unexpectedly.
+- [ ] 🔜 Add safe cache-busting/versioning so users do not receive stale JavaScript.
+- [ ] 🔜 Define behavior when local storage is disabled, full, corrupted, or cleared.
+- [ ] 🔜 Add recovery for invalid or old `lunglens-v1` data.
+- [ ] 🔜 Add graceful handling for LIFF SDK timeouts and blocked third-party scripts.
+- [ ] 🟡 Optimize initial load, image weight, and JavaScript execution for low-cost phones.
+- [ ] 🟡 Measure Core Web Vitals at phone and desktop sizes.
+- [ ] 🟡 Consider a service worker only after medical-content update behavior is safe.
+- [ ] 🟡 Add non-sensitive error monitoring with source maps protected appropriately.
+- [ ] 🟡 Add a deployment smoke test for the public URL and six LIFF routes.
+- [ ] 🟡 Add a visible application version for troubleshooting.
+
+## 14 — Automated and manual testing
+
+- ✅ Engine regression tests for four personas, incomplete answers, and exclusive schemas.
+- ✅ English canonical-data coverage test.
+- ✅ JavaScript syntax checks.
+- [ ] 🔜 Add unit tests for every risk rule boundary and conditional question.
+- [ ] 🔜 Add tests proving symptoms never affect the prototype score.
+- [ ] 🔜 Add tests proving language switching never changes canonical answers or bands.
+- [ ] 🔜 Add tests for corrupted, old, empty, and partially complete local-storage state.
+- [ ] 🔜 Add end-to-end tests for every public route in Thai and English.
+- [ ] 🔜 Add end-to-end tests for consent, urgent symptoms, result modals, clinics,
+  referrals, profile, export, delete, reminders, big-text mode, and deep links.
+- [ ] 🔜 Add automated checks that health results never appear in LINE share previews.
+- [ ] 🔜 Add automated accessibility scans plus manual screen-reader testing.
+- [ ] 🔜 Add visual regression tests at narrow phone, standard phone, tablet, and desktop sizes.
+- [ ] 🔜 Add cross-browser tests for Chrome, Safari/iOS, Android WebView, and LINE WebView.
+- [ ] 🔜 Add security tests for webhook signatures, auth, authorization, RLS, and rate limits.
+- [ ] 🔜 Add backup/restore and migration tests before production data exists.
+- [ ] 🟡 Add a documented release checklist and rollback test.
+
+## 15 — Design and product improvements
+
+- [ ] 🟡 Conduct a complete mobile visual-polish pass after real-phone testing.
+- [ ] 🟡 Improve spacing, typography, card hierarchy, and long-form readability.
+- [ ] 🟡 Standardize button labels, icon usage, empty states, and success/error messages.
+- [ ] 🟡 Improve loading, disabled, empty, offline, and error states.
+- [ ] 🟡 Add clearer navigation between results, education, clinics, and profile.
+- [ ] 🟡 Add a consistent way to return home from deep links.
+- [ ] 🟡 Add a contact/support path with response expectations.
+- [ ] 🟡 Add structured user feedback after the assessment without collecting health details.
+- [ ] 🟡 Add privacy-safe product analytics for drop-off and completion rates.
+- [ ] 🟡 Review whether demo-persona controls should be hidden outside demos.
+- [ ] 🟡 Move provider and presentation routes behind an explicit demo/admin entry point.
+- [ ] 🟡 Create a lightweight design system/reference page for future contributors.
+- [ ] 🟡 Add branded favicons, social preview image, OA profile image, and consistent metadata.
+- [ ] 🟡 Review the tagline and campaign wording with target users.
+
+## 16 — Pilot and production-readiness gates
+
+- [ ] 🩺 Clinical validation and documented sign-off completed.
+- [ ] 🩺 Legal/PDPA review and privacy documentation completed.
+- [ ] 🩺 All public medical content reviewed and versioned.
+- [ ] 🩺 All displayed facilities verified and assigned an update owner.
+- [ ] 🧱 Real referrals, provider access, audit logs, monitoring, and backups operational.
+- [ ] 🔜 Security review and remediation completed.
+- [ ] 🔜 Accessibility review and remediation completed.
+- [ ] 🔜 Device/browser/LINE WebView test matrix passed.
+- [ ] 🔜 Support, incident, escalation, and rollback procedures documented.
+- [ ] 🔜 Pilot scope, participating organizations, success measures, and stop criteria approved.
+- [ ] 🔜 Staff training and user-support materials completed.
+- [ ] 🔜 Soft launch completed with a small controlled group.
+- [ ] 🔜 Pilot feedback reviewed before any wider promotion.
+
+## 17 — Campaign and adoption materials
+
+- [ ] 🟡 Create a QR poster using the permanent OA add-friend link.
+- [ ] 🟡 Create square, story, horizontal, and LINE broadcast assets.
+- [ ] 🟡 Create a simple community-health-worker handout.
+- [ ] 🟡 Create a one-page partner/clinic explanation of what LungLens is and is not.
+- [ ] 🟡 Create a short bilingual demonstration video with captions and transcript.
+- [ ] 🟡 Add clear non-diagnostic wording to every campaign asset.
+- [ ] 🟡 Test campaign language with the intended audience before publication.
+
+## 18 — Optional future research modules
+
+These must remain disabled unless separate ethics, consent, security, and clinical
+governance are established.
+
+- [ ] 💡 Cough-audio research with separate consent and no diagnostic output.
+- [ ] 💡 Breath VOC research module.
+- [ ] 💡 Blood-biomarker research module.
+- [ ] 💡 CXR-AI provider-side research module.
+- [ ] 💡 LDCT-AI provider-side research module.
+- [ ] 💡 Longitudinal research follow-up with explicit consent.
+- [ ] 💡 Multilingual expansion beyond Thai and English.
+
+## Safety rules that are never optional
+
+- Symptoms stay separate from risk scoring.
+- Never calculate or display a cancer probability.
+- Never say a user is “safe” or automatically “low risk.”
+- Never diagnose a disease.
+- Never automatically recommend LDCT; frame it as a professional shared decision.
+- Never expose assessment results or health details in LINE notification/share previews.
+- Never treat demo facilities, rules, cases, analytics, or PM2.5 values as real.
+- Never commit LINE tokens, channel secrets, patient data, or provider credentials.
+- Never enable autonomous medical advice without approved clinical governance.
