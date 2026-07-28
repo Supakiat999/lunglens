@@ -15,6 +15,7 @@ const AIR_QUALITY_CONFIG = Object.freeze({
   ],
   snapshotMaxAgeMs: 6 * 60 * 60 * 1000,
   cacheMs: 10 * 60 * 1000,
+  forecastCacheMs: 30 * 60 * 1000,
   geocodingUrl: "https://geocoding-api.open-meteo.com/v1/search",
   modelUrl: "https://air-quality-api.open-meteo.com/v1/air-quality"
 });
@@ -49,6 +50,7 @@ const AIR_COPY = Object.freeze({
 });
 
 const airQualityCache = new Map();
+const airForecastCache = new Map();
 
 function airLanguage() {
   try { return state?.lang === "en" ? "en" : "th"; } catch (error) { return "th"; }
@@ -124,6 +126,24 @@ async function fetchOfficialSnapshot(fetchImpl) {
   throw lastError || new Error("Air4Thai snapshot unavailable");
 }
 
+async function resolveProvinceLocation(province, fetchImpl) {
+  const search = new URL(AIR_QUALITY_CONFIG.geocodingUrl);
+  search.searchParams.set("name", province.en);
+  search.searchParams.set("count", "5");
+  search.searchParams.set("language", "en");
+  search.searchParams.set("countryCode", "TH");
+  const locations = await fetchJson(search.toString(), fetchImpl);
+  const location = (locations.results || []).find(item => item.country_code === "TH") || locations.results?.[0];
+  if (!location || !Number.isFinite(Number(location.latitude)) || !Number.isFinite(Number(location.longitude))) {
+    throw new Error("Province coordinates unavailable");
+  }
+  return {
+    latitude: Number(location.latitude),
+    longitude: Number(location.longitude),
+    name: String(location.name || province.en)
+  };
+}
+
 function median(values) {
   const sorted = values.filter(Number.isFinite).slice().sort((a, b) => a - b);
   if (!sorted.length) return null;
@@ -146,14 +166,7 @@ function provinceStationSummary(stations) {
 }
 
 async function fetchModelFallback(province, fetchImpl) {
-  const search = new URL(AIR_QUALITY_CONFIG.geocodingUrl);
-  search.searchParams.set("name", province.en);
-  search.searchParams.set("count", "5");
-  search.searchParams.set("language", "en");
-  search.searchParams.set("countryCode", "TH");
-  const locations = await fetchJson(search.toString(), fetchImpl);
-  const location = (locations.results || []).find(item => item.country_code === "TH") || locations.results?.[0];
-  if (!location) throw new Error("Province coordinates unavailable");
+  const location = await resolveProvinceLocation(province, fetchImpl);
 
   const request = new URL(AIR_QUALITY_CONFIG.modelUrl);
   request.searchParams.set("latitude", String(location.latitude));
@@ -189,6 +202,88 @@ async function fetchModelFallback(province, fetchImpl) {
     stations: [station],
     summary: provinceStationSummary([station])
   };
+}
+
+function average(values) {
+  const valid = values.filter(Number.isFinite);
+  return valid.length ? valid.reduce((sum, value) => sum + value, 0) / valid.length : null;
+}
+
+function summarizeForecastTrend(points) {
+  if (!Array.isArray(points) || points.length < 4) {
+    return { key: "unknown", difference: null, firstAverage: null, lastAverage: null };
+  }
+  const windowSize = Math.min(4, Math.floor(points.length / 2));
+  const firstAverage = average(points.slice(0, windowSize).map(point => point.pm25));
+  const lastAverage = average(points.slice(-windowSize).map(point => point.pm25));
+  const values = points.map(point => point.pm25).filter(Number.isFinite);
+  if (!Number.isFinite(firstAverage) || !Number.isFinite(lastAverage) || !values.length) {
+    return { key: "unknown", difference: null, firstAverage, lastAverage };
+  }
+  const difference = lastAverage - firstAverage;
+  const range = Math.max(...values) - Math.min(...values);
+  const key = Math.abs(difference) >= 5
+    ? (difference > 0 ? "higher" : "lower")
+    : range >= 12 ? "variable" : "similar";
+  return { key, difference, firstAverage, lastAverage, min: Math.min(...values), max: Math.max(...values) };
+}
+
+function localModelTimestamp(value) {
+  if (typeof value !== "string") return null;
+  const withOffset = /(?:Z|[+-]\d{2}:\d{2})$/.test(value)
+    ? value
+    : `${value}${/T\d{2}:\d{2}$/.test(value) ? ":00" : ""}+07:00`;
+  const parsed = Date.parse(withOffset);
+  return Number.isFinite(parsed) ? new Date(parsed).toISOString() : null;
+}
+
+async function loadAirQualityForecast(provinceName, {
+  latitude,
+  longitude,
+  fetchImpl = (...args) => fetch(...args),
+  now = Date.now(),
+  force = false
+} = {}) {
+  const province = typeof provinceName === "object" ? provinceName : provinceMeta(provinceName);
+  if (!province) throw new Error("Unknown province");
+  let location;
+  if (Number.isFinite(Number(latitude)) && Number.isFinite(Number(longitude))) {
+    location = { latitude: Number(latitude), longitude: Number(longitude), name: province.en };
+  } else {
+    location = await resolveProvinceLocation(province, fetchImpl);
+  }
+  const cacheKey = `${province.th}:${location.latitude.toFixed(3)}:${location.longitude.toFixed(3)}`;
+  const cached = airForecastCache.get(cacheKey);
+  if (!force && cached && now - cached.cachedAt < AIR_QUALITY_CONFIG.forecastCacheMs) return cached.data;
+
+  const request = new URL(AIR_QUALITY_CONFIG.modelUrl);
+  request.searchParams.set("latitude", String(location.latitude));
+  request.searchParams.set("longitude", String(location.longitude));
+  request.searchParams.set("hourly", "pm2_5");
+  request.searchParams.set("forecast_hours", "24");
+  request.searchParams.set("timezone", "Asia/Bangkok");
+  request.searchParams.set("domains", "cams_global");
+  const payload = await fetchJson(request.toString(), fetchImpl);
+  const times = Array.isArray(payload?.hourly?.time) ? payload.hourly.time : [];
+  const values = Array.isArray(payload?.hourly?.pm2_5) ? payload.hourly.pm2_5 : [];
+  const points = times.map((time, index) => ({
+    at: localModelTimestamp(time),
+    pm25: Number.isFinite(Number(values[index])) ? Number(values[index]) : null
+  })).filter(point => point.at && Number.isFinite(point.pm25)).slice(0, 24);
+  if (points.length < 4) throw new Error("Air-quality forecast was incomplete");
+
+  const data = {
+    kind: "model_forecast",
+    source: "Open-Meteo air-quality API — CAMS global model",
+    sourceUrl: "https://open-meteo.com/en/docs/air-quality-api",
+    fetchedAt: new Date(now).toISOString(),
+    province,
+    location,
+    points,
+    trend: summarizeForecastTrend(points)
+  };
+  airForecastCache.set(cacheKey, { cachedAt: now, data });
+  return data;
 }
 
 async function loadAirQualityForProvince(provinceName, {
@@ -250,6 +345,7 @@ function stationBand(station, kind, lang = airLanguage()) {
 if (typeof module !== "undefined") {
   module.exports = {
     AIR_QUALITY_CONFIG, thaiPm25Band, usAqiBand, stationMatchesProvince,
-    provinceStationSummary, loadAirQualityForProvince, stationBand
+    provinceStationSummary, loadAirQualityForProvince, loadAirQualityForecast,
+    summarizeForecastTrend, stationBand
   };
 }

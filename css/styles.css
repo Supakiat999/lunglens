@@ -274,9 +274,34 @@ code {
   background: #faf5ff; border-left-color: #7e22ce;
 }
 .air-stale { background: var(--warn-soft); border-color: #f59e0b; }
+.model-badge {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+  color: var(--ink-2); display: inline-block; font-size: 10px; font-weight: 600;
+  margin-left: 5px; padding: 1px 7px; vertical-align: middle;
+}
+.air-forecast-chart {
+  background: linear-gradient(180deg, var(--brand-soft), #fff); border: 1px solid var(--line);
+  border-radius: 10px; display: block; height: auto; margin-top: 10px;
+  max-height: 220px; overflow: visible; width: 100%;
+}
+.air-forecast-chart text {
+  fill: var(--ink-2); font-family: var(--font); font-size: 11px;
+}
+.chart-axis { stroke: var(--ink-3); stroke-width: 1; }
+.chart-grid { stroke: var(--line); stroke-dasharray: 5 5; stroke-width: 1; }
+.chart-line { fill: none; stroke: var(--brand); stroke-linecap: round; stroke-linejoin: round; stroke-width: 4; }
+.chart-point { fill: var(--card); stroke: var(--brand-deep); stroke-width: 2; }
+.air-forecast-stats { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 8px; }
+.air-forecast-stats span { color: var(--ink-2); font-size: 12px; }
+.article-forecast {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px;
+}
+.article-forecast h3 { color: var(--brand-deep); margin-top: 0; }
 @media (max-width: 390px) {
   .air-summary, .air-reading { grid-template-columns: 1fr; }
   .air-summary > div, .air-reading > div { text-align: left; }
+  .air-forecast-chart { min-height: 150px; }
 }
 
 /* ---------- timeline ---------- */

@@ -6,7 +6,9 @@ const {
   usAqiBand,
   stationMatchesProvince,
   provinceStationSummary,
-  loadAirQualityForProvince
+  loadAirQualityForProvince,
+  loadAirQualityForecast,
+  summarizeForecastTrend
 } = require("../js/air-quality.js");
 
 (async () => {
@@ -107,7 +109,52 @@ assert.equal(fallback.stations[0].pm25, 18.2);
 assert.equal(fallback.stations[0].aqi, 62);
 assert.equal(fallback.stations[0].modelled, true);
 
-console.log("Air-quality checks passed: Thai PM2.5 bands, station matching, province summaries, official data, and model fallback.");
+const forecastTimes = Array.from({ length: 24 }, (_, index) =>
+  `2026-07-28T${String(12 + index).padStart(2, "0")}:00`
+);
+// Roll times into the next day to keep valid ISO local timestamps.
+forecastTimes.forEach((value, index) => {
+  if (12 + index >= 24) {
+    forecastTimes[index] = `2026-07-29T${String(12 + index - 24).padStart(2, "0")}:00`;
+  }
+});
+const forecastValues = Array.from({ length: 24 }, (_, index) => 10 + index * 0.6);
+const forecastFetch = async url => {
+  if (String(url).includes("geocoding-api")) {
+    return response({ results: [{ name: "Bangkok", country_code: "TH", latitude: 13.75, longitude: 100.5 }] });
+  }
+  if (String(url).includes("air-quality-api")) {
+    const parsed = new URL(url);
+    assert.equal(parsed.searchParams.get("forecast_hours"), "24");
+    assert.equal(parsed.searchParams.get("domains"), "cams_global");
+    assert.equal(parsed.searchParams.get("hourly"), "pm2_5");
+    return response({ hourly: { time: forecastTimes, pm2_5: forecastValues } });
+  }
+  throw new Error(`Unexpected forecast URL ${url}`);
+};
+const forecast = await loadAirQualityForecast(bangkok, {
+  fetchImpl: forecastFetch,
+  now: Date.parse("2026-07-28T05:00:00.000Z"),
+  force: true
+});
+assert.equal(forecast.kind, "model_forecast");
+assert.equal(forecast.points.length, 24);
+assert.equal(forecast.trend.key, "higher");
+assert.equal(forecast.points[0].at, "2026-07-28T05:00:00.000Z");
+assert.equal(summarizeForecastTrend([
+  { pm25: 20 }, { pm25: 20 }, { pm25: 20 }, { pm25: 20 },
+  { pm25: 10 }, { pm25: 10 }, { pm25: 10 }, { pm25: 10 }
+]).key, "lower");
+assert.equal(summarizeForecastTrend([
+  { pm25: 10 }, { pm25: 20 }, { pm25: 10 }, { pm25: 20 },
+  { pm25: 10 }, { pm25: 20 }, { pm25: 10 }, { pm25: 20 }
+]).key, "similar");
+assert.equal(summarizeForecastTrend([
+  { pm25: 5 }, { pm25: 20 }, { pm25: 5 }, { pm25: 20 },
+  { pm25: 20 }, { pm25: 5 }, { pm25: 20 }, { pm25: 5 }
+]).key, "variable");
+
+console.log("Air-quality checks passed: Thai PM2.5 bands, station matching, province summaries, official data, model fallback, and 24-hour model forecasts.");
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

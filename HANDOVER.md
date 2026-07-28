@@ -106,6 +106,11 @@ and passed as an environment variable at run time. **Never write it into a file.
   remaining-question count; connection loss has a visible retry state; the privacy page
   explains actual device/external data flow; and confirmed exports exclude internal rule
   points and weights while retaining model and review status.
+- **Prototype v0.6 PM2.5 planning forecast** — the air page and PM2.5 article include a
+  responsive next-24-hours PM2.5 chart from the Open-Meteo/CAMS Global model, with
+  minimum/maximum values, cautious higher/lower/variable/similar wording, model retrieval
+  time, approximate 45 km grid disclosure, and an explicit warning that it is neither
+  station history nor a personal cancer-risk estimate.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

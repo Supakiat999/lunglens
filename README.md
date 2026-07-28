@@ -55,13 +55,13 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.5.0`**. It preserves the v0.3 screening-safety
-correction and v0.4 live-data foundation, then adds embedded province pollution context
-to results and the PM2.5 article, factor-to-education navigation, remaining-question
-counts, connection recovery, an explicit device-data explanation, and a privacy-safe
-portable export that excludes internal rule points. Pollution readings remain
-short-term exposure context only: they never enter the factor band or LDCT screening
-context. The engine remains versioned as `prototype_rules_v2`.
+Current app version: **`prototype_0.6.0`**. It preserves the v0.3 screening-safety
+correction, v0.4 live-data foundation, and v0.5 connected privacy controls, then adds a
+responsive next-24-hours PM2.5 chart based on the clearly labelled Open-Meteo/CAMS
+Global model. Official Air4Thai station readings remain the primary current measurement;
+the chart is a planning forecast, not station history or a personal exposure estimate.
+Pollution data never enters the factor band or LDCT screening context. The engine
+remains versioned as `prototype_rules_v2`.
 
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
@@ -125,10 +125,11 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
   (tap → why/next/evidence/related sourced education), embedded local air context,
   not-assessed list, privacy-safe sharing, retake
 - **#air** — current province/station PM2.5, PM10 and AQI from Air4Thai; model fallback,
-  timestamps, freshness warning, health guidance, source attribution and limitations
+  timestamps, freshness warning, health guidance, source attribution, limitations, and
+  a separate responsive 24-hour CAMS Global model forecast with cautious trend wording
 - **#education** — 12 sourced bilingual articles, search, myth/fact explanations,
   content versions, dates, authority links, explicit medical-review status, and a live
-  selected-province reading inside the PM2.5 topic
+  selected-province reading plus 24-hour model chart inside the PM2.5 topic
 - **#clinics** — 6 demo facilities, filters (province / LDCT / public), CTAs
 - **#referral** — referral request form (consent-gated) + status timeline with demo advance button
 - **#profile** — history, reminder prefs, consent withdrawal, confirmed portable JSON

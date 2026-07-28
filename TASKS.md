@@ -53,6 +53,8 @@ Status legend:
 - ✅ v0.5 embeds current province pollution in results and the PM2.5 article, connects
   factor explanations to sourced education, adds connection recovery and remaining-question
   counts, documents device-only data flow, and removes internal points from confirmed exports
+- ✅ v0.6 adds a responsive next-24-hours PM2.5 model chart and cautious trend wording
+  while keeping official Air4Thai station readings visibly separate and primary
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -197,7 +199,8 @@ Status legend:
 - [x] ✅ Add tests for Thai PM2.5 bands, station/province matching, official snapshots,
   model fallback, and unchanged screening safety.
 - [ ] 🟡 Add station-distance sorting only after explicit location permission.
-- [ ] 🟡 Add a 24-hour chart and trend wording without overstating forecast certainty.
+- [x] ✅ Add a 24-hour CAMS Global model chart and cautious trend wording, clearly
+  separated from official station measurements and personal risk.
 - [ ] 🧱 Add monitoring/alerting when the hourly snapshot workflow fails repeatedly.
 - [ ] 🩺 Review PM2.5 activity guidance and vulnerable-group wording with a Thai clinician.
 

@@ -870,6 +870,7 @@ let selectedAirProvince = state.answers.PROVINCE || "กรุงเทพมห
 let selectedAirStation = "";
 let latestAirData = null;
 let airRequestId = 0;
+let airForecastRequestId = 0;
 
 function formatAirNumber(value) {
   if (!Number.isFinite(Number(value))) return "—";
@@ -888,6 +889,117 @@ function airStationArea(station) {
   return state.lang === "en"
     ? (station.area_en || station.area_th)
     : (station.area_th || station.area_en);
+}
+
+function forecastTrendText(trend) {
+  const copy = {
+    higher: uiText(
+      "แบบจำลองแสดงว่าค่า PM2.5 ช่วงท้ายของ 24 ชั่วโมงข้างหน้าอาจสูงกว่าช่วงต้น",
+      "The model shows PM2.5 may be higher toward the end of the next 24 hours."
+    ),
+    lower: uiText(
+      "แบบจำลองแสดงว่าค่า PM2.5 ช่วงท้ายของ 24 ชั่วโมงข้างหน้าอาจต่ำกว่าช่วงต้น",
+      "The model shows PM2.5 may be lower toward the end of the next 24 hours."
+    ),
+    variable: uiText(
+      "แบบจำลองแสดงว่าค่า PM2.5 อาจเปลี่ยนแปลงขึ้นลงใน 24 ชั่วโมงข้างหน้า",
+      "The model shows PM2.5 may vary during the next 24 hours."
+    ),
+    similar: uiText(
+      "แบบจำลองยังไม่แสดงการเปลี่ยนแปลงเด่นชัดระหว่างช่วงต้นและท้ายของ 24 ชั่วโมงข้างหน้า",
+      "The model does not show a clear change between the start and end of the next 24 hours."
+    ),
+    unknown: uiText(
+      "ข้อมูลแบบจำลองยังไม่เพียงพอสำหรับอธิบายแนวโน้ม",
+      "The model does not contain enough data to describe a pattern."
+    )
+  };
+  return copy[trend?.key] || copy.unknown;
+}
+
+function forecastTimeLabel(value) {
+  return new Intl.DateTimeFormat(state.lang === "en" ? "en-GB" : "th-TH", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(new Date(value));
+}
+
+function renderForecastChart(points) {
+  const width = 600, height = 190, left = 44, right = 16, top = 18, bottom = 38;
+  const values = points.map(point => point.pm25).filter(Number.isFinite);
+  if (values.length < 2) return "";
+  const minValue = Math.max(0, Math.floor(Math.min(...values) / 5) * 5);
+  let maxValue = Math.ceil(Math.max(...values) / 5) * 5;
+  if (maxValue <= minValue) maxValue = minValue + 5;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const x = index => left + (index / Math.max(1, points.length - 1)) * plotWidth;
+  const y = value => top + (1 - (value - minValue) / (maxValue - minValue)) * plotHeight;
+  const path = points.map((point, index) =>
+    `${index === 0 ? "M" : "L"} ${x(index).toFixed(1)} ${y(point.pm25).toFixed(1)}`
+  ).join(" ");
+  const labelIndexes = [...new Set([0, Math.floor((points.length - 1) / 3),
+    Math.floor((points.length - 1) * 2 / 3), points.length - 1])];
+  const ariaLabel = uiText(
+    `กราฟแบบจำลอง PM2.5 24 ชั่วโมง ค่าต่ำสุด ${formatAirNumber(Math.min(...values))} และสูงสุด ${formatAirNumber(Math.max(...values))} ไมโครกรัมต่อลูกบาศก์เมตร`,
+    `24-hour model PM2.5 chart, minimum ${formatAirNumber(Math.min(...values))} and maximum ${formatAirNumber(Math.max(...values))} micrograms per cubic metre`
+  );
+  return `<svg class="air-forecast-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(ariaLabel)}">
+    <line x1="${left}" y1="${top}" x2="${left}" y2="${height - bottom}" class="chart-axis"></line>
+    <line x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}" class="chart-axis"></line>
+    <line x1="${left}" y1="${top}" x2="${width - right}" y2="${top}" class="chart-grid"></line>
+    <text x="${left - 8}" y="${top + 5}" text-anchor="end">${formatAirNumber(maxValue)}</text>
+    <text x="${left - 8}" y="${height - bottom + 5}" text-anchor="end">${formatAirNumber(minValue)}</text>
+    <path d="${path}" class="chart-line"></path>
+    ${points.map((point, index) => index % 3 === 0 || index === points.length - 1
+      ? `<circle cx="${x(index).toFixed(1)}" cy="${y(point.pm25).toFixed(1)}" r="3" class="chart-point">
+          <title>${esc(forecastTimeLabel(point.at))}: PM2.5 ${formatAirNumber(point.pm25)} µg/m³</title>
+        </circle>` : "").join("")}
+    ${labelIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${height - 12}" text-anchor="${index === 0 ? "start" : index === points.length - 1 ? "end" : "middle"}">${esc(forecastTimeLabel(points[index].at))}</text>`).join("")}
+  </svg>`;
+}
+
+async function updateAirForecast(targetId, province, station = null, { compact = false } = {}) {
+  const target = $(`#${targetId}`);
+  if (!target) return;
+  const requestToken = String(++airForecastRequestId);
+  target.dataset.requestToken = requestToken;
+  try {
+    const forecast = await loadAirQualityForecast(province, {
+      latitude: station?.latitude,
+      longitude: station?.longitude
+    });
+    if (!target.isConnected || target.dataset.requestToken !== requestToken) return;
+    const values = forecast.points.map(point => point.pm25);
+    const min = Math.min(...values), max = Math.max(...values);
+    target.innerHTML = `
+      <p class="muted"><b>${esc(forecastTrendText(forecast.trend))}</b></p>
+      ${renderForecastChart(forecast.points)}
+      <div class="air-forecast-stats">
+        <span>${esc(uiText("ต่ำสุด", "Minimum"))}: <b>${formatAirNumber(min)}</b> µg/m³</span>
+        <span>${esc(uiText("สูงสุด", "Maximum"))}: <b>${formatAirNumber(max)}</b> µg/m³</span>
+      </div>
+      <p class="tiny mt">${esc(uiText(
+        `กริดแบบจำลอง CAMS Global ประมาณ 45 กม. · ดึงเมื่อ ${formatDate(forecast.fetchedAt, { dateTime: true })}`,
+        `CAMS Global model grid, approximately 45 km · retrieved ${formatDate(forecast.fetchedAt, { dateTime: true })}`
+      ))}</p>
+      <p class="tiny mt">${esc(uiText(
+        "นี่คือแบบจำลอง CAMS Global ไม่ใช่ประวัติการวัดจากสถานี และการคาดการณ์อาจเปลี่ยนเมื่อแบบจำลองอัปเดต โปรดตรวจค่าจริงจากสถานีใกล้ตัวก่อนวางแผนกิจกรรม",
+        "This is a CAMS Global model forecast, not station measurement history. It may change when the model updates. Check a nearby official station before planning activities."
+      ))}</p>
+      ${compact ? "" : `<p class="tiny mt"><a href="${esc(forecast.sourceUrl)}" target="_blank" rel="noopener">${esc(uiText(
+        "ที่มา: Open-Meteo / CAMS Global",
+        "Source: Open-Meteo / CAMS Global"
+      ))}</a></p>`}`;
+  } catch (error) {
+    if (!target.isConnected || target.dataset.requestToken !== requestToken) return;
+    target.innerHTML = `<p class="muted">${esc(uiText(
+      "ยังโหลดแบบจำลอง 24 ชั่วโมงไม่ได้ ค่าจากสถานีด้านบนยังใช้งานได้ตามปกติ",
+      "The 24-hour model forecast is unavailable. The station reading above is still available."
+    ))}</p>
+      <button class="btn btn-ghost btn-sm mt" onclick="updateAirForecast('${esc(targetId)}','${esc(province.th || province)}')">${esc(uiText("ลองอีกครั้ง", "Try again"))}</button>`;
+  }
 }
 
 function renderAirQuality() {
@@ -1011,6 +1123,14 @@ function renderAirResults(data) {
     </div>
 
     <div class="card">
+      <h3>${esc(uiText("แนวโน้ม 24 ชั่วโมงข้างหน้า", "Next 24 hours"))}
+        <span class="model-badge">${esc(uiText("แบบจำลอง", "model forecast"))}</span></h3>
+      <div id="air-forecast" aria-live="polite">
+        <p class="muted">${esc(uiText("กำลังโหลดแบบจำลอง 24 ชั่วโมง…", "Loading the 24-hour model forecast…"))}</p>
+      </div>
+    </div>
+
+    <div class="card">
       <h3>${esc(uiText("ที่มาและข้อจำกัด", "Sources and limitations"))}</h3>
       <p class="tiny"><a href="${sourceUrl}" target="_blank" rel="noopener">${esc(sourceName)}</a> ·
         ${esc(uiText("ดึงข้อมูลเมื่อ", "Snapshot fetched"))} ${esc(snapshotFetched)}</p>
@@ -1022,6 +1142,7 @@ function renderAirResults(data) {
         <a href="https://hpc10app.anamai.moph.go.th/hdc/airpollution/pm25/index" target="_blank" rel="noopener">${esc(uiText("เกณฑ์และคำแนะนำ PM2.5 ของกรมอนามัย", "Thai Department of Health PM2.5 categories and advice"))}</a>
       </p>
     </div>`;
+  updateAirForecast("air-forecast", data.province, station);
 }
 
 async function updateCompactAirContext(targetId, province, guard = () => true) {
@@ -1124,7 +1245,13 @@ function renderArticle(slug) {
     <p class="tiny">${esc(uiText(
       "ค่าปัจจุบันช่วยวางแผนกิจกรรมวันนี้ ไม่สามารถบอกการสัมผัสสะสมหรือความเสี่ยงมะเร็งของบุคคล",
       "A current reading can guide today's activities; it cannot show cumulative exposure or an individual's cancer risk."
-    ))}</p>` : ""}
+    ))}</p>
+    <div class="article-forecast mt">
+      <h3>${esc(uiText("แบบจำลอง PM2.5 24 ชั่วโมงข้างหน้า", "PM2.5 model for the next 24 hours"))}</h3>
+      <div id="article-air-forecast" aria-live="polite">
+        <p class="muted">${esc(uiText("กำลังโหลดแบบจำลอง 24 ชั่วโมง…", "Loading the 24-hour model forecast…"))}</p>
+      </div>
+    </div>` : ""}
     ${a.body.map(p => `<p class="mt" style="font-size:15px">${esc(p)}</p>`).join("")}
     <div class="myth">
       <div class="m">❌ <b>ความเชื่อ:</b> ${esc(a.myth.m)}</div>
@@ -1142,7 +1269,9 @@ function renderArticle(slug) {
     <a class="btn btn-primary mt" href="#begin">ประเมินความเสี่ยง 2–3 นาที</a>
   </div>`);
   if (a.slug === "pm25") {
-    updateCompactAirContext("article-air-context", state.answers.PROVINCE || selectedAirProvince);
+    const articleProvince = state.answers.PROVINCE || selectedAirProvince;
+    updateCompactAirContext("article-air-context", articleProvince);
+    updateAirForecast("article-air-forecast", articleProvince, null, { compact: true });
   }
 }
 
