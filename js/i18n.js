@@ -785,7 +785,25 @@ const EN_TRANSLATIONS = Object.freeze({
   "อังกฤษ": "English",
   "จีน": "Chinese",
   "ชุดข้อมูลสาธิต (demo dataset) — ไม่ใช่ข้อมูลจริง": "Demo dataset — not real measurements",
-  "2569-06 (ตัวอย่าง)": "June 2026 (example)"
+  "2569-06 (ตัวอย่าง)": "June 2026 (example)",
+
+  /* v0.5 usability, privacy and connected education */
+  "เตรียมคำถามสำหรับบุคลากรทางการแพทย์": "Prepare questions for a healthcare professional",
+  "ดูตัวอย่างช่องทางบริการสุขภาพ": "View healthcare-navigation demo",
+  "ข้อมูลนี้ช่วยวางแผนกิจกรรมระยะสั้นเท่านั้น และแยกจากผลปัจจัยสุขภาพและเกณฑ์คัดกรองโดยสิ้นเชิง": "This information only helps with short-term activity planning and remains completely separate from the factor result and screening context.",
+  "ดาวน์โหลดข้อมูลของฉัน": "Download my data",
+  "ยืนยันและดาวน์โหลด": "Confirm and download",
+  "ข้อมูลอยู่ที่ไหนในต้นแบบนี้": "Where data stays in this prototype",
+  "การส่งออกและลบข้อมูล": "Exporting and deleting data",
+  "ฉบับร่าง privacy_prototype_v2 · อัปเดต 28 กรกฎาคม 2569 · ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง": "Draft privacy_prototype_v2 · updated 28 July 2026 · legal review is required before real-world use",
+  "คำตอบ ผล ประวัติ คำขอจำลอง และการตั้งค่าแจ้งเตือนบันทึกในเบราว์เซอร์บนอุปกรณ์นี้ด้วยคีย์": "Answers, results, history, demo requests and reminder settings are stored in this device's browser under the key",
+  "ไม่มีเซิร์ฟเวอร์ LungLens รับคำตอบสุขภาพ และไม่มีโรงพยาบาลหรือเจ้าหน้าที่ได้รับคำขอจำลอง": "No LungLens server receives health answers, and no hospital or staff member receives a demo request.",
+  "หน้าอากาศส่งเฉพาะจังหวัดที่เลือกไปยังแหล่งข้อมูลสาธารณะเมื่อจำเป็น ไม่ส่งคำตอบ ผล หรืออาการ": "The air-quality page sends only the selected province to public data services when needed. It does not send answers, results or symptoms.",
+  "LINE อาจให้ข้อมูลโปรไฟล์พื้นฐานเมื่อผู้ใช้เลือกเข้าสู่ระบบใน LIFF แต่เว็บไซต์สาธารณะใช้ได้โดยไม่เข้าสู่ระบบ LINE": "LINE may provide basic profile information when a user chooses to sign in through LIFF, but the public website works without LINE login.",
+  "บันทึกเหตุการณ์การใช้งานในต้นแบบอยู่บนอุปกรณ์และมีเพียงชื่อเหตุการณ์กับเวลา ไม่มีระบบวิเคราะห์ภายนอก": "The prototype event log stays on the device and contains only event names and times. No external analytics service is connected.",
+  "ไฟล์ดาวน์โหลดมีข้อมูลสุขภาพที่คุณให้ จึงควรเก็บอย่างปลอดภัย คะแนนภายในและน้ำหนักกฎต้นแบบจะไม่ถูกส่งออก การลบข้อมูลจะลบคีย์": "The downloaded file contains health information you provided and should be stored securely. Internal points and prototype rule weights are excluded. Deleting data removes the key",
+  "ออกจากเบราว์เซอร์นี้เท่านั้น": "from this browser only",
+  "ข้อมูลต้นแบบอยู่บนอุปกรณ์นี้": "Prototype data stays on this device"
 });
 
 const EN_TRANSLATION_KEYS = Object.keys(EN_TRANSLATIONS).sort((a, b) => b.length - a.length);

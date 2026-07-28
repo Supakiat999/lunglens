@@ -50,6 +50,9 @@ Status legend:
 - ✅ v0.4 adds a labelled Open-Meteo/CAMS fallback, freshness/error states, and sources
 - ✅ v0.4 completes all 12 bilingual education topics with authoritative references,
   content versions, review status, reading times, and search
+- ✅ v0.5 embeds current province pollution in results and the PM2.5 article, connects
+  factor explanations to sourced education, adds connection recovery and remaining-question
+  counts, documents device-only data flow, and removes internal points from confirmed exports
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -131,7 +134,7 @@ Status legend:
 - [ ] 🔜 Explain why location data is requested before the user enters it.
 - [ ] 🔜 Add an explicit “I do not know” path for questions where uncertainty is common.
 - [ ] 🔜 Review every exclusive option and conditional step with real users.
-- [ ] 🔜 Add a clear progress estimate and remaining-question count.
+- [x] ✅ Add a clear progress estimate and remaining-question count.
 - [ ] 🟡 Allow users to return to the previous question without losing conditional answers.
 - [ ] 🟡 Add a compact answer summary when resuming an unfinished assessment.
 - [ ] 🟡 Add a safe timeout/session-expiry explanation for shared devices.
@@ -151,8 +154,11 @@ Status legend:
 - [ ] 🩺 Confirm no result implies cancer probability, diagnosis, or automatic LDCT eligibility.
 - [ ] 🩺 Confirm symptoms remain separate from the risk calculation.
 - [ ] 🔜 Add a visible model/rule version and content-review date to exported results.
+- [x] ✅ Export the model version and an explicit `pending_medical_review` status with
+  a null review date until a real reviewer signs off.
 - [ ] 🔜 Make “not assessed” factors easier to understand without causing alarm.
-- [ ] 🔜 Add a clearer path from each factor to relevant education and clinic information.
+- [x] ✅ Add a clearer path from each factor to relevant sourced education, questions
+  for a healthcare professional, and the explicitly demonstrational clinic route.
 - [ ] 🔜 Add a user-friendly explanation of why a result can change after new information.
 - [ ] 🟡 Improve the factor modal layout on very small screens.
 - [ ] 🟡 Add print and screen-reader checks for result explanations.
@@ -169,6 +175,8 @@ Status legend:
 - [x] ✅ Add search across article titles, summaries, and topics.
 - [x] ✅ Remove outline placeholders now that every topic has an article.
 - [ ] 🔜 Link assessment factors to the most relevant reviewed articles.
+- [x] ✅ Link assessment factors to the most relevant sourced drafts with a visible
+  pending-medical-review label; retain the item above until clinical review is complete.
 - [ ] 🔜 Add a “last medically reviewed” field to each complete article.
 - [x] ✅ Add reading-time estimates.
 - [ ] 🟡 Add font-size, line-height, and long-article readability testing.
@@ -299,8 +307,11 @@ Status legend:
 - [ ] 🩺 Define an adverse-event or unsafe-content reporting process.
 - [ ] 🩺 Complete a privacy/security impact assessment before a real pilot.
 - [ ] 🔜 Add version numbers and effective dates to consent and privacy documents.
+- [x] ✅ Add a version and update date to the prototype privacy draft; production
+  effective dates remain pending legal approval.
 - [ ] 🔜 Add a real privacy/support contact instead of prototype placeholders.
-- [ ] 🔜 Document which data stays only on the device and which data leaves it.
+- [x] ✅ Document which current prototype data stays only on the device and which
+  limited requests leave it.
 - [ ] 🔜 Confirm analytics never collect assessment answers or identifiable health information.
 
 ## 12 — Accessibility and inclusive design
@@ -321,7 +332,7 @@ Status legend:
 
 ## 13 — Reliability, performance, and offline behavior
 
-- [ ] 🔜 Add a visible offline/unstable-connection state and retry controls.
+- [x] ✅ Add a visible offline/unstable-connection state and retry controls.
 - [ ] 🔜 Prevent data loss when the browser or LIFF view closes unexpectedly.
 - [x] ✅ Add safe cache-busting/versioning so users do not receive stale JavaScript.
 - [ ] 🔜 Define behavior when local storage is disabled, full, corrupted, or cleared.
@@ -332,7 +343,7 @@ Status legend:
 - [ ] 🟡 Consider a service worker only after medical-content update behavior is safe.
 - [ ] 🟡 Add non-sensitive error monitoring with source maps protected appropriately.
 - [ ] 🟡 Add a deployment smoke test for the public URL and six LIFF routes.
-- [ ] 🟡 Add a visible application version for troubleshooting.
+- [x] ✅ Add a visible application version for troubleshooting.
 
 ## 14 — Automated and manual testing
 
@@ -347,6 +358,8 @@ Status legend:
 - [ ] 🔜 Add end-to-end tests for consent, urgent symptoms, result modals, clinics,
   referrals, profile, export, delete, reminders, big-text mode, and deep links.
 - [ ] 🔜 Add automated checks that health results never appear in LINE share previews.
+- [x] ✅ Add automated checks that health results never appear in LINE invitation copy;
+  actual native preview verification remains part of the real-phone test.
 - [ ] 🔜 Add automated accessibility scans plus manual screen-reader testing.
 - [ ] 🔜 Add visual regression tests at narrow phone, standard phone, tablet, and desktop sizes.
 - [ ] 🔜 Add cross-browser tests for Chrome, Safari/iOS, Android WebView, and LINE WebView.

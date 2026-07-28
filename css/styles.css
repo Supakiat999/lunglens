@@ -89,6 +89,19 @@ header.app .spacer { flex: 1; }
   header.app #sizeBtn { grid-column: 2; grid-row: 1; }
   header.app #langBtn { grid-column: 3; grid-row: 1; }
 }
+.connection-status {
+  align-items: center; background: var(--warn-soft); border-bottom: 1px solid #f59e0b;
+  color: #78350f; display: flex; gap: 12px; justify-content: space-between;
+  margin: 0 auto; max-width: 100%; padding: 9px 16px;
+}
+.connection-status[hidden] { display: none; }
+.connection-status div { display: flex; flex-direction: column; min-width: 0; }
+.connection-status span { font-size: 13px; }
+.connection-status .btn { flex: 0 0 auto; width: auto; }
+@media (max-width: 480px) {
+  .connection-status { align-items: stretch; flex-direction: column; }
+  .connection-status .btn { width: 100%; }
+}
 
 /* ---------- layout ---------- */
 main { max-width: 640px; margin: 0 auto; padding: 16px; }
@@ -143,6 +156,7 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 /* ---------- assessment ---------- */
 .progress-wrap { margin-bottom: 14px; }
 .progress-txt { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.progress-remaining { color: var(--ink-3); font-size: 12px; margin-bottom: 5px; }
 .progress-bar { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .progress-bar > div { height: 100%; background: var(--brand); border-radius: 999px; transition: width .25s; }
 .section-tag { display: inline-block; background: var(--brand-soft); color: var(--brand-deep); font-size: 12px; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; }
@@ -219,6 +233,13 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .article-sources ul { margin: 6px 0 0 20px; }
 .article-sources a { color: var(--brand-deep); overflow-wrap: anywhere; }
 .edu-article-card[hidden] { display: none; }
+.plain-list { margin: 8px 0 12px 22px; }
+.plain-list li { margin-bottom: 7px; }
+code {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 5px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .9em;
+  padding: 1px 5px;
+}
 
 /* ---------- live air quality ---------- */
 .air-compact {

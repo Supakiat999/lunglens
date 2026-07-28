@@ -100,6 +100,12 @@ and passed as an environment variable at run time. **Never write it into a file.
   12 education topics with authoritative sources. Current pollution never enters the
   cancer-factor score or LDCT context. The hourly updater was manually verified in
   GitHub Actions on 2026-07-28 and published a validated 174-station snapshot.
+- **Prototype v0.5 connected context and privacy controls** — current province air data
+  appears directly in results and the PM2.5 article; factor explanations link to relevant
+  sourced drafts and healthcare-navigation demo routes; assessment progress includes a
+  remaining-question count; connection loss has a visible retry state; the privacy page
+  explains actual device/external data flow; and confirmed exports exclude internal rule
+  points and weights while retaining model and review status.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

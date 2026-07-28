@@ -45,6 +45,10 @@ for (const article of data.ARTICLES) {
       `Non-authoritative article source: ${article.slug} ${ref.url}`);
   }
 }
+for (const [code, slug] of Object.entries(data.FACTOR_EDUCATION_MAP)) {
+  assert.ok(data.RULES.some(rule => rule.code === code), `Education map references unknown rule: ${code}`);
+  assert.ok(data.ARTICLES.some(article => article.slug === slug), `Education map references unknown article: ${slug}`);
+}
 [
   "ข้ามไปยังเนื้อหาหลัก",
   "ตรวจทานคำตอบ",
@@ -59,6 +63,10 @@ for (const article of data.ARTICLES) {
   "คุณภาพอากาศในพื้นที่ของคุณวันนี้",
   "ดูค่าฝุ่นตามจังหวัดและสถานี",
   "ดูข้อมูล PM2.5 ล่าสุดในจังหวัดของคุณ",
+  "เตรียมคำถามสำหรับบุคลากรทางการแพทย์",
+  "ข้อมูลอยู่ที่ไหนในต้นแบบนี้",
+  "การส่งออกและลบข้อมูล",
+  "ดาวน์โหลดข้อมูลของฉัน",
   "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้"
 ].forEach(source => assert.ok(EN_TRANSLATIONS[source], `Missing public UI translation: ${source}`));
 

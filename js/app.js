@@ -77,6 +77,47 @@ function showStorageIssue() {
   setTimeout(() => toast(storageIssue), 0);
 }
 
+/* ---------------- connection recovery ---------------- */
+let lastKnownOnline = navigator.onLine !== false;
+
+function updateConnectionStatus({ announce = false } = {}) {
+  const banner = $("#connectionStatus");
+  if (!banner) return;
+  const online = navigator.onLine !== false;
+  if (online) {
+    banner.hidden = true;
+    banner.innerHTML = "";
+    if (announce && !lastKnownOnline) {
+      toast(uiText("กลับมาเชื่อมต่ออินเทอร์เน็ตแล้ว", "Internet connection restored"));
+    }
+  } else {
+    banner.hidden = false;
+    banner.setAttribute("role", "alert");
+    banner.innerHTML = `<div><b>${esc(uiText("ออฟไลน์อยู่", "You are offline"))}</b>
+      <span>${esc(uiText(
+        "คำตอบที่บันทึกไว้ยังอยู่บนอุปกรณ์ แต่ข้อมูลอากาศและลิงก์ภายนอกอาจไม่อัปเดต",
+        "Saved answers remain on this device, but air-quality data and external links may not update."
+      ))}</span></div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="retryConnection()">${esc(uiText("ลองเชื่อมต่ออีกครั้ง", "Try again"))}</button>`;
+  }
+  lastKnownOnline = online;
+}
+
+function retryConnection() {
+  updateConnectionStatus({ announce: true });
+  if (navigator.onLine === false) {
+    toast(uiText("ยังไม่พบการเชื่อมต่ออินเทอร์เน็ต", "Still offline"));
+    return;
+  }
+  route();
+}
+
+window.addEventListener("offline", () => updateConnectionStatus({ announce: true }));
+window.addEventListener("online", () => {
+  updateConnectionStatus({ announce: true });
+  if ((location.hash || "").startsWith("#air")) loadAirPage(selectedAirProvince);
+});
+
 /* ---------------- tiny helpers ---------------- */
 const $ = sel => document.querySelector(sel);
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
@@ -193,6 +234,7 @@ function applyLocale() {
     langBtn.textContent = lang === "th" ? "EN" : "ไทย";
     langBtn.setAttribute("aria-label", lang === "th" ? "เปลี่ยนภาษา" : "Switch to Thai");
   }
+  updateConnectionStatus();
   applyTextSize();
 }
 
@@ -433,7 +475,11 @@ function renderAssess() {
   const isSymptoms = step.type === "symptoms";
   view(`
   <div class="progress-wrap">
-    <div class="progress-txt"><span>ข้อ ${n} จาก ${total}</span><span>${esc(step.section)}</span></div>
+    <div class="progress-txt"><span>${esc(uiText(`ข้อ ${n} จาก ${total}`, `Question ${n} of ${total}`))}</span><span>${esc(step.section)}</span></div>
+    <div class="progress-remaining">${esc(uiText(
+      n === total ? "คำถามสุดท้าย" : `เหลืออีก ${total - n} คำถาม`,
+      n === total ? "Final question" : `${total - n} questions remaining`
+    ))}</div>
     <div class="progress-bar" role="progressbar" aria-label="ความคืบหน้าแบบประเมิน"
       aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}">
       <div style="width:${Math.round(n / total * 100)}%"></div></div>
@@ -731,7 +777,13 @@ function renderResult() {
 
   <div class="card">
     <h3>คุณภาพอากาศในพื้นที่ของคุณวันนี้</h3>
-    <p class="muted">ดูข้อมูล PM2.5 ล่าสุดจากสถานี Air4Thai แยกจากผลปัจจัยสุขภาพและเกณฑ์คัดกรองโดยสิ้นเชิง</p>
+    <p class="muted">ข้อมูลนี้ช่วยวางแผนกิจกรรมระยะสั้นเท่านั้น และแยกจากผลปัจจัยสุขภาพและเกณฑ์คัดกรองโดยสิ้นเชิง</p>
+    ${state.answers.PROVINCE ? `<div id="result-air-context" class="air-compact" role="status" aria-live="polite">
+      ${esc(uiText("กำลังโหลดข้อมูลคุณภาพอากาศล่าสุด…", "Loading current air-quality data…"))}
+    </div>` : `<p class="tiny">${esc(uiText(
+      "ยังไม่ได้เลือกจังหวัด เปิดหน้าคุณภาพอากาศเพื่อเลือกพื้นที่",
+      "No province is selected. Open the air-quality page to choose an area."
+    ))}</p>`}
     <a class="btn btn-secondary mt" href="#air">ดูค่าฝุ่นตามจังหวัดและสถานี</a>
   </div>
 
@@ -744,6 +796,7 @@ function renderResult() {
       <button class="btn btn-secondary btn-sm" onclick="toast('บันทึกผลไว้ใน “ข้อมูลของฉัน” แล้ว')">💾 บันทึกผล</button>
       <button class="btn btn-secondary btn-sm" onclick="shareCard()">📤 แชร์แบบปลอดภัย</button>
       <a class="btn btn-secondary btn-sm" href="#education">📚 เรียนรู้เพิ่มเติม</a>
+      <a class="btn btn-secondary btn-sm" href="#education=questions-for-clinician">💬 เตรียมคำถามสำหรับบุคลากรทางการแพทย์</a>
       ${needsProfessionalNext ? "" : `<a class="btn btn-secondary btn-sm" href="#clinics">ดูข้อมูลการหาบริการสุขภาพ</a>`}
       <button class="btn btn-ghost btn-sm" onclick="retake()">🔄 ทำแบบประเมินใหม่</button>
     </div>
@@ -751,14 +804,34 @@ function renderResult() {
 
   <p class="tiny center">ประเมินเมื่อ ${dt} · ${esc(r.model_version)} · ${esc(r.clinical_validation_status)}<br>
   แบบประเมินความเสี่ยงเบื้องต้น — ไม่ใช่การวินิจฉัย และต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง</p>`);
+  if (state.answers.PROVINCE) {
+    updateCompactAirContext("result-air-context", state.answers.PROVINCE);
+  }
 }
 
 function factorDetail(i) {
   track("factor_explanation_opened");
   const f = state.result.factors[i];
+  const articleSlug = FACTOR_EDUCATION_MAP[f.code];
+  const article = ARTICLES.find(item => item.slug === articleSlug);
   modal(`<h3>${esc(f.name)}</h3>
     <p class="muted"><b>เหตุใดจึงอาจเกี่ยวข้อง:</b> ${esc(f.explain)}</p>
     <p class="muted mt"><b>สิ่งที่ทำต่อได้:</b> ${esc(f.next)}</p>
+    ${article ? `<div class="q-note mt"><b>${esc(uiText("อ่านต่อ", "Learn more"))}:</b>
+      ${esc(article.title)}<br>
+      <span class="tiny">${esc(uiText(
+        "บทความมีแหล่งอ้างอิง แต่ยังรอการทบทวนโดยแพทย์",
+        "This sourced article is still awaiting medical review."
+      ))}</span></div>
+      <a class="btn btn-secondary mt" href="#education=${esc(article.slug)}" onclick="closeModal()">${esc(uiText("เปิดบทความที่เกี่ยวข้อง", "Open related article"))}</a>` : ""}
+    <a class="btn btn-ghost mt" href="#education=questions-for-clinician" onclick="closeModal()">${esc(uiText(
+      "ดูคำถามที่ควรถามบุคลากรทางการแพทย์",
+      "Questions to ask a healthcare professional"
+    ))}</a>
+    <a class="btn btn-ghost mt" href="#clinics" onclick="closeModal()">${esc(uiText(
+      "ดูตัวอย่างช่องทางบริการสุขภาพ",
+      "View healthcare-navigation demo"
+    ))}</a>
     <p class="tiny mt">รหัสกฎ: ${esc(f.code)} (v${f.version}) · สถานะหลักฐาน: ${esc(f.evidence)}<br>กฎต้นแบบ — ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง</p>`);
 }
 
@@ -782,10 +855,7 @@ function shareCard() {
 }
 function shareInvite() {
   const url = location.origin + location.pathname;
-  const text = state.lang === "en"
-    ? `I reviewed my lung-health risk factors 🫁 You can do it in just 2–3 minutes too — review your risk factors at: ${url}`
-    : `ฉันเช็กปัจจัยเสี่ยงสุขภาพปอดแล้ว 🫁 คุณก็ใช้เวลาเพียง 2–3 นาทีได้เช่นกัน — เช็กความเสี่ยงเบื้องต้นได้ที่: ${url}`;
-  liffShare(text);
+  liffShare(buildShareInvite(state.lang, url));
 }
 function confirmDetailShare() {
   modal(`<h3>ยืนยันการสร้างลิงก์ผลโดยละเอียด</h3>
@@ -954,25 +1024,38 @@ function renderAirResults(data) {
     </div>`;
 }
 
-async function updateAssessmentAirContext(province) {
-  const target = $("#assessment-air-context");
+async function updateCompactAirContext(targetId, province, guard = () => true) {
+  const target = $(`#${targetId}`);
   if (!target) return;
   try {
     const data = await loadAirQualityForProvince(province);
-    if (!target.isConnected || state.answers.PROVINCE !== province) return;
+    if (!target.isConnected || !guard()) return;
     const summary = data.summary;
     const value = data.kind === "official" ? summary.medianPm25 : data.stations[0]?.pm25;
-    target.innerHTML = `<b>${esc(uiText("ข้อมูลอากาศวันนี้", "Today's air-quality context"))}</b><br>
-      ${esc(provinceDisplay(province))}: PM2.5 ${formatAirNumber(value)} µg/m³ ·
-      ${esc(data.kind === "official"
-        ? uiText(`ค่ากลางจาก ${summary.reportingCount} สถานี`, `median across ${summary.reportingCount} reporting stations`)
-        : uiText("ค่าประมาณจากแบบจำลอง", "model estimate"))}<br>
+    const station = data.stations[0];
+    const band = data.kind === "official"
+      ? thaiPm25Band(value, state.lang)
+      : stationBand(station, data.kind, state.lang);
+    const sourceDescription = data.kind === "official"
+      ? uiText(`ค่ากลางจาก ${summary.reportingCount} สถานี Air4Thai`, `median across ${summary.reportingCount} Air4Thai stations`)
+      : uiText("ค่าประมาณจากแบบจำลอง Open-Meteo/CAMS", "Open-Meteo/CAMS model estimate");
+    target.innerHTML = `<b>${esc(uiText("ข้อมูลอากาศวันนี้", "Today's air-quality context"))} — ${esc(provinceDisplay(province))}</b><br>
+      PM2.5 ${formatAirNumber(value)} µg/m³${band ? ` · ${esc(band.label)}` : ""}<br>
+      <span class="tiny">${esc(sourceDescription)}${data.stale ? ` · ${esc(uiText("ข้อมูลอาจล่าช้า", "data may be delayed"))}` : ""}</span><br>
       <a href="#air">${esc(uiText("ดูรายสถานีและคำแนะนำ", "View stations and guidance"))}</a>`;
   } catch (error) {
     if (!target.isConnected) return;
     target.innerHTML = `${esc(uiText("ยังโหลดข้อมูลอากาศไม่ได้", "Air-quality data is currently unavailable"))} ·
       <a href="#air">${esc(uiText("ลองอีกครั้ง", "Try again"))}</a>`;
   }
+}
+
+function updateAssessmentAirContext(province) {
+  return updateCompactAirContext(
+    "assessment-air-context",
+    province,
+    () => state.answers.PROVINCE === province
+  );
 }
 
 /* =====================================================================
@@ -1035,6 +1118,13 @@ function renderArticle(slug) {
     <p class="tiny">อ่าน ${a.minutes} นาที · สถานะหลักฐาน: ${esc(a.evidence)} · ${esc(a.reviewed)}<br>
       ${esc(uiText("เวอร์ชันเนื้อหา", "Content version"))}: ${esc(a.version)} ·
       ${esc(uiText("อัปเดต", "Updated"))}: ${esc(formatDate(a.updated))}</p>
+    ${a.slug === "pm25" ? `<div id="article-air-context" class="air-compact mt" role="status" aria-live="polite">
+      ${esc(uiText("กำลังโหลดข้อมูลคุณภาพอากาศล่าสุด…", "Loading current air-quality data…"))}
+    </div>
+    <p class="tiny">${esc(uiText(
+      "ค่าปัจจุบันช่วยวางแผนกิจกรรมวันนี้ ไม่สามารถบอกการสัมผัสสะสมหรือความเสี่ยงมะเร็งของบุคคล",
+      "A current reading can guide today's activities; it cannot show cumulative exposure or an individual's cancer risk."
+    ))}</p>` : ""}
     ${a.body.map(p => `<p class="mt" style="font-size:15px">${esc(p)}</p>`).join("")}
     <div class="myth">
       <div class="m">❌ <b>ความเชื่อ:</b> ${esc(a.myth.m)}</div>
@@ -1051,6 +1141,9 @@ function renderArticle(slug) {
     <a class="btn btn-secondary mt" href="#education">← บทความทั้งหมด</a>
     <a class="btn btn-primary mt" href="#begin">ประเมินความเสี่ยง 2–3 นาที</a>
   </div>`);
+  if (a.slug === "pm25") {
+    updateCompactAirContext("article-air-context", state.answers.PROVINCE || selectedAirProvince);
+  }
 }
 
 /* =====================================================================
@@ -1185,7 +1278,7 @@ function renderProfile() {
     </label>
     ${state.reminders.enabled ? `
     <div class="row mt">
-      <div class="field"><label>เวลา</label><input type="text" value="${esc(state.reminders.time)}" onchange="state.reminders.time=this.value;save()"></div>
+      <div class="field"><label for="reminder-time">เวลา</label><input id="reminder-time" type="time" value="${esc(state.reminders.time)}" onchange="state.reminders.time=this.value;save()"></div>
       <div class="field"><label>ความถี่</label><select onchange="state.reminders.freq=this.value;save()">
         ${["รายเดือน","ราย 3 เดือน","รายปี (ประเมินซ้ำ)"].map(o => `<option value="${esc(o)}" ${state.reminders.freq === o ? "selected" : ""}>${o}</option>`).join("")}
       </select></div>
@@ -1210,6 +1303,8 @@ function renderProfile() {
       <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇️ ดาวน์โหลดข้อมูลของฉัน</button>
       <button class="btn btn-ghost btn-sm" onclick="confirmDelete()">🗑 ลบข้อมูลทั้งหมด</button>
     </div>
+    <p class="tiny mt">${esc(uiText("เวอร์ชันแอป", "App version"))}: ${esc(APP_VERSION)} ·
+      ${esc(uiText("ข้อมูลต้นแบบอยู่บนอุปกรณ์นี้", "Prototype data stays on this device"))}</p>
     <p class="tiny mt">ติดต่อเจ้าหน้าที่คุ้มครองข้อมูล: privacy@lunglens.example (ตัวอย่าง)</p>
   </div>`);
 }
@@ -1221,10 +1316,31 @@ function toggleRemind(on) {
 }
 function exportData() {
   track("data_export_requested");
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  modal(`<h3>${esc(uiText("ดาวน์โหลดข้อมูลของฉัน", "Download my data"))}</h3>
+    <p class="muted">${esc(uiText(
+      "ไฟล์นี้มีคำตอบสุขภาพที่คุณให้ ผลปัจจัย และคำขอจำลอง เก็บไฟล์ไว้ในที่ปลอดภัยและอย่าส่งให้บุคคลที่ไม่ไว้วางใจ",
+      "This file contains your self-reported health answers, factor result and demo requests. Store it securely and do not send it to anyone you do not trust."
+    ))}</p>
+    <p class="tiny">${esc(uiText(
+      "ระบบจะไม่ใส่คะแนนภายในหรือน้ำหนักของกฎต้นแบบลงในไฟล์",
+      "Internal prototype points and rule weights are excluded from the file."
+    ))}</p>
+    <button class="btn btn-primary mt" onclick="performExport()">${esc(uiText("ยืนยันและดาวน์โหลด", "Confirm and download"))}</button>`);
+}
+
+function performExport() {
+  const exported = buildPortableExport(state, {
+    appVersion: APP_VERSION,
+    storageKey: STORE_KEY
+  });
+  const blob = new Blob([JSON.stringify(exported, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = "lunglens-my-data.json"; a.click();
-  URL.revokeObjectURL(a.href);
+  const objectUrl = URL.createObjectURL(blob);
+  a.href = objectUrl;
+  a.download = `lunglens-my-data-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  closeModal();
   toast("ดาวน์โหลดข้อมูลแล้ว");
 }
 function confirmDelete() {
@@ -1374,14 +1490,25 @@ function renderStory() {
 function renderPrivacy() {
   view(`<div class="card">
     <h2>นโยบายความเป็นส่วนตัว</h2>
-    <p class="q-note">ฉบับร่างสำหรับต้นแบบ ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง</p>
+    <p class="q-note">ฉบับร่าง privacy_prototype_v2 · อัปเดต 28 กรกฎาคม 2569 · ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง</p>
     <h3>หลักการ</h3>
     <p class="muted">เก็บข้อมูลเท่าที่จำเป็น · แยกข้อจำเป็นออกจากข้อเลือกได้ · อธิบายเหตุผลของทุกคำถามอ่อนไหว · ไม่ขายข้อมูล · ไม่ใช้ข้อมูลความเสี่ยงสุขภาพเพื่อโฆษณา · ไม่แสดงข้อมูลสุขภาพในตัวอย่างการแจ้งเตือน LINE · ผู้ใช้ลบและแก้ไขข้อมูลได้</p>
+    <h3>ข้อมูลอยู่ที่ไหนในต้นแบบนี้</h3>
+    <ul class="plain-list muted">
+      <li>คำตอบ ผล ประวัติ คำขอจำลอง และการตั้งค่าแจ้งเตือนบันทึกในเบราว์เซอร์บนอุปกรณ์นี้ด้วยคีย์ <code>${esc(STORE_KEY)}</code></li>
+      <li>ไม่มีเซิร์ฟเวอร์ LungLens รับคำตอบสุขภาพ และไม่มีโรงพยาบาลหรือเจ้าหน้าที่ได้รับคำขอจำลอง</li>
+      <li>หน้าอากาศส่งเฉพาะจังหวัดที่เลือกไปยังแหล่งข้อมูลสาธารณะเมื่อจำเป็น ไม่ส่งคำตอบ ผล หรืออาการ</li>
+      <li>LINE อาจให้ข้อมูลโปรไฟล์พื้นฐานเมื่อผู้ใช้เลือกเข้าสู่ระบบใน LIFF แต่เว็บไซต์สาธารณะใช้ได้โดยไม่เข้าสู่ระบบ LINE</li>
+      <li>บันทึกเหตุการณ์การใช้งานในต้นแบบอยู่บนอุปกรณ์และมีเพียงชื่อเหตุการณ์กับเวลา ไม่มีระบบวิเคราะห์ภายนอก</li>
+    </ul>
+    <h3>การส่งออกและลบข้อมูล</h3>
+    <p class="muted">ไฟล์ดาวน์โหลดมีข้อมูลสุขภาพที่คุณให้ จึงควรเก็บอย่างปลอดภัย คะแนนภายในและน้ำหนักกฎต้นแบบจะไม่ถูกส่งออก การลบข้อมูลจะลบคีย์ ${esc(STORE_KEY)} ออกจากเบราว์เซอร์นี้เท่านั้น</p>
     <h3>เอกสารที่เกี่ยวข้อง (โครงร่าง)</h3>
     <div class="opts">
       ${["ข้อกำหนดการใช้งาน","ข้อจำกัดความรับผิดทางการแพทย์","นโยบายเก็บรักษาข้อมูล","ความยินยอมเพื่อการวิจัย","ถ้อยแถลงการเข้าถึง (Accessibility)"].map(d => `
       <button class="opt" onclick="protoPopup('${d}','เอกสารฉบับร่าง — ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง')">${d}</button>`).join("")}
     </div>
+    <p class="tiny mt">${esc(uiText("เวอร์ชันแอป", "App version"))}: ${esc(APP_VERSION)}</p>
     <a class="btn btn-ghost mt" href="#home">← กลับหน้าแรก</a>
   </div>`);
 }

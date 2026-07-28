@@ -51,15 +51,17 @@ Key safety invariants baked into the code:
 ## Current prototype (this folder)
 
 **Zero-dependency static SPA** — vanilla JS + CSS, hash-routed, state in `localStorage`
-(key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), works offline after load,
-and is deliberately structured so each layer maps 1:1 onto the target production stack.
+(key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), keeps already loaded
+local journeys usable during a connection loss with a visible offline warning, and is
+deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.4.0`**. It preserves the v0.3 screening-safety
-correction and adds all 77 provinces, a live Air4Thai station-data screen, an explicitly
-labelled Open-Meteo/CAMS fallback for provinces without a reporting station, and 12
-sourced bilingual education articles. Pollution readings are short-term exposure
-context only: they never enter the factor score or LDCT screening context. The engine
-remains versioned as `prototype_rules_v2`.
+Current app version: **`prototype_0.5.0`**. It preserves the v0.3 screening-safety
+correction and v0.4 live-data foundation, then adds embedded province pollution context
+to results and the PM2.5 article, factor-to-education navigation, remaining-question
+counts, connection recovery, an explicit device-data explanation, and a privacy-safe
+portable export that excludes internal rule points. Pollution readings remain
+short-term exposure context only: they never enter the factor band or LDCT screening
+context. The engine remains versioned as `prototype_rules_v2`.
 
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
@@ -73,6 +75,7 @@ lunglens/
 │                               freshness handling, and model fallback
 ├── js/validation.js            Completeness/range checks only; no clinical scoring
 ├── js/engine.js                Explainable rule engine + symptom pathway ← "risk service"
+├── js/privacy.js               Portable export + privacy-safe LINE invitation helpers
 ├── js/app.js                   Router + every screen + local state       ← "frontend"
 ├── js/liff.js                  LINE layer: init, login, profile, share, ?p= deep links
 ├── js/liff-config.js           LIFF_ID (public by design — safe to commit)
@@ -119,18 +122,22 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
 - **#review** — bilingual answer summary with per-question editing before result creation
 - **#symptom** — symptom pathway interstitial (urgent = red + 1669 guidance; never diagnostic)
 - **#result** — band, separate LDCT screening context, "ทำไมจึงได้ผลนี้" factor cards
-  (tap → why/next/evidence/rule code), not-assessed list, privacy-safe sharing, retake
+  (tap → why/next/evidence/related sourced education), embedded local air context,
+  not-assessed list, privacy-safe sharing, retake
 - **#air** — current province/station PM2.5, PM10 and AQI from Air4Thai; model fallback,
   timestamps, freshness warning, health guidance, source attribution and limitations
 - **#education** — 12 sourced bilingual articles, search, myth/fact explanations,
-  content versions, dates, authority links and explicit medical-review status
+  content versions, dates, authority links, explicit medical-review status, and a live
+  selected-province reading inside the PM2.5 topic
 - **#clinics** — 6 demo facilities, filters (province / LDCT / public), CTAs
 - **#referral** — referral request form (consent-gated) + status timeline with demo advance button
-- **#profile** — history, reminder prefs, consent withdrawal, data export (JSON), full delete
+- **#profile** — history, reminder prefs, consent withdrawal, confirmed portable JSON
+  export without internal scoring points, app version, full delete
 - **#provider** — role-based demo login (Navigator / Clinical reviewer / Programme manager),
   case list + detail, referrals, versioned rules table, funnel + distribution analytics
 - **#demo-story** — 5-slide presentation mode with next/back/reset
-- **#privacy** — placeholder legal pages, all marked "ฉบับร่างสำหรับต้นแบบ"
+- **#privacy** — versioned prototype draft plus a factual map of device-only storage,
+  public air-data requests, optional LIFF profile access, export and deletion
 
 ### Demo personas (one tap on #home)
 

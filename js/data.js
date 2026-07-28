@@ -5,7 +5,7 @@
    ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
    ===================================================================== */
 
-const APP_VERSION = "prototype_0.4.0";
+const APP_VERSION = "prototype_0.5.0";
 const ENGINE_VERSION = "prototype_rules_v2";
 const STORE_KEY = "lunglens-v1";
 
@@ -660,6 +660,26 @@ const ARTICLES = [
   }
 ];
 
+/* Education links explain a reported factor without changing its rule, weight,
+   band, or screening context. All linked articles remain sourced drafts until
+   their review status explicitly changes. */
+const FACTOR_EDUCATION_MAP = Object.freeze({
+  SMOKER_FORMER: "risk-factors",
+  SMOKER_CURRENT: "risk-factors",
+  PACK_YEARS_20_PLUS: "ldct",
+  FIRST_DEGREE_FAMILY_HISTORY: "never-smoker",
+  FAMILY_HISTORY_MULTIPLE: "never-smoker",
+  PERSONAL_CANCER_HISTORY: "questions-for-clinician",
+  TB_HISTORY: "questions-for-clinician",
+  CHRONIC_LUNG_DISEASE: "questions-for-clinician",
+  LONG_TERM_SECONDHAND_SMOKE: "secondhand-smoke",
+  SECONDHAND_SMOKE_SOME: "secondhand-smoke",
+  HIGH_RISK_OCCUPATIONAL: "occupational-risk",
+  LONG_TERM_OCCUPATIONAL_DUST: "occupational-risk",
+  OCCUPATIONAL_DUST_SOME: "occupational-risk",
+  HOUSEHOLD_BIOMASS_POOR_VENT: "reduce-exposure"
+});
+
 /* ---------------- Demo personas (quick-fill) ---------------- */
 const PERSONAS = [
   {
@@ -740,7 +760,7 @@ const PROVIDER_ROLES = [
 if (typeof module !== "undefined") {
   module.exports = {
     PROVINCE_META, PROVINCES, STEPS, RULES, BANDS, SCREENING_CONTEXTS, FACILITIES,
-    EDU_CATEGORIES, ARTICLES, PERSONAS, packYears,
+    EDU_CATEGORIES, ARTICLES, FACTOR_EDUCATION_MAP, PERSONAS, packYears,
     APP_VERSION, ENGINE_VERSION, STORE_KEY
   };
 }
