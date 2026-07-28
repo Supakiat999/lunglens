@@ -17,14 +17,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out live-data branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: air-quality-data
           fetch-depth: 1
 
       - name: Fetch and validate official station data
         run: |
-          curl --fail --silent --show-error --retry 3 --proto '=https' --tlsv1.2 \
+          # Air4Thai currently omits its Let's Encrypt YR1 chain. Download that
+          # chain from Let's Encrypt over normally verified HTTPS, append it to
+          # the runner trust bundle, then keep full verification enabled.
+          cp /etc/ssl/certs/ca-certificates.crt "$RUNNER_TEMP/air4thai-ca.pem"
+          curl --fail --silent --show-error --proto '=https' --tlsv1.2 \
+            'https://letsencrypt.org/certs/gen-y/int-yr1.pem' \
+            >> "$RUNNER_TEMP/air4thai-ca.pem"
+          curl --fail --silent --show-error --proto '=https' --tlsv1.2 \
+            'https://letsencrypt.org/certs/gen-y/root-yr-by-x1.pem' \
+            >> "$RUNNER_TEMP/air4thai-ca.pem"
+          curl --fail --silent --show-error --retry 3 --max-time 45 --max-filesize 5000000 \
+            --proto '=https' --tlsv1.2 --cacert "$RUNNER_TEMP/air4thai-ca.pem" \
             'https://air4thai.pcd.go.th/services/getNewAQI_JSON.php' \
             --output "$RUNNER_TEMP/air4thai.json"
           AIR4THAI_INPUT="$RUNNER_TEMP/air4thai.json" node scripts/update-air-quality.mjs
