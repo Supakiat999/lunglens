@@ -98,7 +98,8 @@ and passed as an environment variable at run time. **Never write it into a file.
 - **Prototype v0.4 live air and education** — all 77 provinces, current Air4Thai station
   PM2.5/PM10/AQI, a labelled CAMS model fallback, freshness and failure states, and all
   12 education topics with authoritative sources. Current pollution never enters the
-  cancer-factor score or LDCT context.
+  cancer-factor score or LDCT context. The hourly updater was manually verified in
+  GitHub Actions on 2026-07-28 and published a validated 174-station snapshot.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

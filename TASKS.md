@@ -170,9 +170,9 @@ Status legend:
 - [x] ✅ Remove outline placeholders now that every topic has an article.
 - [ ] 🔜 Link assessment factors to the most relevant reviewed articles.
 - [ ] 🔜 Add a “last medically reviewed” field to each complete article.
-- [ ] 🟡 Add reading-time estimates.
+- [x] ✅ Add reading-time estimates.
 - [ ] 🟡 Add font-size, line-height, and long-article readability testing.
-- [ ] 🟡 Add a source list that remains understandable to non-specialists.
+- [x] ✅ Add a source list that remains understandable to non-specialists.
 - [ ] 🟡 Add simple illustrations only after their medical meaning is reviewed.
 - [ ] 🟡 Consider audio or read-aloud support for users with lower literacy.
 
@@ -183,6 +183,8 @@ Status legend:
   observation time, source, and limitations.
 - [x] ✅ Keep a static validated snapshot so a temporary live-data failure does not break the app.
 - [x] ✅ Add an hourly GitHub Actions updater on the `air-quality-data` branch.
+- [x] ✅ Verify the updater in GitHub Actions and confirm that it publishes a fresh,
+  validated 174-station snapshot with TLS certificate verification enabled.
 - [x] ✅ Add a clearly labelled Open-Meteo/CAMS model fallback when no station reports PM2.5.
 - [x] ✅ Add tests for Thai PM2.5 bands, station/province matching, official snapshots,
   model fallback, and unchanged screening safety.
