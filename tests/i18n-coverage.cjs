@@ -42,6 +42,7 @@ assert.ok(I18N_UI.en.language_changed_en);
   "ความคืบหน้าแบบประเมิน",
   "เวอร์ชัน",
   "บันทึกประวัติการประเมิน",
+  "ส่งคำขอแล้ว",
   "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้"
 ].forEach(source => assert.ok(EN_TRANSLATIONS[source], `Missing public UI translation: ${source}`));
 

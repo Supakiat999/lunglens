@@ -542,6 +542,7 @@ const EN_TRANSLATIONS = Object.freeze({
   "ยังไม่มีคำขอ": "No requests yet",
   "ค้นหาสถานพยาบาล": "Find clinics",
   "คำขอ #": "Request #",
+  "ส่งคำขอแล้ว": "Request submitted",
   "เจ้าหน้าที่กำลังตรวจสอบ": "Staff review",
   "มีข้อมูลนัดหมาย": "Appointment information available",
   "เสร็จสิ้น": "Completed",
