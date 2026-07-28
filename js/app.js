@@ -500,12 +500,6 @@ function renderAssess() {
   if (step.type === "province" && a.PROVINCE) updateAssessmentAirContext(a.PROVINCE);
 }
 
-function askGeo() {
-  modal(`<h3>ขอใช้ตำแหน่งปัจจุบัน</h3>
-    <p class="muted">ใช้เพื่อจับคู่ข้อมูลพื้นที่และบริการใกล้คุณเท่านั้น ไม่บังคับ และไม่กระทบการทำแบบประเมิน</p>
-    <button class="btn btn-secondary mt" onclick="closeModal(); toast('โหมดต้นแบบ: ใช้จังหวัดที่เลือกแทนตำแหน่งจริง')">อนุญาต (จำลอง)</button>`);
-}
-
 function answerChoice(id, v) {
   state.answers[id] = v;
   pruneInactiveAnswers(state.answers);
@@ -871,6 +865,8 @@ let selectedAirStation = "";
 let latestAirData = null;
 let airRequestId = 0;
 let airForecastRequestId = 0;
+let airUserLocation = null; // session memory only; never saved to lunglens-v1
+let airLocationStatus = "idle";
 
 function formatAirNumber(value) {
   if (!Number.isFinite(Number(value))) return "—";
@@ -889,6 +885,120 @@ function airStationArea(station) {
   return state.lang === "en"
     ? (station.area_en || station.area_th)
     : (station.area_th || station.area_en);
+}
+
+function airStationsInDisplayOrder(data) {
+  return data?.kind === "official" && airUserLocation
+    ? sortStationsByDistance(data.stations, airUserLocation)
+    : (data?.stations || []);
+}
+
+function formatStationDistance(station) {
+  const distance = airUserLocation ? stationDistanceKm(station, airUserLocation) : null;
+  return Number.isFinite(distance) ? formatAirNumber(distance) : null;
+}
+
+function requestAirLocation() {
+  modal(`<h3>📍 ${esc(uiText("ค้นหาสถานีใกล้ตำแหน่งของฉัน", "Find the nearest station"))}</h3>
+    <p class="muted">${esc(uiText(
+      "เบราว์เซอร์จะถามสิทธิ์ตำแหน่งหลังจากคุณกดดำเนินการต่อ พิกัดใช้เฉพาะในหน่วยความจำของหน้านี้เพื่อเรียงสถานีตามระยะเส้นตรง ไม่บันทึก ไม่ส่งไปยัง LungLens และไม่กระทบผลแบบประเมิน",
+      "Your browser will request location permission after you continue. Coordinates are used only in this page's memory to sort stations by straight-line distance. They are not saved, sent to LungLens, or used in the assessment result."
+    ))}</p>
+    <p class="tiny">${esc(uiText(
+      "คุณปฏิเสธสิทธิ์ได้และยังเลือกสถานีเองได้ตามปกติ",
+      "You can deny permission and continue choosing stations manually."
+    ))}</p>
+    <button class="btn btn-primary mt" onclick="useAirLocation()">${esc(uiText("ดำเนินการต่อ", "Continue"))}</button>`);
+}
+
+function useAirLocation() {
+  closeModal();
+  if (!navigator.geolocation) {
+    airLocationStatus = "unavailable";
+    refreshAirLocationControls();
+    if (latestAirData) renderAirResults(latestAirData);
+    toast(uiText("อุปกรณ์นี้ไม่รองรับการระบุตำแหน่ง", "Location is not available on this device"));
+    return;
+  }
+  airLocationStatus = "requesting";
+  refreshAirLocationControls();
+  if (latestAirData) renderAirResults(latestAirData);
+  navigator.geolocation.getCurrentPosition(position => {
+    const latitude = Number(position?.coords?.latitude);
+    const longitude = Number(position?.coords?.longitude);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      airLocationStatus = "unavailable";
+      if (latestAirData) renderAirResults(latestAirData);
+      toast(uiText("ไม่สามารถอ่านตำแหน่งได้", "The location could not be read"));
+      return;
+    }
+    airUserLocation = {
+      latitude,
+      longitude,
+      accuracy: Number.isFinite(Number(position.coords.accuracy)) ? Number(position.coords.accuracy) : null
+    };
+    airLocationStatus = "ready";
+    refreshAirLocationControls();
+    if (latestAirData) {
+      const nearest = airStationsInDisplayOrder(latestAirData).find(station => Number.isFinite(station.pm25));
+      if (nearest) selectedAirStation = nearest.station_id;
+      renderAirResults(latestAirData);
+    }
+    toast(uiText("เรียงสถานีใกล้ตำแหน่งแล้ว", "Stations are sorted by distance"));
+  }, error => {
+    airUserLocation = null;
+    airLocationStatus = error?.code === 1 ? "denied" : error?.code === 3 ? "timeout" : "unavailable";
+    refreshAirLocationControls();
+    if (latestAirData) renderAirResults(latestAirData);
+    const message = airLocationStatus === "denied"
+      ? uiText("ไม่ได้รับสิทธิ์ตำแหน่ง คุณยังเลือกสถานีเองได้", "Location permission was denied. You can still choose a station manually.")
+      : airLocationStatus === "timeout"
+        ? uiText("การขอตำแหน่งใช้เวลานานเกินไป โปรดลองใหม่", "The location request timed out. Try again.")
+        : uiText("ยังค้นหาตำแหน่งไม่ได้ โปรดเลือกสถานีเอง", "Your location is unavailable. Choose a station manually.");
+    toast(message);
+  }, {
+    enableHighAccuracy: false,
+    timeout: 10000,
+    maximumAge: 5 * 60 * 1000
+  });
+}
+
+function clearAirLocation() {
+  airUserLocation = null;
+  airLocationStatus = "idle";
+  refreshAirLocationControls();
+  if (latestAirData) renderAirResults(latestAirData);
+  toast(uiText("ล้างตำแหน่งจากหน่วยความจำแล้ว", "Location cleared from page memory"));
+}
+
+function airLocationControlsMarkup() {
+  return `<div class="air-location-control">
+      <button class="btn btn-secondary btn-sm" onclick="requestAirLocation()" ${airLocationStatus === "requesting" ? "disabled" : ""}>
+        📍 ${esc(airLocationStatus === "requesting"
+          ? uiText("กำลังขอตำแหน่ง…", "Requesting location…")
+          : airUserLocation
+            ? uiText("เรียงสถานีใหม่", "Sort stations again")
+            : uiText("ค้นหาสถานีใกล้ฉัน", "Find nearest station"))}
+      </button>
+      ${airUserLocation ? `<button class="btn btn-ghost btn-sm" onclick="clearAirLocation()">${esc(uiText("ล้างตำแหน่ง", "Clear location"))}</button>` : ""}
+    </div>
+    <p class="tiny mt">${esc(airUserLocation
+      ? uiText("สถานีในจังหวัดที่เลือกเรียงตามระยะเส้นตรงจากตำแหน่งของคุณ พิกัดอยู่ในหน่วยความจำของหน้านี้เท่านั้น",
+        "Stations in the selected province are sorted by straight-line distance. Coordinates remain only in this page's memory.")
+      : airLocationStatus === "denied"
+        ? uiText("ไม่ได้รับสิทธิ์ตำแหน่ง คุณยังเลือกสถานีเองได้", "Location permission was denied. You can still choose a station manually.")
+        : airLocationStatus === "timeout"
+          ? uiText("การขอตำแหน่งใช้เวลานานเกินไป คุณสามารถลองใหม่หรือเลือกสถานีเอง",
+            "The location request timed out. Try again or choose a station manually.")
+          : airLocationStatus === "unavailable"
+            ? uiText("ยังค้นหาตำแหน่งไม่ได้ คุณยังเลือกสถานีเองได้", "Location is unavailable. You can still choose a station manually.")
+            : uiText("ไม่บังคับ ตำแหน่งไม่ถูกบันทึกและไม่กระทบผลแบบประเมิน",
+              "Optional. Location is not saved and never affects the assessment result."))}</p>`;
+}
+
+function refreshAirLocationControls() {
+  const target = $("#air-location-section");
+  if (target) target.innerHTML = airLocationControlsMarkup();
 }
 
 function forecastTrendText(trend) {
@@ -1017,6 +1127,7 @@ function renderAirQuality() {
         ${PROVINCES.map(province => `<option value="${esc(province)}" ${selectedAirProvince === province ? "selected" : ""}>${esc(provinceDisplay(province))}</option>`).join("")}
       </select>
     </div>
+    <div id="air-location-section">${airLocationControlsMarkup()}</div>
   </div>
   <div id="air-results" aria-live="polite">
     <div class="card center"><p class="muted">${esc(uiText("กำลังโหลดข้อมูลคุณภาพอากาศล่าสุด…", "Loading current air-quality data…"))}</p></div>
@@ -1050,7 +1161,8 @@ async function loadAirPage(province) {
     if (requestId !== airRequestId || !$("#air-results")) return;
     latestAirData = data;
     if (!data.stations.some(station => station.station_id === selectedAirStation)) {
-      selectedAirStation = data.stations.find(station => Number.isFinite(station.pm25))?.station_id || data.stations[0]?.station_id || "";
+      const orderedStations = airStationsInDisplayOrder(data);
+      selectedAirStation = orderedStations.find(station => Number.isFinite(station.pm25))?.station_id || orderedStations[0]?.station_id || "";
     }
     renderAirResults(data);
   } catch (error) {
@@ -1070,7 +1182,9 @@ async function loadAirPage(province) {
 function renderAirResults(data) {
   const target = $("#air-results");
   if (!target) return;
-  const station = data.stations.find(item => item.station_id === selectedAirStation) || data.stations[0];
+  const displayStations = airStationsInDisplayOrder(data);
+  const station = displayStations.find(item => item.station_id === selectedAirStation) || displayStations[0];
+  const selectedDistance = data.kind === "official" ? formatStationDistance(station) : null;
   const band = station ? stationBand(station, data.kind, state.lang) : null;
   const summary = data.summary;
   const isOfficial = data.kind === "official";
@@ -1106,11 +1220,18 @@ function renderAirResults(data) {
     <div class="card">
       <div class="field"><label for="air-station">${esc(uiText(isOfficial ? "สถานีตรวจวัด" : "ตำแหน่งแบบจำลอง", isOfficial ? "Monitoring station" : "Model location"))}</label>
         <select id="air-station" onchange="changeAirStation(this.value)">
-          ${data.stations.map(item => `<option value="${esc(item.station_id)}" ${item.station_id === station?.station_id ? "selected" : ""}>${esc(airStationName(item))}</option>`).join("")}
+          ${displayStations.map(item => {
+            const distance = isOfficial ? formatStationDistance(item) : null;
+            return `<option value="${esc(item.station_id)}" ${item.station_id === station?.station_id ? "selected" : ""}>${esc(airStationName(item))}${distance ? ` — ${distance} km` : ""}</option>`;
+          }).join("")}
         </select>
       </div>
       ${station ? `<h3>${esc(airStationName(station))}</h3>
         <p class="muted">${esc(airStationArea(station))}</p>
+        ${selectedDistance ? `<p class="tiny">${esc(uiText(
+          `ระยะเส้นตรงโดยประมาณ ${selectedDistance} กม. จากตำแหน่งที่อนุญาต ไม่ใช่ระยะทางเดินทาง`,
+          `Approximately ${selectedDistance} km straight-line from the permitted location; this is not travel distance.`
+        ))}</p>` : ""}
         <div class="air-reading">
           <div><span>PM2.5</span><b>${formatAirNumber(station.pm25)}</b><small>µg/m³</small></div>
           <div><span>PM10</span><b>${formatAirNumber(station.pm10)}</b><small>µg/m³</small></div>
@@ -1627,6 +1748,7 @@ function renderPrivacy() {
       <li>คำตอบ ผล ประวัติ คำขอจำลอง และการตั้งค่าแจ้งเตือนบันทึกในเบราว์เซอร์บนอุปกรณ์นี้ด้วยคีย์ <code>${esc(STORE_KEY)}</code></li>
       <li>ไม่มีเซิร์ฟเวอร์ LungLens รับคำตอบสุขภาพ และไม่มีโรงพยาบาลหรือเจ้าหน้าที่ได้รับคำขอจำลอง</li>
       <li>หน้าอากาศส่งเฉพาะจังหวัดที่เลือกไปยังแหล่งข้อมูลสาธารณะเมื่อจำเป็น ไม่ส่งคำตอบ ผล หรืออาการ</li>
+      <li>หากกดค้นหาสถานีใกล้ฉันและอนุญาตตำแหน่ง พิกัดจะอยู่ในหน่วยความจำของหน้านี้เพื่อคำนวณระยะเส้นตรงเท่านั้น ไม่บันทึกและไม่ส่งไปยัง LungLens</li>
       <li>LINE อาจให้ข้อมูลโปรไฟล์พื้นฐานเมื่อผู้ใช้เลือกเข้าสู่ระบบใน LIFF แต่เว็บไซต์สาธารณะใช้ได้โดยไม่เข้าสู่ระบบ LINE</li>
       <li>บันทึกเหตุการณ์การใช้งานในต้นแบบอยู่บนอุปกรณ์และมีเพียงชื่อเหตุการณ์กับเวลา ไม่มีระบบวิเคราะห์ภายนอก</li>
     </ul>

@@ -8,7 +8,10 @@ const {
   provinceStationSummary,
   loadAirQualityForProvince,
   loadAirQualityForecast,
-  summarizeForecastTrend
+  summarizeForecastTrend,
+  distanceKm,
+  stationDistanceKm,
+  sortStationsByDistance
 } = require("../js/air-quality.js");
 
 (async () => {
@@ -54,6 +57,19 @@ assert.deepEqual(
     latestObservedAt: "2026-07-28T04:00:00.000Z"
   }
 );
+
+assert.equal(distanceKm(13.7563, 100.5018, 13.7563, 100.5018), 0);
+assert.ok(distanceKm(13, 100, 14, 100) > 110 && distanceKm(13, 100, 14, 100) < 112);
+const unsortedStations = [
+  { station_id: "far", latitude: 14, longitude: 100 },
+  { station_id: "missing", latitude: null, longitude: null },
+  { station_id: "near", latitude: 13.01, longitude: 100 }
+];
+const sortedStations = sortStationsByDistance(unsortedStations, { latitude: 13, longitude: 100 });
+assert.deepEqual(sortedStations.map(station => station.station_id), ["near", "far", "missing"]);
+assert.deepEqual(unsortedStations.map(station => station.station_id), ["far", "missing", "near"],
+  "Distance sorting must not mutate the station source array");
+assert.ok(stationDistanceKm(sortedStations[0], { latitude: 13, longitude: 100 }) < 2);
 
 function response(body, ok = true, status = 200) {
   return { ok, status, json: async () => body };
@@ -154,7 +170,7 @@ assert.equal(summarizeForecastTrend([
   { pm25: 20 }, { pm25: 5 }, { pm25: 20 }, { pm25: 5 }
 ]).key, "variable");
 
-console.log("Air-quality checks passed: Thai PM2.5 bands, station matching, province summaries, official data, model fallback, and 24-hour model forecasts.");
+console.log("Air-quality checks passed: Thai PM2.5 bands, station matching, province summaries, official data, model fallback, 24-hour forecasts, and local nearest-station sorting.");
 })().catch(error => {
   console.error(error);
   process.exitCode = 1;

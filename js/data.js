@@ -5,7 +5,7 @@
    ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
    ===================================================================== */
 
-const APP_VERSION = "prototype_0.6.0";
+const APP_VERSION = "prototype_0.7.0";
 const ENGINE_VERSION = "prototype_rules_v2";
 const STORE_KEY = "lunglens-v1";
 

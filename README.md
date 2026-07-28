@@ -55,13 +55,13 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.6.0`**. It preserves the v0.3 screening-safety
-correction, v0.4 live-data foundation, and v0.5 connected privacy controls, then adds a
-responsive next-24-hours PM2.5 chart based on the clearly labelled Open-Meteo/CAMS
-Global model. Official Air4Thai station readings remain the primary current measurement;
-the chart is a planning forecast, not station history or a personal exposure estimate.
-Pollution data never enters the factor band or LDCT screening context. The engine
-remains versioned as `prototype_rules_v2`.
+Current app version: **`prototype_0.7.0`**. It preserves the v0.3 screening-safety
+correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
+then adds explicit-permission nearest-station sorting. Browser coordinates remain only
+in page memory, are never written to `lunglens-v1`, and are used locally to calculate
+straight-line distance; clearing or reloading removes them. Official Air4Thai readings
+remain primary, and no pollution or location data enters the factor band or LDCT
+screening context. The engine remains versioned as `prototype_rules_v2`.
 
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
@@ -126,7 +126,9 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
   not-assessed list, privacy-safe sharing, retake
 - **#air** — current province/station PM2.5, PM10 and AQI from Air4Thai; model fallback,
   timestamps, freshness warning, health guidance, source attribution, limitations, and
-  a separate responsive 24-hour CAMS Global model forecast with cautious trend wording
+  a separate responsive 24-hour CAMS Global model forecast with cautious trend wording;
+  optional nearest-station sorting requires an explicit permission tap and keeps
+  coordinates in page memory only
 - **#education** — 12 sourced bilingual articles, search, myth/fact explanations,
   content versions, dates, authority links, explicit medical-review status, and a live
   selected-province reading plus 24-hour model chart inside the PM2.5 topic

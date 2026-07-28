@@ -165,6 +165,40 @@ function provinceStationSummary(stations) {
   };
 }
 
+function distanceKm(latitudeA, longitudeA, latitudeB, longitudeB) {
+  const raw = [latitudeA, longitudeA, latitudeB, longitudeB];
+  if (raw.some(value => value == null || value === "")) return null;
+  const values = raw.map(Number);
+  if (!values.every(Number.isFinite)) return null;
+  const [latA, lonA, latB, lonB] = values;
+  if (Math.abs(latA) > 90 || Math.abs(latB) > 90 || Math.abs(lonA) > 180 || Math.abs(lonB) > 180) return null;
+  const toRadians = degrees => degrees * Math.PI / 180;
+  const earthRadiusKm = 6371;
+  const deltaLat = toRadians(latB - latA);
+  const deltaLon = toRadians(lonB - lonA);
+  const a = Math.sin(deltaLat / 2) ** 2 +
+    Math.cos(toRadians(latA)) * Math.cos(toRadians(latB)) *
+    Math.sin(deltaLon / 2) ** 2;
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function stationDistanceKm(station, location) {
+  if (!station || !location) return null;
+  return distanceKm(location.latitude, location.longitude, station.latitude, station.longitude);
+}
+
+function sortStationsByDistance(stations, location) {
+  if (!Array.isArray(stations)) return [];
+  return stations.slice().sort((a, b) => {
+    const distanceA = stationDistanceKm(a, location);
+    const distanceB = stationDistanceKm(b, location);
+    if (distanceA == null && distanceB == null) return 0;
+    if (distanceA == null) return 1;
+    if (distanceB == null) return -1;
+    return distanceA - distanceB;
+  });
+}
+
 async function fetchModelFallback(province, fetchImpl) {
   const location = await resolveProvinceLocation(province, fetchImpl);
 
@@ -346,6 +380,7 @@ if (typeof module !== "undefined") {
   module.exports = {
     AIR_QUALITY_CONFIG, thaiPm25Band, usAqiBand, stationMatchesProvince,
     provinceStationSummary, loadAirQualityForProvince, loadAirQualityForecast,
-    summarizeForecastTrend, stationBand
+    summarizeForecastTrend, distanceKm, stationDistanceKm, sortStationsByDistance,
+    stationBand
   };
 }

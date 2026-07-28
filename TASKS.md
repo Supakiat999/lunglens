@@ -55,6 +55,8 @@ Status legend:
   counts, documents device-only data flow, and removes internal points from confirmed exports
 - ✅ v0.6 adds a responsive next-24-hours PM2.5 model chart and cautious trend wording
   while keeping official Air4Thai station readings visibly separate and primary
+- ✅ v0.7 adds explicit-permission nearest-Air4Thai-station sorting with local-only,
+  session-memory coordinates and straight-line distance labels
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -198,7 +200,8 @@ Status legend:
 - [x] ✅ Add a clearly labelled Open-Meteo/CAMS model fallback when no station reports PM2.5.
 - [x] ✅ Add tests for Thai PM2.5 bands, station/province matching, official snapshots,
   model fallback, and unchanged screening safety.
-- [ ] 🟡 Add station-distance sorting only after explicit location permission.
+- [x] ✅ Add station-distance sorting only after explicit location permission; keep
+  coordinates in page memory only and provide an immediate clear control.
 - [x] ✅ Add a 24-hour CAMS Global model chart and cautious trend wording, clearly
   separated from official station measurements and personal risk.
 - [ ] 🧱 Add monitoring/alerting when the hourly snapshot workflow fails repeatedly.

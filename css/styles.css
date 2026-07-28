@@ -247,6 +247,8 @@ code {
   color: var(--brand-deep); font-size: 13px; margin: 12px 0; padding: 10px 12px;
 }
 .air-compact a { color: var(--brand-deep); font-weight: 700; }
+.air-location-control { display: flex; flex-wrap: wrap; gap: 8px; }
+.air-location-control .btn { flex: 1 1 180px; }
 .air-summary, .air-reading {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px;
 }
@@ -302,6 +304,7 @@ code {
   .air-summary, .air-reading { grid-template-columns: 1fr; }
   .air-summary > div, .air-reading > div { text-align: left; }
   .air-forecast-chart { min-height: 150px; }
+  .air-location-control .btn { width: 100%; }
 }
 
 /* ---------- timeline ---------- */

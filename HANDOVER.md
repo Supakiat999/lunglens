@@ -111,6 +111,11 @@ and passed as an environment variable at run time. **Never write it into a file.
   minimum/maximum values, cautious higher/lower/variable/similar wording, model retrieval
   time, approximate 45 km grid disclosure, and an explicit warning that it is neither
   station history nor a personal cancer-risk estimate.
+- **Prototype v0.7 nearest-station privacy flow** — users can explicitly request browser
+  location permission to sort Air4Thai stations by straight-line distance. Coordinates
+  are held only in page memory, never saved to `lunglens-v1` or sent to LungLens, can be
+  cleared immediately, and never affect the assessment. Distance calculation and
+  non-mutating station sorting have automated boundary checks.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
