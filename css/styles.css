@@ -212,6 +212,51 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .myth { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); margin: 12px 0; font-size: 14px; }
 .myth .m { background: var(--urgent-soft); padding: 10px 14px; }
 .myth .f { background: var(--ok-soft); padding: 10px 14px; }
+.article-sources {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+  color: var(--ink-2); font-size: 13px; padding: 12px 14px;
+}
+.article-sources ul { margin: 6px 0 0 20px; }
+.article-sources a { color: var(--brand-deep); overflow-wrap: anywhere; }
+.edu-article-card[hidden] { display: none; }
+
+/* ---------- live air quality ---------- */
+.air-compact {
+  background: var(--brand-soft); border: 1px solid #a5f3fc; border-radius: 10px;
+  color: var(--brand-deep); font-size: 13px; margin: 12px 0; padding: 10px 12px;
+}
+.air-compact a { color: var(--brand-deep); font-weight: 700; }
+.air-summary, .air-reading {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px;
+}
+.air-summary > div, .air-reading > div {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+  min-width: 0; padding: 10px; text-align: center;
+}
+.air-summary b, .air-reading b { display: block; color: var(--brand-deep); font-size: 19px; line-height: 1.3; }
+.air-summary span, .air-reading span, .air-reading small {
+  color: var(--ink-2); display: block; font-size: 11px; overflow-wrap: anywhere;
+}
+.air-guidance {
+  border: 1px solid var(--line); border-left: 5px solid var(--brand);
+  border-radius: 10px; margin-top: 12px; padding: 12px 14px;
+}
+.air-guidance p { color: var(--ink-2); font-size: 13px; margin-top: 3px; }
+.air-very_good, .air-good, .air-model_good { background: var(--ok-soft); border-left-color: var(--ok); }
+.air-moderate, .air-model_moderate, .air-model_sensitive {
+  background: var(--warn-soft); border-left-color: #d97706;
+}
+.air-starting_impact, .air-model_unhealthy {
+  background: #fff7ed; border-left-color: #c2410c;
+}
+.air-health_impact, .air-model_very_unhealthy, .air-model_hazardous {
+  background: #faf5ff; border-left-color: #7e22ce;
+}
+.air-stale { background: var(--warn-soft); border-color: #f59e0b; }
+@media (max-width: 390px) {
+  .air-summary, .air-reading { grid-template-columns: 1fr; }
+  .air-summary > div, .air-reading > div { text-align: left; }
+}
 
 /* ---------- timeline ---------- */
 .timeline { list-style: none; margin: 10px 0; }

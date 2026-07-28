@@ -54,12 +54,12 @@ Key safety invariants baked into the code:
 (key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), works offline after load,
 and is deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.3.2`**. This safety release removes province and
-age-only scoring, removes the fictional PM2.5 area lookup from the assessment, asks
-former smokers when they stopped, and adds a separate plain-language LDCT screening
-context based on age plus smoking history. Previous v1 results are retired rather than
-silently recalculated; saved answers remain available for reassessment. The engine is
-versioned as `prototype_rules_v2`.
+Current app version: **`prototype_0.4.0`**. It preserves the v0.3 screening-safety
+correction and adds all 77 provinces, a live Air4Thai station-data screen, an explicitly
+labelled Open-Meteo/CAMS fallback for provinces without a reporting station, and 12
+sourced bilingual education articles. Pollution readings are short-term exposure
+context only: they never enter the factor score or LDCT screening context. The engine
+remains versioned as `prototype_rules_v2`.
 
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
@@ -69,6 +69,8 @@ lunglens/
 ├── css/styles.css              Design system (teal palette, WCAG-aware, big-text mode)
 ├── js/data.js                  Questions (STEPS), risk rules (RULES), bands, demo
 │                               facilities, articles, personas   ← "database + config"
+├── js/air-quality.js           Air4Thai station matching, Thai PM2.5 guidance,
+│                               freshness handling, and model fallback
 ├── js/validation.js            Completeness/range checks only; no clinical scoring
 ├── js/engine.js                Explainable rule engine + symptom pathway ← "risk service"
 ├── js/app.js                   Router + every screen + local state       ← "frontend"
@@ -80,6 +82,9 @@ lunglens/
 ├── line/richmenu-labels.json   Button wording — edit here, then regenerate the PNG
 ├── line/make-richmenu-image.ps1  Regenerates rich-menu.png (ASCII-only script)
 ├── line/flex-messages.json     Flex Message templates (privacy-safe copy)
+├── data/air4thai-latest.json   Validated public station snapshot (automatic fallback)
+├── scripts/update-air-quality.mjs  Fetches, sanitises, and validates Air4Thai data
+├── .github/workflows/update-air-quality.yml  Hourly live-data refresh
 ├── .env.example                Env vars for the future backend (no secrets)
 ├── HANDOVER.md                 ▶ Status, all links/IDs, next steps — start here
 ├── CLAUDE.md                   Operating guide + safety invariants for AI sessions
@@ -109,12 +114,16 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
 - **#assess** — 15-step wizard: profile, smoking (+pack-years and time since stopping),
   second-hand smoke, family/medical, occupational, household cooking, symptom safety check.
   Province is used only for healthcare navigation and never changes the result.
+  Current pollution context is displayed separately and never changes the result.
   Autosave per answer, "บันทึกและกลับมาทำต่อภายหลัง", resume card on home.
 - **#review** — bilingual answer summary with per-question editing before result creation
 - **#symptom** — symptom pathway interstitial (urgent = red + 1669 guidance; never diagnostic)
 - **#result** — band, separate LDCT screening context, "ทำไมจึงได้ผลนี้" factor cards
   (tap → why/next/evidence/rule code), not-assessed list, privacy-safe sharing, retake
-- **#education** — 4 written articles (myth/fact, evidence labels, reviewer placeholder) + 12 category grid
+- **#air** — current province/station PM2.5, PM10 and AQI from Air4Thai; model fallback,
+  timestamps, freshness warning, health guidance, source attribution and limitations
+- **#education** — 12 sourced bilingual articles, search, myth/fact explanations,
+  content versions, dates, authority links and explicit medical-review status
 - **#clinics** — 6 demo facilities, filters (province / LDCT / public), CTAs
 - **#referral** — referral request form (consent-gated) + status timeline with demo advance button
 - **#profile** — history, reminder prefs, consent withdrawal, data export (JSON), full delete
@@ -213,7 +222,9 @@ Messaging-API webhook (Phase 2):
 - Public user journeys support complete Thai/English switching. Thai remains the canonical
   stored-answer language so switching languages cannot alter rule-engine outcomes.
 - The provider dashboard demo and presentation-only route remain Thai-first.
-- The app provides PM2.5 education but does not infer personal exposure from province.
+- The app shows real station-level PM2.5 for short-term planning but does not treat a
+  province reading as personal lifetime exposure, a cancer-risk score, or LDCT eligibility.
 - All "call / map / detailed share / provider write actions" open labelled prototype popups.
 - No real persistence beyond the device (localStorage), no accounts, no real LINE session.
-- Articles are drafts pending medical review; references are placeholders.
+- All 12 articles include current authoritative references and remain drafts pending
+  medical review; no named clinical reviewer has approved them yet.

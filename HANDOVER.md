@@ -76,7 +76,8 @@ and passed as an environment variable at run time. **Never write it into a file.
   context rules), each with a Thai explanation,
   a "what to do next", and an evidence-strength label. Symptoms are handled in a
   **separate pathway and are never scored**.
-- Education centre (4 written articles + 12-category structure), provider dashboard demo
+- Education centre (12 sourced bilingual articles + search), live Air4Thai station data,
+  provider dashboard demo
   (3 roles, case list, rules table, funnel analytics), 5-slide presentation mode
   (`?p=demo-story`)
 - **Real LINE LIFF integration** — `liff.init()`, LINE Login, profile, native share
@@ -94,6 +95,10 @@ and passed as an environment variable at run time. **Never write it into a file.
   the result; the fictional area-PM2.5 lookup was removed; former smokers are asked when
   they stopped; LDCT context uses age together with smoking exposure; and old v1 results
   require reassessment instead of continuing to show retired rules.
+- **Prototype v0.4 live air and education** — all 77 provinces, current Air4Thai station
+  PM2.5/PM10/AQI, a labelled CAMS model fallback, freshness and failure states, and all
+  12 education topics with authoritative sources. Current pollution never enters the
+  cancer-factor score or LDCT context.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
@@ -136,6 +141,7 @@ Where things live:
   *(edit rules here; each has a code, weight, explanation, evidence label)*
 - `js/validation.js` — questionnaire completeness/range checks; never clinical scoring
 - `js/engine.js` — the rule evaluation + symptom pathway (the safety-critical logic)
+- `js/air-quality.js` — official station matching, PM2.5 guidance, freshness and fallback
 - `js/app.js` — router and every screen
 - `js/liff.js` — everything LINE-related
 - `line/` — the Official Account kit
@@ -148,8 +154,8 @@ Deploying = `git push`. Nothing else.
 
 1. Complete the real-phone OA greeting/rich-menu test and collect the add-friend link/QR
 2. Decide whether first visit defaults to Thai, English, or the device language
-3. Have a clinician review the 18 rules and the four result bands 🩺
-4. Write the remaining 8 education articles with a medical reviewer 🩺
+3. Have a clinician review the rules, four result bands, PM2.5 guidance, and 12 articles 🩺
+4. Monitor the hourly Air4Thai workflow and add operational alerts
 5. Replace demo facilities with verified real ones
 5. Then Phase 3 — real backend (Next.js + Supabase) so results persist server-side and
    referrals reach actual staff

@@ -45,6 +45,11 @@ Status legend:
 - ✅ v0.3 retires saved v1 results safely while preserving answers for reassessment
 - ✅ v0.3 makes all clinic/referral actions explicitly demonstrational and states that
   no hospital or staff member receives a request
+- ✅ v0.4 adds all 77 provinces and live station-level Air4Thai PM2.5/PM10/AQI data
+- ✅ v0.4 keeps pollution outside factor scoring and LDCT screening eligibility
+- ✅ v0.4 adds a labelled Open-Meteo/CAMS fallback, freshness/error states, and sources
+- ✅ v0.4 completes all 12 bilingual education topics with authoritative references,
+  content versions, review status, reading times, and search
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -120,7 +125,7 @@ Status legend:
   - [x] ✅ Reject numeric smoking details outside their configured ranges
 - [ ] 🔜 Add clear inline validation messages in both languages.
 - [ ] 🔜 Improve numeric inputs for age, years, cigarettes per day, and duration.
-- [ ] 🔜 Add the full list of 77 Thai provinces.
+- [x] ✅ Add the full list of 77 Thai provinces.
 - [ ] 🔜 Add district/subdistrict selection where operationally necessary.
 - [ ] 🔜 Add Thai postcode validation and province/postcode consistency checks.
 - [ ] 🔜 Explain why location data is requested before the user enters it.
@@ -156,12 +161,13 @@ Status legend:
 ## 5 — Education centre
 
 - [ ] 🩺 Medically review the four existing drafted articles.
-- [ ] 🩺 Replace placeholder references with real, current, authoritative sources.
-- [ ] 🩺 Write and review the remaining eight education articles.
+- [x] ✅ Replace placeholder references with real, current, authoritative sources.
+- [x] ✅ Write the remaining eight education articles as sourced bilingual drafts.
+- [ ] 🩺 Medically review all 12 education articles.
 - [ ] 🩺 Add named medical-review roles, review dates, and content versions.
 - [ ] 🩺 Define a process for revising or withdrawing outdated medical content.
-- [ ] 🔜 Add search across article titles, summaries, and topics.
-- [ ] 🔜 Add useful topic filters and clearer placeholder labels.
+- [x] ✅ Add search across article titles, summaries, and topics.
+- [x] ✅ Remove outline placeholders now that every topic has an article.
 - [ ] 🔜 Link assessment factors to the most relevant reviewed articles.
 - [ ] 🔜 Add a “last medically reviewed” field to each complete article.
 - [ ] 🟡 Add reading-time estimates.
@@ -169,6 +175,21 @@ Status legend:
 - [ ] 🟡 Add a source list that remains understandable to non-specialists.
 - [ ] 🟡 Add simple illustrations only after their medical meaning is reviewed.
 - [ ] 🟡 Consider audio or read-aloud support for users with lower literacy.
+
+## 5A — Live air-quality data
+
+- [x] ✅ Fetch, sanitise, and validate the official Air4Thai public station feed.
+- [x] ✅ Show province overview, reporting-station count, range, median, station reading,
+  observation time, source, and limitations.
+- [x] ✅ Keep a static validated snapshot so a temporary live-data failure does not break the app.
+- [x] ✅ Add an hourly GitHub Actions updater on the `air-quality-data` branch.
+- [x] ✅ Add a clearly labelled Open-Meteo/CAMS model fallback when no station reports PM2.5.
+- [x] ✅ Add tests for Thai PM2.5 bands, station/province matching, official snapshots,
+  model fallback, and unchanged screening safety.
+- [ ] 🟡 Add station-distance sorting only after explicit location permission.
+- [ ] 🟡 Add a 24-hour chart and trend wording without overstating forecast certainty.
+- [ ] 🧱 Add monitoring/alerting when the hourly snapshot workflow fails repeatedly.
+- [ ] 🩺 Review PM2.5 activity guidance and vulnerable-group wording with a Thai clinician.
 
 ## 6 — Clinics and healthcare navigation
 

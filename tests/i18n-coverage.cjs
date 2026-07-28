@@ -18,7 +18,6 @@ function inspect(value) {
 }
 
 [
-  data.PROVINCES,
   data.STEPS,
   data.RULES,
   data.BANDS,
@@ -33,6 +32,19 @@ assert.deepEqual([...missing].sort(), [], `Missing English translations:\n${[...
 assert.ok(I18N_UI.en.document_title);
 assert.ok(I18N_UI.en.document_description);
 assert.ok(I18N_UI.en.language_changed_en);
+assert.equal(data.ARTICLES.length, data.EDU_CATEGORIES.length, "Every education topic must have a complete article");
+for (const category of data.EDU_CATEGORIES) {
+  assert.ok(data.ARTICLES.some(article => article.category === category), `Missing article for ${category}`);
+}
+for (const article of data.ARTICLES) {
+  assert.ok(article.version, `Missing content version: ${article.slug}`);
+  assert.match(article.updated, /^\d{4}-\d{2}-\d{2}$/, `Missing review date: ${article.slug}`);
+  assert.ok(Array.isArray(article.refs) && article.refs.length > 0, `Missing sources: ${article.slug}`);
+  for (const ref of article.refs) {
+    assert.match(ref.url, /^https:\/\/(www\.)?(cdc\.gov|cancer\.gov|who\.int|air4thai\.pcd\.go\.th|hpc10app\.anamai\.moph\.go\.th|anamai\.moph\.go\.th)\//,
+      `Non-authoritative article source: ${article.slug} ${ref.url}`);
+  }
+}
 [
   "ข้ามไปยังเนื้อหาหลัก",
   "ตรวจทานคำตอบ",
@@ -43,6 +55,10 @@ assert.ok(I18N_UI.en.language_changed_en);
   "เวอร์ชัน",
   "บันทึกประวัติการประเมิน",
   "ส่งคำขอแล้ว",
+  "ตรวจค่าฝุ่น PM2.5 ในจังหวัดของคุณ",
+  "คุณภาพอากาศในพื้นที่ของคุณวันนี้",
+  "ดูค่าฝุ่นตามจังหวัดและสถานี",
+  "ดูข้อมูล PM2.5 ล่าสุดในจังหวัดของคุณ",
   "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้"
 ].forEach(source => assert.ok(EN_TRANSLATIONS[source], `Missing public UI translation: ${source}`));
 

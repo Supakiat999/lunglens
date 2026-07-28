@@ -80,6 +80,11 @@ function showStorageIssue() {
 /* ---------------- tiny helpers ---------------- */
 const $ = sel => document.querySelector(sel);
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+function provinceDisplay(name) {
+  const province = PROVINCE_META.find(item => item.th === name);
+  return state.lang === "en" ? (province?.en || name) : name;
+}
+function uiText(th, en) { return state.lang === "en" ? en : th; }
 
 function toast(msg) {
   const el = document.createElement("div");
@@ -133,7 +138,7 @@ function protoPopup(feature, detail) {
 const ROUTES = {
   home: renderHome, begin: renderBegin, consent: renderConsent, assess: renderAssess,
   review: renderReview, symptom: renderSymptomPathway, result: renderResult, education: renderEducation,
-  clinics: renderClinics, referral: renderReferral, profile: renderProfile,
+  air: renderAirQuality, clinics: renderClinics, referral: renderReferral, profile: renderProfile,
   provider: renderProvider, "demo-story": renderStory, privacy: renderPrivacy
 };
 function route() {
@@ -217,6 +222,7 @@ function renderHome() {
     <p>มะเร็งปอดไม่ได้เกิดเฉพาะกับผู้สูบบุหรี่ อายุ ประวัติครอบครัว โรคปอดเดิม อาชีพ ควัน และมลพิษอาจมีส่วนต่อความเสี่ยงของแต่ละคน</p>
     <a class="btn btn-primary" href="#begin" onclick="track('assessment_cta_clicked')">ประเมินความเสี่ยง 2–3 นาที</a>
     <a class="btn btn-ghost" href="#education">มะเร็งปอดในคนไม่สูบบุหรี่คืออะไร</a>
+    <a class="btn btn-ghost" href="#air">ตรวจค่าฝุ่น PM2.5 ในจังหวัดของคุณ</a>
   </div>
 
   ${resume ? `<div class="card" style="border-color:#a5f3fc;background:var(--brand-soft)">
@@ -410,11 +416,18 @@ function renderAssess() {
     body = `<div class="field"><label for="province-select">จังหวัด</label>
       <select id="province-select" onchange="answerChoice('PROVINCE', this.value)">
         <option value="">— เลือกจังหวัด —</option>
-        ${PROVINCES.map(p => `<option value="${esc(p)}" ${a.PROVINCE === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
+        ${PROVINCES.map(p => `<option value="${esc(p)}" ${a.PROVINCE === p ? "selected" : ""}>${esc(provinceDisplay(p))}</option>`).join("")}
       </select></div>
       <div class="field"><label for="district-input">อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)</label>
         <input id="district-input" type="text" value="${esc(a.DISTRICT || "")}"
-          onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>`;
+          onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>
+      ${a.PROVINCE ? `<div id="assessment-air-context" class="air-compact" role="status" aria-live="polite">
+        ${esc(uiText("กำลังโหลดข้อมูลคุณภาพอากาศล่าสุด…", "Loading current air-quality data…"))}
+      </div>` : ""}
+      <p class="tiny">${esc(uiText(
+        "ค่าฝุ่นปัจจุบันแสดงเพื่อช่วยวางแผนกิจกรรมวันนี้เท่านั้น และไม่ถูกนำไปคำนวณผลปัจจัยหรือเกณฑ์คัดกรองมะเร็งปอด",
+        "Current pollution data is shown only to help plan today's activities. It never changes the factor result or lung-cancer screening criteria."
+      ))}</p>`;
   }
 
   const isSymptoms = step.type === "symptoms";
@@ -438,6 +451,7 @@ function renderAssess() {
     <button type="button" class="btn btn-primary" onclick="stepNext()">${n === total ? "ตรวจทานคำตอบ" : "ถัดไป"}</button>
   </div>
   <button type="button" class="btn btn-ghost mt" onclick="saveExit()">บันทึกและกลับมาทำต่อภายหลัง</button>`);
+  if (step.type === "province" && a.PROVINCE) updateAssessmentAirContext(a.PROVINCE);
 }
 
 function askGeo() {
@@ -716,6 +730,12 @@ function renderResult() {
   </div>
 
   <div class="card">
+    <h3>คุณภาพอากาศในพื้นที่ของคุณวันนี้</h3>
+    <p class="muted">ดูข้อมูล PM2.5 ล่าสุดจากสถานี Air4Thai แยกจากผลปัจจัยสุขภาพและเกณฑ์คัดกรองโดยสิ้นเชิง</p>
+    <a class="btn btn-secondary mt" href="#air">ดูค่าฝุ่นตามจังหวัดและสถานี</a>
+  </div>
+
+  <div class="card">
     <h3>ขั้นตอนถัดไปที่แนะนำ</h3>
     <p class="muted">${esc(b.action)}</p>
     ${b === BANDS.review ? `<p class="muted mt" style="font-size:13.5px">บุคลากรทางการแพทย์สามารถช่วยพิจารณาว่าจำเป็นต้องตรวจเพิ่มเติม เช่น การประเมินทางคลินิกหรือการถ่ายภาพรังสีชนิดใด</p>` : ""}
@@ -774,28 +794,235 @@ function confirmDetailShare() {
 }
 
 /* =====================================================================
+   SCREEN: live air quality
+   ===================================================================== */
+let selectedAirProvince = state.answers.PROVINCE || "กรุงเทพมหานคร";
+let selectedAirStation = "";
+let latestAirData = null;
+let airRequestId = 0;
+
+function formatAirNumber(value) {
+  if (!Number.isFinite(Number(value))) return "—";
+  return new Intl.NumberFormat(state.lang === "en" ? "en-GB" : "th-TH", {
+    maximumFractionDigits: 1
+  }).format(Number(value));
+}
+
+function airStationName(station) {
+  return state.lang === "en"
+    ? (station.name_en || station.name_th)
+    : (station.name_th || station.name_en);
+}
+
+function airStationArea(station) {
+  return state.lang === "en"
+    ? (station.area_en || station.area_th)
+    : (station.area_th || station.area_en);
+}
+
+function renderAirQuality() {
+  selectedAirProvince = PROVINCES.includes(selectedAirProvince)
+    ? selectedAirProvince
+    : (state.answers.PROVINCE || "กรุงเทพมหานคร");
+  view(`<div class="card">
+    <h2>🌫️ ${esc(uiText("คุณภาพอากาศตามจังหวัด", "Air quality by province"))}</h2>
+    <p class="muted">${esc(uiText(
+      "เลือกจังหวัดเพื่อดูค่า PM2.5 จากสถานีตรวจวัดของกรมควบคุมมลพิษ หากพื้นที่ไม่มีสถานี ระบบจะแสดงค่าประมาณจากแบบจำลองและติดป้ายกำกับให้ชัดเจน",
+      "Choose a province to see PM2.5 readings from Pollution Control Department monitoring stations. Where no station is available, a clearly labelled model estimate is shown."
+    ))}</p>
+    <div class="field mt"><label for="air-province">${esc(uiText("จังหวัด", "Province"))}</label>
+      <select id="air-province" onchange="changeAirProvince(this.value)">
+        ${PROVINCES.map(province => `<option value="${esc(province)}" ${selectedAirProvince === province ? "selected" : ""}>${esc(provinceDisplay(province))}</option>`).join("")}
+      </select>
+    </div>
+  </div>
+  <div id="air-results" aria-live="polite">
+    <div class="card center"><p class="muted">${esc(uiText("กำลังโหลดข้อมูลคุณภาพอากาศล่าสุด…", "Loading current air-quality data…"))}</p></div>
+  </div>
+  <div class="disclaimer">
+    ${esc(uiText(
+      "ค่าฝุ่นปัจจุบันช่วยวางแผนกิจกรรมระยะสั้น แต่ไม่สามารถบอกการสัมผัสสะสมตลอดชีวิต ไม่ใช่คะแนนความเสี่ยงมะเร็ง และไม่ทำให้เข้าเกณฑ์ตรวจ LDCT",
+      "Current pollution data can guide short-term activities. It cannot estimate lifetime exposure, is not a cancer-risk score, and never creates LDCT eligibility."
+    ))}
+  </div>`);
+  loadAirPage(selectedAirProvince);
+}
+
+function changeAirProvince(province) {
+  if (!PROVINCES.includes(province)) return;
+  selectedAirProvince = province;
+  selectedAirStation = "";
+  latestAirData = null;
+  renderAirQuality();
+}
+
+function changeAirStation(stationId) {
+  selectedAirStation = stationId;
+  if (latestAirData) renderAirResults(latestAirData);
+}
+
+async function loadAirPage(province) {
+  const requestId = ++airRequestId;
+  try {
+    const data = await loadAirQualityForProvince(province);
+    if (requestId !== airRequestId || !$("#air-results")) return;
+    latestAirData = data;
+    if (!data.stations.some(station => station.station_id === selectedAirStation)) {
+      selectedAirStation = data.stations.find(station => Number.isFinite(station.pm25))?.station_id || data.stations[0]?.station_id || "";
+    }
+    renderAirResults(data);
+  } catch (error) {
+    if (requestId !== airRequestId || !$("#air-results")) return;
+    $("#air-results").innerHTML = `<div class="card">
+      <h3>${esc(uiText("ยังโหลดข้อมูลคุณภาพอากาศไม่ได้", "Air-quality data is unavailable"))}</h3>
+      <p class="muted">${esc(uiText(
+        "โปรดลองอีกครั้งในภายหลัง หรือตรวจสอบข้อมูลโดยตรงจาก Air4Thai ข้อมูลล้มเหลวจะไม่เปลี่ยนผลแบบประเมินของคุณ",
+        "Try again later or check Air4Thai directly. A data failure never changes your assessment result."
+      ))}</p>
+      <a class="btn btn-secondary mt" href="https://air4thai.pcd.go.th/" target="_blank" rel="noopener">${esc(uiText("เปิด Air4Thai", "Open Air4Thai"))}</a>
+      <button class="btn btn-ghost mt" onclick="loadAirPage(selectedAirProvince)">${esc(uiText("ลองอีกครั้ง", "Try again"))}</button>
+    </div>`;
+  }
+}
+
+function renderAirResults(data) {
+  const target = $("#air-results");
+  if (!target) return;
+  const station = data.stations.find(item => item.station_id === selectedAirStation) || data.stations[0];
+  const band = station ? stationBand(station, data.kind, state.lang) : null;
+  const summary = data.summary;
+  const isOfficial = data.kind === "official";
+  const sourceName = isOfficial
+    ? uiText("Air4Thai — กรมควบคุมมลพิษ", "Air4Thai — Thailand Pollution Control Department")
+    : uiText("Open-Meteo / แบบจำลอง CAMS Global", "Open-Meteo / CAMS Global model");
+  const sourceUrl = isOfficial
+    ? "https://air4thai.pcd.go.th/"
+    : "https://open-meteo.com/en/docs/air-quality-api";
+  const stationObserved = station?.observed_at ? formatDate(station.observed_at, { dateTime: true }) : "—";
+  const snapshotFetched = data.fetchedAt ? formatDate(data.fetchedAt, { dateTime: true }) : "—";
+
+  target.innerHTML = `
+    ${data.stale ? `<div class="card air-stale"><b>${esc(uiText("ข้อมูลอาจล่าช้ากว่าปกติ", "Data may be older than usual"))}</b>
+      <p class="tiny">${esc(uiText("โปรดตรวจสอบ Air4Thai ก่อนตัดสินใจทำกิจกรรมกลางแจ้ง", "Check Air4Thai before making outdoor-activity decisions."))}</p></div>` : ""}
+    <div class="card">
+      <span class="section-tag">${esc(provinceDisplay(data.province.th))}</span>
+      <h3>${esc(uiText("ภาพรวมสถานีในจังหวัด", "Province station overview"))}</h3>
+      ${isOfficial ? `<div class="air-summary">
+        <div><b>${formatAirNumber(summary.medianPm25)}</b><span>PM2.5 ${esc(uiText("ค่ากลาง", "median"))}</span></div>
+        <div><b>${summary.reportingCount}</b><span>${esc(uiText("สถานีที่มีข้อมูล", "reporting stations"))}</span></div>
+        <div><b>${formatAirNumber(summary.minPm25)}–${formatAirNumber(summary.maxPm25)}</b><span>µg/m³ ${esc(uiText("ช่วงค่า", "range"))}</span></div>
+      </div>
+      <p class="tiny mt">${esc(uiText(
+        "ค่ากลางเป็นภาพรวมของสถานีที่รายงานในจังหวัด ไม่ใช่ค่าที่บ้านของคุณ สภาพอากาศอาจแตกต่างกันมากในแต่ละจุด",
+        "The median summarises reporting stations in the province; it is not a reading at your home. Conditions can vary substantially by location."
+      ))}</p>` : `<p class="muted">${esc(uiText(
+        "จังหวัดนี้ไม่มีสถานี Air4Thai ที่มีค่า PM2.5 ในชุดข้อมูลล่าสุด จึงแสดงค่าประมาณจากแบบจำลองบรรยากาศ",
+        "No Air4Thai station in this province reported PM2.5 in the latest snapshot, so an atmospheric-model estimate is shown."
+      ))}</p>`}
+    </div>
+
+    <div class="card">
+      <div class="field"><label for="air-station">${esc(uiText(isOfficial ? "สถานีตรวจวัด" : "ตำแหน่งแบบจำลอง", isOfficial ? "Monitoring station" : "Model location"))}</label>
+        <select id="air-station" onchange="changeAirStation(this.value)">
+          ${data.stations.map(item => `<option value="${esc(item.station_id)}" ${item.station_id === station?.station_id ? "selected" : ""}>${esc(airStationName(item))}</option>`).join("")}
+        </select>
+      </div>
+      ${station ? `<h3>${esc(airStationName(station))}</h3>
+        <p class="muted">${esc(airStationArea(station))}</p>
+        <div class="air-reading">
+          <div><span>PM2.5</span><b>${formatAirNumber(station.pm25)}</b><small>µg/m³</small></div>
+          <div><span>PM10</span><b>${formatAirNumber(station.pm10)}</b><small>µg/m³</small></div>
+          <div><span>AQI</span><b>${formatAirNumber(station.aqi)}</b><small>${esc(isOfficial ? uiText("เกณฑ์ไทย", "Thai scale") : uiText("เกณฑ์สหรัฐฯ", "U.S. scale"))}</small></div>
+        </div>
+        ${band ? `<div class="air-guidance air-${esc(band.key)}">
+          <b>${esc(band.label)}</b><p>${esc(band.guidance)}</p>
+        </div>` : `<p class="muted mt">${esc(uiText("สถานีนี้ยังไม่มีค่าที่ใช้แปลผล", "This station does not currently have enough data for guidance."))}</p>`}
+        <p class="tiny mt">${esc(uiText("เวลาที่สถานีรายงาน", "Station observation"))}: ${esc(stationObserved)}</p>` : ""}
+    </div>
+
+    <div class="card">
+      <h3>${esc(uiText("ที่มาและข้อจำกัด", "Sources and limitations"))}</h3>
+      <p class="tiny"><a href="${sourceUrl}" target="_blank" rel="noopener">${esc(sourceName)}</a> ·
+        ${esc(uiText("ดึงข้อมูลเมื่อ", "Snapshot fetched"))} ${esc(snapshotFetched)}</p>
+      <p class="tiny mt">${esc(uiText(
+        "คำแนะนำระดับ PM2.5 อ้างอิงเกณฑ์คุณภาพอากาศของประเทศไทยและคำแนะนำกรมอนามัย ข้อมูล Air4Thai เป็นข้อมูลสถานี ส่วนข้อมูลสำรองเป็นค่าประมาณจากแบบจำลอง CAMS Global",
+        "PM2.5 guidance follows Thailand's air-quality categories and Department of Health advice. Air4Thai values are station data; the fallback is a CAMS Global model estimate."
+      ))}</p>
+      <p class="tiny mt">
+        <a href="https://hpc10app.anamai.moph.go.th/hdc/airpollution/pm25/index" target="_blank" rel="noopener">${esc(uiText("เกณฑ์และคำแนะนำ PM2.5 ของกรมอนามัย", "Thai Department of Health PM2.5 categories and advice"))}</a>
+      </p>
+    </div>`;
+}
+
+async function updateAssessmentAirContext(province) {
+  const target = $("#assessment-air-context");
+  if (!target) return;
+  try {
+    const data = await loadAirQualityForProvince(province);
+    if (!target.isConnected || state.answers.PROVINCE !== province) return;
+    const summary = data.summary;
+    const value = data.kind === "official" ? summary.medianPm25 : data.stations[0]?.pm25;
+    target.innerHTML = `<b>${esc(uiText("ข้อมูลอากาศวันนี้", "Today's air-quality context"))}</b><br>
+      ${esc(provinceDisplay(province))}: PM2.5 ${formatAirNumber(value)} µg/m³ ·
+      ${esc(data.kind === "official"
+        ? uiText(`ค่ากลางจาก ${summary.reportingCount} สถานี`, `median across ${summary.reportingCount} reporting stations`)
+        : uiText("ค่าประมาณจากแบบจำลอง", "model estimate"))}<br>
+      <a href="#air">${esc(uiText("ดูรายสถานีและคำแนะนำ", "View stations and guidance"))}</a>`;
+  } catch (error) {
+    if (!target.isConnected) return;
+    target.innerHTML = `${esc(uiText("ยังโหลดข้อมูลอากาศไม่ได้", "Air-quality data is currently unavailable"))} ·
+      <a href="#air">${esc(uiText("ลองอีกครั้ง", "Try again"))}</a>`;
+  }
+}
+
+/* =====================================================================
    SCREEN: education
    ===================================================================== */
 function renderEducation(slug) {
   if (slug) return renderArticle(slug);
   view(`<div class="card">
     <h2>📚 ความรู้เรื่องปอด</h2>
-    <p class="tiny">บทความฉบับร่างสำหรับต้นแบบ — ต้องผ่านการทบทวนโดยแพทย์ก่อนเผยแพร่จริง</p>
+    <p class="tiny">${esc(uiText(
+      "บทความทั้ง 12 หัวข้อมีแหล่งอ้างอิงจากหน่วยงานสาธารณสุข แต่ยังต้องผ่านการทบทวนโดยแพทย์ก่อนใช้เป็นเนื้อหาทางคลินิก",
+      "All 12 topics cite public-health authorities, but medical review is still required before they can be treated as clinical content."
+    ))}</p>
+    <a class="btn btn-secondary mt" href="#air">🌫️ ดูข้อมูล PM2.5 ล่าสุดในจังหวัดของคุณ</a>
+    <div class="field mt">
+      <label for="education-search">${esc(uiText("ค้นหาหัวข้อ", "Search topics"))}</label>
+      <input id="education-search" type="text" autocomplete="off"
+        placeholder="${esc(uiText("เช่น ฝุ่น ควัน การคัดกรอง", "For example: pollution, smoke, screening"))}"
+        oninput="filterEducation(this.value)">
+    </div>
+    <p id="education-count" class="tiny">${ARTICLES.length} ${esc(uiText("บทความ", "articles"))}</p>
   </div>
   ${ARTICLES.map(a => `
-  <div class="card" style="cursor:pointer" onclick="location.hash='#education=${a.slug}'">
+  <div class="card edu-article-card" data-search="${esc(`${a.category} ${a.title} ${a.summary} ${tr(a.category, "en")} ${tr(a.title, "en")} ${tr(a.summary, "en")}`.toLocaleLowerCase())}"
+    style="cursor:pointer" onclick="location.hash='#education=${a.slug}'">
     <span class="section-tag">${esc(a.category)}</span>
     <h3 style="margin-top:2px">${esc(a.title)}</h3>
     <p class="muted" style="font-size:13.5px">${esc(a.summary)}</p>
-    <p class="tiny mt">อ่าน ${a.minutes} นาที · ${esc(a.evidence)}</p>
+    <p class="tiny mt">อ่าน ${a.minutes} นาที · ${esc(a.evidence)} · ${esc(a.reviewed)}</p>
   </div>`).join("")}
   <div class="card">
     <h3>หัวข้อทั้งหมด</h3>
     <div class="edu-grid">${EDU_CATEGORIES.map(c => {
       const has = ARTICLES.find(a => a.category === c);
-      return `<button class="edu-cat" onclick="${has ? `location.hash='#education=${has.slug}'` : `protoPopup('บทความ: ${esc(c)}','โครงร่างบทความนี้อยู่ใน TASKS.md — จะเขียนพร้อมผู้ทบทวนทางการแพทย์')`}">${esc(c)}${has ? "" : ' <span class="tiny">(โครงร่าง)</span>'}</button>`;
+      return `<button class="edu-cat" onclick="location.hash='#education=${has.slug}'">${esc(c)}</button>`;
     }).join("")}</div>
   </div>`);
+}
+
+function filterEducation(query) {
+  const normalized = String(query || "").trim().toLocaleLowerCase();
+  const cards = [...document.querySelectorAll(".edu-article-card")];
+  let visible = 0;
+  cards.forEach(card => {
+    const match = !normalized || (card.dataset.search || "").includes(normalized);
+    card.hidden = !match;
+    if (match) visible++;
+  });
+  const count = $("#education-count");
+  if (count) count.textContent = `${visible} ${uiText("บทความ", "articles")}`;
 }
 
 function renderArticle(slug) {
@@ -805,14 +1032,22 @@ function renderArticle(slug) {
   view(`<div class="card">
     <span class="section-tag">${esc(a.category)}</span>
     <h2>${esc(a.title)}</h2>
-    <p class="tiny">อ่าน ${a.minutes} นาที · สถานะหลักฐาน: ${esc(a.evidence)} · ผู้ทบทวน: ${esc(a.reviewed)}</p>
+    <p class="tiny">อ่าน ${a.minutes} นาที · สถานะหลักฐาน: ${esc(a.evidence)} · ${esc(a.reviewed)}<br>
+      ${esc(uiText("เวอร์ชันเนื้อหา", "Content version"))}: ${esc(a.version)} ·
+      ${esc(uiText("อัปเดต", "Updated"))}: ${esc(formatDate(a.updated))}</p>
     ${a.body.map(p => `<p class="mt" style="font-size:15px">${esc(p)}</p>`).join("")}
     <div class="myth">
       <div class="m">❌ <b>ความเชื่อ:</b> ${esc(a.myth.m)}</div>
       <div class="f">✅ <b>ข้อเท็จจริง:</b> ${esc(a.myth.f)}</div>
     </div>
     <div class="q-note"><b>สิ่งนี้หมายความว่าอย่างไรสำหรับคุณ:</b> ${esc(a.forYou)}</div>
-    <p class="tiny mt">อ้างอิง: ${a.refs.map(esc).join("; ")}</p>
+    <div class="article-sources mt"><b>${esc(uiText("แหล่งอ้างอิง", "Sources"))}</b>
+      <ul>${a.refs.map(ref => `<li><a href="${esc(ref.url)}" target="_blank" rel="noopener">${esc(ref.label)}</a></li>`).join("")}</ul>
+    </div>
+    <div class="disclaimer">${esc(uiText(
+      "เนื้อหานี้ให้ความรู้ทั่วไป ไม่ใช่คำวินิจฉัยหรือคำแนะนำเฉพาะบุคคล และยังรอการทบทวนโดยแพทย์",
+      "This is general educational information, not a diagnosis or personalised advice. Medical review is still pending."
+    ))}</div>
     <a class="btn btn-secondary mt" href="#education">← บทความทั้งหมด</a>
     <a class="btn btn-primary mt" href="#begin">ประเมินความเสี่ยง 2–3 นาที</a>
   </div>`);

@@ -1,0 +1,42 @@
+name: Update Air4Thai snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: air4thai-snapshot
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out live-data branch
+        uses: actions/checkout@v4
+        with:
+          ref: air-quality-data
+          fetch-depth: 1
+
+      - name: Fetch and validate official station data
+        run: |
+          curl --fail --silent --show-error --retry 3 --proto '=https' --tlsv1.2 \
+            'https://air4thai.pcd.go.th/services/getNewAQI_JSON.php' \
+            --output "$RUNNER_TEMP/air4thai.json"
+          AIR4THAI_INPUT="$RUNNER_TEMP/air4thai.json" node scripts/update-air-quality.mjs
+
+      - name: Publish changed snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/air4thai-latest.json
+          if git diff --cached --quiet; then
+            echo "No station-data change"
+          else
+            git commit -m "data: refresh Air4Thai snapshot"
+            git push origin HEAD:air-quality-data
+          fi
