@@ -19,6 +19,12 @@ assert.equal(groupIssue.code, "group_field_required");
 assert.equal(groupIssue.fieldKey, "protection");
 
 const smokingDetail = data.STEPS.find(step => step.id === "SMOKE_DETAIL");
+const missingSmokingNumber = validation.validateAssessmentStep(smokingDetail, {
+  SMOKE_DETAIL: { cpd: 20 }
+});
+assert.equal(missingSmokingNumber.code, "number_required");
+assert.equal(missingSmokingNumber.fieldKey, "years");
+
 const rangeIssue = validation.validateAssessmentStep(smokingDetail, {
   SMOKE_DETAIL: { cpd: 101, years: 20 }
 });
@@ -38,4 +44,10 @@ assert.equal("SMOKE_DETAIL" in staleConditional, false);
 assert.equal("SHS_DETAIL" in staleConditional, false);
 assert.equal("OCC_DETAIL" in staleConditional, false);
 
-console.log("Validation checks passed: personas, grouped fields, ranges, conditional cleanup.");
+const formerSmokerMissingQuitTime = structuredClone(data.PERSONAS[2].answers);
+formerSmokerMissingQuitTime.SMOKE_STATUS = "เคยสูบเป็นประจำ แต่เลิกแล้ว";
+formerSmokerMissingQuitTime.SMOKE_DETAIL = { cpd: 20, years: 20 };
+const formerSmokerIssues = validation.validateAssessment(formerSmokerMissingQuitTime);
+assert.ok(formerSmokerIssues.some(issue => issue.stepId === "QUIT_YEARS"));
+
+console.log("Validation checks passed: personas, required smoking details, ranges, conditional cleanup.");

@@ -1,6 +1,6 @@
 # TASKS.md — LungLens / รู้ทันปอด roadmap
 
-Last reviewed: **2026-07-26**
+Last reviewed: **2026-07-28**
 
 Status legend:
 
@@ -38,6 +38,13 @@ Status legend:
   accessible factor controls, active-navigation state, and stronger visible focus
 - ✅ v0.2 safer saved-state hydration, non-destructive storage-error handling, and cache busting
 - ✅ v0.2 responsive phone header verified at 375px and desktop width
+- ✅ v0.3 removed province, demo PM2.5, and age-only scoring so Bangkok or age alone
+  cannot change a user's factor band
+- ✅ v0.3 added former-smoker quit timing and a separate educational LDCT context based
+  on age together with smoking exposure
+- ✅ v0.3 retires saved v1 results safely while preserving answers for reassessment
+- ✅ v0.3 makes all clinic/referral actions explicitly demonstrational and states that
+  no hospital or staff member receives a request
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -130,10 +137,11 @@ Status legend:
 
 ## 4 — Results and safety communication
 
-- [ ] 🩺 Clinically review all 18 rules, prototype weights, thresholds, and result bands.
+- [ ] 🩺 Clinically review all 17 rules, prototype weights, thresholds, and result bands.
 - [ ] 🩺 Confirm that every rule explanation accurately matches its evidence.
 - [ ] 🩺 Confirm the “what to do next” guidance is appropriate and non-diagnostic.
-- [ ] 🩺 Review age, smoking, family-history, occupational, household, and PM2.5 wording.
+- [ ] 🩺 Review age, smoking, family-history, occupational, household, screening-context,
+  and PM2.5 education wording.
 - [ ] 🩺 Confirm Band B never reassures users that they are “safe” or “low risk.”
 - [ ] 🩺 Confirm no result implies cancer probability, diagnosis, or automatic LDCT eligibility.
 - [ ] 🩺 Confirm symptoms remain separate from the risk calculation.

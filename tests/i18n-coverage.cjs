@@ -22,7 +22,7 @@ function inspect(value) {
   data.STEPS,
   data.RULES,
   data.BANDS,
-  data.PM25_DEMO,
+  data.SCREENING_CONTEXTS,
   data.FACILITIES,
   data.EDU_CATEGORIES,
   data.ARTICLES,

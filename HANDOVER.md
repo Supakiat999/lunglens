@@ -1,7 +1,7 @@
 # HANDOVER — LungLens / รู้ทันปอด
 
 **Read this first.** It assumes you know nothing about the project and have not seen any
-prior conversation. Last updated **2026-07-26**.
+prior conversation. Last updated **2026-07-28**.
 
 ---
 
@@ -26,7 +26,7 @@ medical test.**
 | The LINE app, hosting, login, sharing | The **risk rules and their weights** |
 | The questionnaire flow and UI | All **hospitals/clinics** in the finder |
 | Data stays on the user's own device | All **provider cases + analytics** |
-| | The **PM2.5 area data** |
+| General PM2.5 education | Any personal PM2.5 exposure estimate |
 | | The education articles (drafts, unreviewed) |
 
 Before any real-world use, these gates **must** be cleared: clinical validation of the
@@ -69,9 +69,11 @@ and passed as an environment variable at run time. **Never write it into a file.
 ## 4. What's done ✅
 
 - Full user journey: landing → consent (layered, nothing pre-checked) → 15-step
-  assessment with autosave/resume → explainable result → clinic finder → referral +
+  assessment with autosave/resume → explainable result with separate LDCT screening
+  context → clinic finder → referral +
   status timeline → personal data controls (export/delete/withdraw consent)
-- **Explainable risk engine** — 18 versioned rules, each with a Thai explanation,
+- **Explainable risk engine** — 17 versioned rules (14 active factor rules and 3 age
+  context rules), each with a Thai explanation,
   a "what to do next", and an evidence-strength label. Symptoms are handled in a
   **separate pathway and are never scored**.
 - Education centre (4 written articles + 12-category structure), provider dashboard demo
@@ -88,6 +90,10 @@ and passed as an environment variable at run time. **Never write it into a file.
   number-range validation, hidden conditional-answer cleanup, safer saved-state loading,
   cache busting, a responsive phone header, accessible factor controls, route-heading
   focus, modal focus restoration, and stronger ARIA/focus states.
+- **Prototype v0.3 screening-safety correction** — province and age alone cannot change
+  the result; the fictional area-PM2.5 lookup was removed; former smokers are asked when
+  they stopped; LDCT context uses age together with smoking exposure; and old v1 results
+  require reassessment instead of continuing to show retired rules.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

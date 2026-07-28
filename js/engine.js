@@ -24,6 +24,28 @@ function symptomPathway(answers) {
   return "prompt";
 }
 
+function screeningContext(answers) {
+  const pathway = symptomPathway(answers);
+  if (pathway !== "standard") return SCREENING_CONTEXTS.symptoms_first;
+
+  const standardAgeRange = ["50–59 ปี", "60–69 ปี", "70–79 ปี"].includes(answers.AGE);
+  const ageNeedsConfirmation = answers.AGE === "80 ปีขึ้นไป";
+  const smokingExposure = packYears(answers);
+  const hasScreeningSmokingHistory =
+    answers.SMOKE_STATUS === "ปัจจุบันยังสูบ" ||
+    answers.SMOKE_STATUS === "เคยสูบเป็นประจำ แต่เลิกแล้ว";
+
+  if ((!standardAgeRange && !ageNeedsConfirmation) || !hasScreeningSmokingHistory || smokingExposure < 20) {
+    return SCREENING_CONTEXTS.not_standard;
+  }
+
+  if (ageNeedsConfirmation) return SCREENING_CONTEXTS.individual_review;
+  if (answers.SMOKE_STATUS === "ปัจจุบันยังสูบ") return SCREENING_CONTEXTS.discuss_ldct;
+
+  const within15Years = ["น้อยกว่า 1 ปี", "1–5 ปี", "6–10 ปี", "11–15 ปี"].includes(answers.QUIT_YEARS);
+  return within15Years ? SCREENING_CONTEXTS.discuss_ldct : SCREENING_CONTEXTS.individual_review;
+}
+
 function evaluateRisk(answers) {
   const now = new Date();
 
@@ -33,6 +55,7 @@ function evaluateRisk(answers) {
       screening_context_band: "incomplete",
       band: BANDS.incomplete,
       symptom_pathway: symptomPathway(answers),
+      screening_context: SCREENING_CONTEXTS.not_standard,
       factors: [], score: 0,
       missing: REQUIRED_STEPS.filter(id => {
         const v = answers[id];
@@ -66,18 +89,22 @@ function evaluateRisk(answers) {
   else band = BANDS.review;
 
   const pathway = symptomPathway(answers);
+  const screening = screeningContext(answers);
 
   return {
     assessment_status: "completed",
     screening_context_band: band.key,
     band,
     symptom_pathway: pathway,
+    screening_context: screening,
     factor_codes: factors.map(f => f.code),
     factors,
     score, // internal prototype points, never shown as a probability
     explanation_th: factors.map(f => f.explain),
     recommended_next_step:
       pathway !== "standard" ? "clinical_symptom_assessment" :
+      screening === SCREENING_CONTEXTS.discuss_ldct ? "discuss_ldct_screening" :
+      screening === SCREENING_CONTEXTS.individual_review ? "professional_screening_review" :
       band === BANDS.review ? "professional_review" :
       band === BANDS.attention ? "learn_and_consider_consult" : "stay_informed",
     generated_at: now.toISOString(),
@@ -96,6 +123,6 @@ const NOT_ASSESSED = [
 
 if (typeof module !== "undefined") {
   module.exports = {
-    REQUIRED_STEPS, assessmentComplete, symptomPathway, evaluateRisk, NOT_ASSESSED
+    REQUIRED_STEPS, assessmentComplete, symptomPathway, screeningContext, evaluateRisk, NOT_ASSESSED
   };
 }

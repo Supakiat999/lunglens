@@ -39,7 +39,14 @@ function validateAssessmentStep(step, answers) {
     const current = value && typeof value === "object" ? value : {};
     for (const field of step.fields) {
       const number = current[field.key];
-      if (number == null || number === "") continue;
+      if (number == null || number === "") {
+        return {
+          code: "number_required",
+          stepId: step.id,
+          fieldKey: field.key,
+          fieldLabel: field.label
+        };
+      }
       if (!Number.isFinite(Number(number)) || Number(number) < field.min || Number(number) > field.max) {
         return {
           code: "number_range",

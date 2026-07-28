@@ -54,11 +54,12 @@ Key safety invariants baked into the code:
 (key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), works offline after load,
 and is deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.2.0`**. This release adds a review-before-submit
-screen, reusable questionnaire validation, hidden conditional-answer cleanup, safer
-saved-state hydration, cache busting, a responsive phone header, accessible factor
-controls, and improved keyboard/focus behavior. The risk engine and its bands remain
-unchanged at `prototype_rules_v1`.
+Current app version: **`prototype_0.3.0`**. This safety release removes province and
+age-only scoring, removes the fictional PM2.5 area lookup from the assessment, asks
+former smokers when they stopped, and adds a separate plain-language LDCT screening
+context based on age plus smoking history. Previous v1 results are retired rather than
+silently recalculated; saved answers remain available for reassessment. The engine is
+versioned as `prototype_rules_v2`.
 
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
@@ -105,13 +106,14 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
 
 - **#home** — campaign landing (hero, benefit cards, disclaimer, 45-s video storyboard, demo personas)
 - **#begin → #consent** — before-you-begin + layered consent (required vs optional, nothing pre-checked)
-- **#assess** — 15-step wizard: profile, smoking (+pack-years), second-hand smoke, family/medical,
-  occupational, household cooking, area PM2.5 (demo data), symptom safety check.
+- **#assess** — 15-step wizard: profile, smoking (+pack-years and time since stopping),
+  second-hand smoke, family/medical, occupational, household cooking, symptom safety check.
+  Province is used only for healthcare navigation and never changes the result.
   Autosave per answer, "บันทึกและกลับมาทำต่อภายหลัง", resume card on home.
 - **#review** — bilingual answer summary with per-question editing before result creation
 - **#symptom** — symptom pathway interstitial (urgent = red + 1669 guidance; never diagnostic)
-- **#result** — band, "ทำไมจึงได้ผลนี้" factor cards (tap → why/next/evidence/rule code),
-  not-assessed list, privacy-safe share card, detailed-share confirm, retake
+- **#result** — band, separate LDCT screening context, "ทำไมจึงได้ผลนี้" factor cards
+  (tap → why/next/evidence/rule code), not-assessed list, privacy-safe sharing, retake
 - **#education** — 4 written articles (myth/fact, evidence labels, reviewer placeholder) + 12 category grid
 - **#clinics** — 6 demo facilities, filters (province / LDCT / public), CTAs
 - **#referral** — referral request form (consent-gated) + status timeline with demo advance button
@@ -135,12 +137,14 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
 `RULES` in `js/data.js` — each rule carries: code, version, prototype weight, Thai explanation,
 "what next" advice, evidence label (มีหลักฐานค่อนข้างชัด / บางส่วน / อยู่ระหว่างการศึกษา), status.
 `evaluateRisk()` returns the spec's result object shape (factor codes, explanations,
-`model_version: "prototype_rules_v1"`, `clinical_validation_status: "not_clinically_validated"`).
+`model_version: "prototype_rules_v2"`, `clinical_validation_status: "not_clinically_validated"`).
 
 Bands: **0 pts** → B "ยังไม่พบปัจจัยเสี่ยงเด่น" · **1–3** → C "พบปัจจัยที่ควรให้ความสำคัญ" ·
 **≥4** → D "แนะนำให้รับการประเมินเพิ่มเติมจากบุคลากรทางการแพทย์".
 Thresholds and weights are prototype placeholders — **ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง**.
-Rule changes must create a new version; old results keep their generating version (see TASKS).
+Province and age-only context never add points. Screening context is separate from the
+factor band and never orders LDCT. Rule changes create a new version; retired results
+remain identifiable by their generating version and require reassessment.
 
 ## Path to production (target architecture)
 
@@ -209,7 +213,7 @@ Messaging-API webhook (Phase 2):
 - Public user journeys support complete Thai/English switching. Thai remains the canonical
   stored-answer language so switching languages cannot alter rule-engine outcomes.
 - The provider dashboard demo and presentation-only route remain Thai-first.
-- PM2.5 area data is a seeded demo list, clearly labelled — not real measurements.
+- The app provides PM2.5 education but does not infer personal exposure from province.
 - All "call / map / detailed share / provider write actions" open labelled prototype popups.
 - No real persistence beyond the device (localStorage), no accounts, no real LINE session.
 - Articles are drafts pending medical review; references are placeholders.

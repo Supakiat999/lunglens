@@ -5,8 +5,8 @@
    ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
    ===================================================================== */
 
-const APP_VERSION = "prototype_0.2.0";
-const ENGINE_VERSION = "prototype_rules_v1";
+const APP_VERSION = "prototype_0.3.0";
+const ENGINE_VERSION = "prototype_rules_v2";
 const STORE_KEY = "lunglens-v1";
 
 /* ---------------- Provinces (subset for prototype) ---------------- */
@@ -15,14 +15,6 @@ const PROVINCES = [
   "อุดรธานี","อุบลราชธานี","ชลบุรี","ระยอง","สระบุรี","สมุทรปราการ",
   "นนทบุรี","ปทุมธานี","สงขลา","ภูเก็ต","สุราษฎร์ธานี","อื่น ๆ"
 ];
-
-/* Demo district-level long-term PM2.5 context (DEMONSTRATION DATA ONLY) */
-const PM25_DEMO = {
-  source: "ชุดข้อมูลสาธิต (demo dataset) — ไม่ใช่ข้อมูลจริง",
-  asOf: "2569-06 (ตัวอย่าง)",
-  elevated: ["เชียงใหม่","เชียงราย","ลำปาง","ขอนแก่น","สระบุรี","กรุงเทพมหานคร"],
-  moderate: ["นครราชสีมา","อุดรธานี","สมุทรปราการ","ปทุมธานี","ระยอง"],
-};
 
 /* ---------------- Assessment steps ----------------
    Each step: id, section, title, why (optional), type, options, cond(answers)
@@ -46,7 +38,7 @@ const STEPS = [
   {
     id: "PROVINCE", section: "ข้อมูลพื้นฐาน",
     title: "จังหวัดที่อาศัยอยู่เป็นหลัก",
-    why: "ใช้ประกอบข้อมูลสภาพแวดล้อมระดับพื้นที่ และช่วยแนะนำสถานพยาบาลใกล้คุณ (ไม่เก็บที่อยู่เต็ม)",
+    why: "ใช้เพื่อช่วยแนะนำสถานพยาบาลใกล้คุณเท่านั้น จังหวัดไม่ถูกนำไปตัดสินผลปัจจัยสุขภาพหรือเกณฑ์การคัดกรอง",
     type: "province"
   },
   {
@@ -66,6 +58,14 @@ const STEPS = [
       { key: "years", label: "จำนวนปีที่สูบทั้งหมด",     min: 0, max: 80 }
     ],
     cond: a => a.SMOKE_STATUS === "เคยสูบเป็นประจำ แต่เลิกแล้ว" || a.SMOKE_STATUS === "ปัจจุบันยังสูบ"
+  },
+  {
+    id: "QUIT_YEARS", section: "ประวัติการสูบบุหรี่",
+    title: "คุณเลิกสูบบุหรี่มานานเท่าไรแล้ว?",
+    why: "ระยะเวลาหลังเลิกสูบเป็นข้อมูลหนึ่งที่แนวทางบางแห่งใช้ประกอบการพูดคุยเรื่องการคัดกรอง",
+    type: "choice",
+    options: ["น้อยกว่า 1 ปี","1–5 ปี","6–10 ปี","11–15 ปี","มากกว่า 15 ปี","ไม่แน่ใจ"],
+    cond: a => a.SMOKE_STATUS === "เคยสูบเป็นประจำ แต่เลิกแล้ว"
   },
   {
     id: "SHS_HOME", section: "ควันบุหรี่มือสอง",
@@ -141,11 +141,6 @@ const STEPS = [
     options: ["ทำอาหารนอกบ้าน/กลางแจ้ง","มีเครื่องดูดควันหรือปล่องระบาย","เปิดหน้าต่างอย่างเดียว","ระบายอากาศได้จำกัด","ไม่มีการระบายอากาศ","ไม่แน่ใจ"]
   },
   {
-    id: "AREA_INFO", section: "ข้อมูลพื้นที่",
-    title: "ข้อมูลฝุ่น PM2.5 ระดับพื้นที่ (ข้อมูลสาธิต)",
-    type: "info"
-  },
-  {
     id: "SYMPTOMS", section: "เช็กอาการ",
     title: "ก่อนดูผล ขอเช็กอาการที่ควรปรึกษาแพทย์",
     note: "ส่วนนี้แยกจากคะแนนปัจจัยเสี่ยง และไม่ถูกนำไปคำนวณความน่าจะเป็นของโรค",
@@ -173,17 +168,17 @@ function packYears(a) {
 }
 
 const RULES = [
-  { code: "AGE_50_59", version: 1, weight: 1, evidence: EV.clear, status: "approved_for_prototype",
+  { code: "AGE_50_59", version: 2, weight: 0, evidence: EV.clear, status: "context_only",
     name: "อายุ 50–59 ปี",
     cond: a => a.AGE === "50–59 ปี",
     explain: "อายุอยู่ในช่วงที่ควรเริ่มให้ความสำคัญกับสุขภาพปอดมากขึ้น",
     next: "ติดตามสุขภาพปอดสม่ำเสมอ และรู้จักอาการที่ควรพบแพทย์" },
-  { code: "AGE_60_69", version: 1, weight: 2, evidence: EV.clear, status: "approved_for_prototype",
+  { code: "AGE_60_69", version: 2, weight: 0, evidence: EV.clear, status: "context_only",
     name: "อายุ 60–69 ปี",
     cond: a => a.AGE === "60–69 ปี",
     explain: "อายุอยู่ในช่วงที่ควรให้ความสำคัญกับสุขภาพปอดมากขึ้น",
     next: "พูดคุยเรื่องสุขภาพปอดกับบุคลากรทางการแพทย์เมื่อตรวจสุขภาพประจำปี" },
-  { code: "AGE_70_PLUS", version: 1, weight: 2, evidence: EV.clear, status: "approved_for_prototype",
+  { code: "AGE_70_PLUS", version: 2, weight: 0, evidence: EV.clear, status: "context_only",
     name: "อายุ 70 ปีขึ้นไป",
     cond: a => a.AGE === "70–79 ปี" || a.AGE === "80 ปีขึ้นไป",
     explain: "อายุอยู่ในช่วงที่ควรให้ความสำคัญกับสุขภาพปอดเป็นพิเศษ",
@@ -297,12 +292,7 @@ const RULES = [
       return fuel && vent;
     },
     explain: "การหุงต้มด้วยเชื้อเพลิงชีวมวลในพื้นที่ระบายอากาศจำกัดเป็นเวลานาน เป็นปัจจัยแวดล้อมที่ยังอยู่ระหว่างการศึกษา",
-    next: "ปรับปรุงการระบายอากาศในครัว หรือทำอาหารในที่โล่งเมื่อทำได้" },
-  { code: "AREA_PM25_ELEVATED", version: 1, weight: 1, evidence: EV.studying, status: "approved_for_prototype",
-    name: "อาศัยในพื้นที่ค่าฝุ่นสะสมสูง (ข้อมูลสาธิต)",
-    cond: a => PM25_DEMO.elevated.includes(a.PROVINCE),
-    explain: "เขตนี้มีค่าฝุ่นสะสมในระดับที่ควรให้ความสำคัญตามชุดข้อมูลสาธิต ทั้งนี้ความเสี่ยงส่วนบุคคลขึ้นอยู่กับหลายปัจจัย",
-    next: "ติดตามค่าฝุ่นและลดกิจกรรมกลางแจ้งในวันที่ค่าฝุ่นสูง" }
+    next: "ปรับปรุงการระบายอากาศในครัว หรือทำอาหารในที่โล่งเมื่อทำได้" }
 ];
 
 /* Result bands */
@@ -319,6 +309,38 @@ const BANDS = {
   review: { key: "professional_review", label: "แนะนำให้รับการประเมินเพิ่มเติมจากบุคลากรทางการแพทย์", cls: "band-blue",
     summary: "พบหลายปัจจัยที่ควรให้ความสำคัญ บุคลากรทางการแพทย์สามารถช่วยพิจารณาว่าจำเป็นต้องตรวจเพิ่มเติม เช่น การประเมินทางคลินิกหรือการถ่ายภาพรังสีชนิดใด",
     action: "ค้นหาช่องทางปรึกษาบุคลากรทางการแพทย์" }
+};
+
+/*
+  Screening context is deliberately separate from the factor bands above.
+  It is educational guidance based on commonly used age-and-smoking criteria,
+  not a clinical eligibility decision and never an order for LDCT.
+*/
+const SCREENING_CONTEXTS = {
+  symptoms_first: {
+    key: "symptoms_first",
+    label: "ควรประเมินอาการก่อนพิจารณาเรื่องการคัดกรอง",
+    summary: "คุณรายงานอาการที่ควรได้รับการประเมินจากบุคลากรทางการแพทย์ การตรวจหาสาเหตุของอาการแตกต่างจากการคัดกรองในคนที่ไม่มีอาการ",
+    action: "ดูคำแนะนำเรื่องอาการและติดต่อบริการสุขภาพที่เหมาะสม"
+  },
+  discuss_ldct: {
+    key: "discuss_ldct",
+    label: "ควรพูดคุยเรื่องเกณฑ์ LDCT กับบุคลากรทางการแพทย์",
+    summary: "ช่วงอายุและประวัติการสูบที่คุณรายงานทับซ้อนกับเกณฑ์ที่ใช้ทั่วไปในบางแนวทาง แต่ผลนี้ไม่ใช่คำสั่งตรวจและยังต้องพิจารณาสุขภาพโดยรวม ประโยชน์ และผลเสียร่วมกัน",
+    action: "นำประวัติการสูบโดยประมาณไปพูดคุยกับบุคลากรทางการแพทย์"
+  },
+  individual_review: {
+    key: "individual_review",
+    label: "ควรให้บุคลากรทางการแพทย์ทบทวนข้อมูลเพิ่มเติม",
+    summary: "ข้อมูลบางส่วนอยู่ใกล้ช่วงที่ใช้พิจารณาการคัดกรอง แต่แนวทางอาจแตกต่างกันหรือยังต้องยืนยันรายละเอียดเพิ่มเติม ระบบจึงไม่สรุปว่าคุณเข้าเกณฑ์",
+    action: "ขอให้บุคลากรทางการแพทย์ทบทวนประวัติและความเหมาะสมเป็นรายบุคคล"
+  },
+  not_standard: {
+    key: "not_standard",
+    label: "ไม่เข้าเกณฑ์อายุและประวัติการสูบที่ใช้ทั่วไปสำหรับ LDCT",
+    summary: "จากคำตอบของคุณ ยังไม่เข้าเกณฑ์มาตรฐานที่อาศัยอายุร่วมกับประวัติการสูบสำหรับการคัดกรอง LDCT ข้อนี้ไม่สามารถยืนยันว่าไม่มีโรคได้ และหากมีอาการควรพบแพทย์",
+    action: "ไม่ควรตรวจ CT เพียงเพราะจังหวัด อายุ หรือปัจจัยใดปัจจัยหนึ่งจากแบบประเมินนี้"
+  }
 };
 
 /* ---------------- Demo facilities (ข้อมูลจำลอง) ---------------- */
@@ -494,7 +516,7 @@ const PROVIDER_ROLES = [
 
 if (typeof module !== "undefined") {
   module.exports = {
-    PROVINCES, STEPS, RULES, BANDS, PM25_DEMO, FACILITIES,
+    PROVINCES, STEPS, RULES, BANDS, SCREENING_CONTEXTS, FACILITIES,
     EDU_CATEGORIES, ARTICLES, PERSONAS, packYears,
     APP_VERSION, ENGINE_VERSION, STORE_KEY
   };

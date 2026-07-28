@@ -39,6 +39,12 @@ function hydrateState(saved) {
   next.stepIndex = Number.isInteger(saved.stepIndex) && saved.stepIndex >= 0 ? saved.stepIndex : 0;
   next.returnToReview = saved.returnToReview === true;
   next.consent = saved.consent && typeof saved.consent === "object" ? saved.consent : null;
+  const savedResult = saved.result && typeof saved.result === "object" ? saved.result : null;
+  next.result = savedResult?.model_version === ENGINE_VERSION ? savedResult : null;
+  if (savedResult && !next.result) {
+    next.inProgress = true;
+    next.returnToReview = false;
+  }
   pruneInactiveAnswers(next.answers);
   return next;
 }
@@ -409,15 +415,6 @@ function renderAssess() {
       <div class="field"><label for="district-input">อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)</label>
         <input id="district-input" type="text" value="${esc(a.DISTRICT || "")}"
           onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>`;
-  } else if (step.type === "info") {
-    const p = a.PROVINCE;
-    const lvl = PM25_DEMO.elevated.includes(p) ? "สูง (ควรให้ความสำคัญ)" : PM25_DEMO.moderate.includes(p) ? "ปานกลาง" : "ไม่พบข้อมูลระดับสูงในชุดสาธิต";
-    body = `<div class="q-note">📍 จังหวัด: <b>${esc(p || "ยังไม่ระบุ")}</b><br>
-      ค่าฝุ่นสะสมระดับพื้นที่ (ชุดข้อมูลสาธิต): <b>${lvl}</b><br>
-      <span class="tiny">แหล่งข้อมูล: ${esc(PM25_DEMO.source)} · ข้อมูล ณ ${esc(PM25_DEMO.asOf)}<br>
-      ความเสี่ยงส่วนบุคคลขึ้นอยู่กับหลายปัจจัย และค่าฝุ่นรายวันไม่สามารถแทนการสัมผัสระยะยาวได้</span></div>
-      <button class="btn btn-ghost btn-sm" onclick="askGeo()">📍 ใช้ตำแหน่งปัจจุบัน (ไม่บังคับ)</button>`;
-    if (!a.AREA_INFO) { a.AREA_INFO = "seen"; save(); }
   }
 
   const isSymptoms = step.type === "symptoms";
@@ -490,6 +487,7 @@ function validationMessage(issue) {
   if (state.lang === "en") {
     if (issue.code === "province_required") return "Choose a province.";
     if (issue.code === "group_field_required") return `Please answer “${tr(issue.fieldLabel, "en")}”.`;
+    if (issue.code === "number_required") return `Enter “${tr(issue.fieldLabel, "en")}”.`;
     if (issue.code === "number_range") {
       return `Enter “${tr(issue.fieldLabel, "en")}” between ${issue.min} and ${issue.max}.`;
     }
@@ -497,6 +495,7 @@ function validationMessage(issue) {
   }
   if (issue.code === "province_required") return "กรุณาเลือกจังหวัด";
   if (issue.code === "group_field_required") return `กรุณาตอบหัวข้อ “${issue.fieldLabel}”`;
+  if (issue.code === "number_required") return `กรุณาใส่ “${issue.fieldLabel}”`;
   if (issue.code === "number_range") {
     return `กรุณาใส่ “${issue.fieldLabel}” ระหว่าง ${issue.min} ถึง ${issue.max}`;
   }
@@ -668,6 +667,14 @@ function renderResult() {
     return;
   }
   const b = r.band;
+  const screening = r.screening_context || screeningContext(state.answers);
+  const needsProfessionalNext =
+    screening.key === "discuss_ldct" ||
+    screening.key === "individual_review" ||
+    b === BANDS.review;
+  const primaryNext = needsProfessionalNext
+    ? `<a class="btn btn-primary mt" href="#clinics">ค้นหาช่องทางปรึกษาบุคลากรทางการแพทย์</a>`
+    : `<a class="btn btn-primary mt" href="#education">เรียนรู้วิธีดูแลสุขภาพปอด</a>`;
   const dt = formatDate(r.generated_at);
   view(`
   ${r.symptom_pathway !== "standard" ? `<div class="band band-urgent">
@@ -678,6 +685,14 @@ function renderResult() {
   <div class="band ${b.cls}">
     <h2>${esc(b.label)}</h2>
     <p>${esc(b.summary)}</p>
+  </div>
+
+  <div class="card">
+    <h3>เกณฑ์การคัดกรอง LDCT หมายถึงอะไรสำหรับคุณ</h3>
+    <h4>${esc(screening.label)}</h4>
+    <p class="muted">${esc(screening.summary)}</p>
+    <p class="tiny mt">${esc(screening.action)}</p>
+    <p class="tiny mt">ส่วนนี้ใช้เกณฑ์อายุร่วมกับประวัติการสูบเพื่อให้ความรู้เท่านั้น จังหวัด เพศ และอายุเพียงอย่างเดียวไม่ทำให้เข้าเกณฑ์ และบุคลากรทางการแพทย์ต้องเป็นผู้ยืนยันความเหมาะสม</p>
   </div>
 
   ${r.factors.length ? `<div class="card">
@@ -704,11 +719,12 @@ function renderResult() {
     <h3>ขั้นตอนถัดไปที่แนะนำ</h3>
     <p class="muted">${esc(b.action)}</p>
     ${b === BANDS.review ? `<p class="muted mt" style="font-size:13.5px">บุคลากรทางการแพทย์สามารถช่วยพิจารณาว่าจำเป็นต้องตรวจเพิ่มเติม เช่น การประเมินทางคลินิกหรือการถ่ายภาพรังสีชนิดใด</p>` : ""}
-    <a class="btn btn-primary mt" href="#clinics">ค้นหาช่องทางปรึกษาบุคลากรทางการแพทย์</a>
+    ${primaryNext}
     <div class="row mt">
       <button class="btn btn-secondary btn-sm" onclick="toast('บันทึกผลไว้ใน “ข้อมูลของฉัน” แล้ว')">💾 บันทึกผล</button>
       <button class="btn btn-secondary btn-sm" onclick="shareCard()">📤 แชร์แบบปลอดภัย</button>
       <a class="btn btn-secondary btn-sm" href="#education">📚 เรียนรู้เพิ่มเติม</a>
+      ${needsProfessionalNext ? "" : `<a class="btn btn-secondary btn-sm" href="#clinics">ดูข้อมูลการหาบริการสุขภาพ</a>`}
       <button class="btn btn-ghost btn-sm" onclick="retake()">🔄 ทำแบบประเมินใหม่</button>
     </div>
   </div>
@@ -813,7 +829,8 @@ function renderClinics() {
     (!clinicFilter.publicOnly || f.public));
   view(`<div class="card">
     <h2>🏥 สถานพยาบาลและช่องทางปรึกษา</h2>
-    <p class="tiny">รายการทั้งหมดเป็น <b>ข้อมูลจำลอง</b> เพื่อการสาธิต — ไม่ใช่บริการจริง และไม่ได้ยืนยันว่าทุกแห่งให้บริการคัดกรองมะเร็งปอด</p>
+    <p class="muted"><b>หน้านี้ยังไม่ใช่รายชื่อสถานพยาบาลจริงและยังไม่สามารถนัดหมายหรือส่งต่อผู้ป่วยได้</b></p>
+    <p class="tiny">รายการทั้งหมดเป็น <b>ข้อมูลจำลอง</b> เพื่อแสดงรูปแบบการค้นหาเท่านั้น หากต้องการรับบริการตอนนี้ โปรดติดต่อสถานพยาบาลที่ตรวจสอบได้หรือหน่วยบริการตามสิทธิของคุณโดยตรง หากมีอาการฉุกเฉิน โทร 1669</p>
     <div class="row mt">
       <select onchange="clinicFilter.province=this.value;renderClinics()">
         <option value="">ทุกจังหวัด</option>
@@ -831,7 +848,7 @@ function renderClinics() {
     <p class="tiny">นัดหมาย: ${esc(f.appointment)} · การส่งตัว: ${esc(f.referral)} · ภาษา: ${f.lang.join("/")} · การเข้าถึง: ${esc(f.access)}</p>
     <p class="tiny" style="color:var(--warn)">${esc(f.verified)}</p>
     <div class="row mt">
-      <button class="btn btn-primary btn-sm" onclick="startReferral('${f.id}')">ขอให้เจ้าหน้าที่ติดต่อ</button>
+      <button class="btn btn-primary btn-sm" onclick="startReferral('${f.id}')">ทดลองขั้นตอนขอรับการติดต่อ</button>
       <button class="btn btn-secondary btn-sm" onclick="protoPopup('โทร ${esc(f.phone)}','เวอร์ชันจริงจะเปิดแอปโทรศัพท์')">โทรสอบถาม</button>
       <button class="btn btn-secondary btn-sm" onclick="protoPopup('เปิดแผนที่','เวอร์ชันจริงจะเปิดแผนที่ไปยังตำแหน่งสถานพยาบาล')">เปิดแผนที่</button>
       <button class="btn btn-ghost btn-sm" onclick="toast('บันทึกสถานพยาบาลไว้แล้ว (จำลอง)')">บันทึกไว้</button>
@@ -851,12 +868,12 @@ function startReferral(facilityId) {
   const f = FACILITIES.find(x => x.id === facilityId);
   if (!state.consent?.optional?.contact) {
     modal(`<h3>ต้องการความยินยอมเพิ่มเติม</h3>
-      <p class="muted">การขอให้เจ้าหน้าที่ติดต่อ ต้องการความยินยอม “ให้เจ้าหน้าที่ที่ได้รับอนุญาตติดต่อฉันได้”</p>
+      <p class="muted">นี่เป็นการทดลองขั้นตอนเท่านั้นและจะไม่มีเจ้าหน้าที่ได้รับข้อมูล การใช้งานจริงจะต้องขอความยินยอม “ให้เจ้าหน้าที่ที่ได้รับอนุญาตติดต่อฉันได้”</p>
       <button class="btn btn-primary mt" onclick="grantContactConsent('${facilityId}')">ยินยอมและดำเนินการต่อ</button>`);
     return;
   }
-  modal(`<h3>ขอให้เจ้าหน้าที่ติดต่อ</h3>
-    <p class="tiny">${esc(f.name)} · ไม่ต้องกรอกข้อมูลสุขภาพซ้ำ — ระบบใช้ผลประเมินที่คุณยินยอมแชร์</p>
+  modal(`<h3>ทดลองคำขอให้เจ้าหน้าที่ติดต่อ</h3>
+    <p class="tiny">${esc(f.name)} · ข้อมูลจะบันทึกไว้บนอุปกรณ์นี้เพื่อสาธิตเท่านั้น ไม่มีโรงพยาบาลหรือเจ้าหน้าที่ได้รับคำขอ และระบบไม่ส่งผลประเมินของคุณออกจากอุปกรณ์</p>
     <div class="field"><label>ช่องทางที่สะดวก</label>
       <select id="rf-contact"><option value="LINE">LINE</option><option value="โทรศัพท์">โทรศัพท์</option></select></div>
     <div class="field"><label>วันที่สะดวก</label>
@@ -865,7 +882,7 @@ function startReferral(facilityId) {
       <select id="rf-time"><option value="เช้า (9:00–12:00)">เช้า (9:00–12:00)</option><option value="บ่าย (13:00–16:00)">บ่าย (13:00–16:00)</option><option value="เย็น (16:00–18:00)">เย็น (16:00–18:00)</option></select></div>
     <div class="field"><label>ความต้องการด้านการเข้าถึง / หมายเหตุ (ไม่บังคับ)</label>
       <textarea id="rf-note" rows="2" placeholder="เช่น ต้องการล่าม ต้องการทางลาด"></textarea></div>
-    <button class="btn btn-primary" onclick="submitReferral('${facilityId}')">ส่งคำขอ</button>`);
+    <button class="btn btn-primary" onclick="submitReferral('${facilityId}')">บันทึกคำขอจำลอง</button>`);
 }
 function grantContactConsent(facilityId) {
   state.consent.optional.contact = true; save();
@@ -879,13 +896,14 @@ function submitReferral(facilityId) {
   };
   state.referrals.unshift(ref); save(); track("referral_submitted");
   closeModal();
-  modal(`<h3>✅ ส่งคำขอแล้ว</h3>
-    <p class="muted">เจ้าหน้าที่จะติดต่อกลับตามช่องทางที่คุณเลือก (โหมดต้นแบบ: กดปุ่มจำลองในหน้าสถานะเพื่อดูขั้นตอนถัดไป)</p>
-    <a class="btn btn-primary mt" href="#referral" onclick="closeModal()">ดูสถานะคำขอ</a>`);
+  modal(`<h3>✅ บันทึกคำขอจำลองแล้ว</h3>
+    <p class="muted">คำขอนี้อยู่บนอุปกรณ์ของคุณเท่านั้น ยังไม่ได้ส่งให้โรงพยาบาลและจะไม่มีเจ้าหน้าที่ติดต่อกลับ คุณสามารถเปิดหน้าตัวอย่างสถานะเพื่อดูรูปแบบการทำงานได้</p>
+    <a class="btn btn-primary mt" href="#referral" onclick="closeModal()">ดูตัวอย่างสถานะ</a>`);
 }
 function renderReferral() {
-  view(`<div class="card"><h2>🧭 สถานะการส่งต่อของฉัน</h2>
-    <p class="tiny">ข้อมูลจำลอง — สถานะจริงจะอัปเดตโดยเจ้าหน้าที่ผ่านแดชบอร์ดผู้ให้บริการ</p></div>
+  view(`<div class="card"><h2>🧭 ตัวอย่างสถานะคำขอ</h2>
+    <p class="muted"><b>ยังไม่มีการส่งข้อมูลไปยังโรงพยาบาลหรือระบบสุขภาพจริง</b></p>
+    <p class="tiny">ข้อมูลนี้บันทึกบนอุปกรณ์เพื่อสาธิตว่าระบบสถานะในอนาคตอาจทำงานอย่างไร</p></div>
   ${state.referrals.length === 0 ? `<div class="card center muted">ยังไม่มีคำขอ<br><a class="btn btn-secondary mt" href="#clinics">ค้นหาสถานพยาบาล</a></div>` : ""}
   ${state.referrals.map((r, i) => {
     const f = FACILITIES.find(x => x.id === r.facilityId);
@@ -921,7 +939,7 @@ function renderProfile() {
   <div class="card"><h3>ประวัติการประเมิน</h3>
     ${state.history.length === 0 ? `<p class="muted">ยังไม่มีประวัติ</p>` :
       state.history.map(h => `<div class="factor" style="border-left-color:var(--brand)">
-        <b style="font-size:14px">${esc(h.bandLabel)}</b>
+        <b style="font-size:14px">${h.engine === ENGINE_VERSION ? esc(h.bandLabel) : "ผลเดิมจากกฎต้นแบบที่ยกเลิก — โปรดประเมินใหม่"}</b>
         <p class="tiny">${formatDate(h.at, { dateTime: true })} · ${esc(h.engine)}${h.pathway !== "standard" ? " · มีเส้นทางอาการ" : ""}</p>
       </div>`).join("")}
   </div>
