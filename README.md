@@ -54,7 +54,7 @@ Key safety invariants baked into the code:
 (key `lunglens-v1`). Runs anywhere (GitHub Pages = free hosting), works offline after load,
 and is deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.3.0`**. This safety release removes province and
+Current app version: **`prototype_0.3.1`**. This safety release removes province and
 age-only scoring, removes the fictional PM2.5 area lookup from the assessment, asks
 former smokers when they stopped, and adds a separate plain-language LDCT screening
 context based on age plus smoking history. Previous v1 results are retired rather than
