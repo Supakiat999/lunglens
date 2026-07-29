@@ -72,6 +72,9 @@ Status legend:
 - ✅ v0.12 adds a pure saved-state recovery layer, sanitises invalid answers/results,
   bounds local records, preserves answers when retiring old engine results, enforces
   consent on assessment deep links, and normalises unknown routes
+- ✅ v0.13 adds a dedicated bilingual Help route with emergency, symptom, privacy,
+  technical-support and LINE-chat boundaries; the rich-menu installer targets Help
+  directly, and production-readiness plus controlled-pilot evidence packs are versioned
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -101,7 +104,7 @@ Status legend:
   - [ ] Learn → `?p=education`
   - [ ] Clinics → `?p=clinics`
   - [ ] Reminders → `?p=profile`
-  - [ ] Help → `?p=home`
+  - [ ] Help → `?p=help`
 - [ ] 📱 Confirm LIFF login, browser fallback, back navigation, and reopening the chat.
 - [ ] 📱 Confirm no assessment result or health detail appears in a LINE share preview.
 - [ ] 📱 Confirm Thai and English text on the menu is readable without zooming.
@@ -427,7 +430,10 @@ Status legend:
 - [ ] 🟡 Improve loading, disabled, empty, offline, and error states.
 - [ ] 🟡 Add clearer navigation between results, education, clinics, and profile.
 - [ ] 🟡 Add a consistent way to return home from deep links.
-- [ ] 🟡 Add a contact/support path with response expectations.
+- [x] ✅ Add a truthful Help route that separates emergencies, symptoms, app use,
+  privacy and LINE chat, without inventing a staffed service or response promise.
+- [ ] 🧱 Name the responsible organization, verified channel, staffed hours and
+  response target before publishing operational support.
 - [ ] 🟡 Add structured user feedback after the assessment without collecting health details.
 - [ ] 🟡 Add privacy-safe product analytics for drop-off and completion rates.
 - [ ] 🟡 Review whether demo-persona controls should be hidden outside demos.

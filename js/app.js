@@ -171,7 +171,7 @@ const ROUTES = {
   home: renderHome, begin: renderBegin, consent: renderConsent, assess: renderAssess,
   review: renderReview, symptom: renderSymptomPathway, result: renderResult, education: renderEducation,
   air: renderAirQuality, clinics: renderClinics, referral: renderReferral, profile: renderProfile,
-  provider: renderProvider, "demo-story": renderStory, privacy: renderPrivacy
+  help: renderHelp, provider: renderProvider, "demo-story": renderStory, privacy: renderPrivacy
 };
 function route() {
   /* LIFF deep links: https://liff.line.me/{LIFF_ID}?p=begin → route "begin".
@@ -339,7 +339,8 @@ function renderHome() {
   <p class="center tiny mt">
     <a href="#provider" style="color:var(--ink-3)">สำหรับเจ้าหน้าที่/ผู้ให้บริการ</a> ·
     <a href="#demo-story" style="color:var(--ink-3)">โหมดนำเสนอ</a> ·
-    <a href="#privacy" style="color:var(--ink-3)">ความเป็นส่วนตัว</a>
+    <a href="#privacy" style="color:var(--ink-3)">ความเป็นส่วนตัว</a> ·
+    <a href="#help" style="color:var(--ink-3)">ความช่วยเหลือ</a>
   </p>`);
 }
 
@@ -2166,6 +2167,96 @@ function renderStory() {
     </div>
     <button class="btn btn-ghost btn-sm mt" onclick="storyIdx=0;renderStory()">รีเซ็ตสไลด์</button>
     <p class="tiny mt">โหมดนำเสนอสำหรับการแข่งขัน · ข้อมูลจำลองทั้งหมด</p>
+  </div>`);
+}
+
+/* =====================================================================
+   SCREEN: help and support boundaries
+   ===================================================================== */
+function renderHelp() {
+  view(`<div class="card">
+    <h2>❓ ${esc(uiText("ความช่วยเหลือ", "Help and next steps"))}</h2>
+    <div class="disclaimer">${esc(uiText(
+      "LungLens เป็นเครื่องมือให้ความรู้และประเมินปัจจัยเบื้องต้น ไม่ใช่บริการฉุกเฉิน การวินิจฉัย การนัดหมาย หรือช่องทางส่งต่อผู้ป่วย",
+      "LungLens is an educational, preliminary factor-assessment tool. It is not an emergency, diagnosis, appointment or patient-referral service."
+    ))}</div>
+
+    <section class="card mt" aria-labelledby="help-emergency">
+      <h3 id="help-emergency">${esc(uiText("กรณีฉุกเฉิน", "For an emergency"))}</h3>
+      <p>${esc(uiText(
+        "หากคุณหายใจลำบากรุนแรง หมดสติ เจ็บหน้าอกรุนแรง หรือคิดว่าเป็นเหตุฉุกเฉินในประเทศไทย ให้โทร 1669 ทันที หากอยู่นอกประเทศไทย ให้โทรหมายเลขฉุกเฉินในพื้นที่",
+        "If you have severe breathing difficulty, loss of consciousness, severe chest pain, or believe this is an emergency in Thailand, call 1669 now. Outside Thailand, call your local emergency number."
+      ))}</p>
+      <a class="btn btn-urgent" href="tel:1669">${esc(uiText("โทร 1669 ในประเทศไทย", "Call 1669 in Thailand"))}</a>
+      <p class="tiny mt">${esc(uiText(
+        "อย่ารอผล LungLens หรือคำตอบจาก LINE ในกรณีฉุกเฉิน",
+        "Do not wait for a LungLens result or a LINE reply in an emergency."
+      ))}</p>
+    </section>
+
+    <section class="card mt" aria-labelledby="help-symptoms">
+      <h3 id="help-symptoms">${esc(uiText("มีอาการที่กังวล", "I have a concerning symptom"))}</h3>
+      <p>${esc(uiText(
+        "ติดต่อสถานพยาบาลจริงเพื่อรับการประเมินอาการ แม้ผลแบบประเมินจะไม่พบปัจจัยเด่น หน้าสถานพยาบาลของ LungLens ยังเป็นข้อมูลสาธิตและไม่ได้ส่งคำขอให้โรงพยาบาล",
+        "Contact a real healthcare service for symptom assessment even if LungLens did not identify a prominent factor. The LungLens clinic page is demonstrational and does not send a request to a hospital."
+      ))}</p>
+      <div class="row">
+        <a class="btn btn-primary btn-sm" href="#education=symptoms">${esc(uiText("ดูคำแนะนำเรื่องอาการ", "View symptom guidance"))}</a>
+        <a class="btn btn-secondary btn-sm" href="#clinics">${esc(uiText("ดูวิธีค้นหาบริการ", "See how to find services"))}</a>
+      </div>
+    </section>
+
+    <section class="card mt" aria-labelledby="help-app">
+      <h3 id="help-app">${esc(uiText("ใช้ LungLens อย่างไร", "Using LungLens"))}</h3>
+      <ul class="plain-list">
+        <li>${esc(uiText(
+          "เปิดเว็บไซต์และทำแบบประเมินได้โดยไม่ต้องมีบัญชี LINE หรือเข้าสู่ระบบ LINE",
+          "You can open the website and complete the assessment without a LINE account or LINE login."
+        ))}</li>
+        <li>${esc(uiText(
+          "คำตอบและผลต้นแบบเก็บอยู่ในเบราว์เซอร์ของอุปกรณ์นี้ ไม่ได้ส่งไปยังโรงพยาบาล",
+          "Answers and prototype results stay in this device's browser and are not sent to a hospital."
+        ))}</li>
+        <li>${esc(uiText(
+          "คุณสามารถเปลี่ยนภาษา ปรับขนาดตัวอักษร ดาวน์โหลดข้อมูล หรือลบข้อมูลได้ทุกเมื่อ",
+          "You can change language, enlarge text, download your data or delete it at any time."
+        ))}</li>
+      </ul>
+      <div class="row">
+        <a class="btn btn-primary btn-sm" href="#begin">${esc(uiText("เริ่มประเมิน", "Start assessment"))}</a>
+        <a class="btn btn-secondary btn-sm" href="#profile">${esc(uiText("จัดการข้อมูลของฉัน", "Manage my data"))}</a>
+      </div>
+    </section>
+
+    <section class="card mt" aria-labelledby="help-line">
+      <h3 id="help-line">${esc(uiText("LINE Official Account", "LINE Official Account"))}</h3>
+      <p>${esc(uiText(
+        "บัญชี LungLens ใช้เป็นทางเข้าเว็บไซต์และเมนูเท่านั้น ขณะนี้ไม่มีทีมแพทย์หรือทีมสนับสนุนที่รับรองว่าจะตอบแชต อย่าส่งอาการ ผลตรวจ เอกสาร หรือข้อมูลสุขภาพส่วนตัวทางแชต",
+        "The LungLens account is currently an entry point to the website and menu only. No clinical or support team is committed to answering chat messages. Do not send symptoms, test results, documents or personal health information in chat."
+      ))}</p>
+      <p class="tiny">${esc(uiText(
+        "รหัสบัญชีทางการ: @794hkqhs · ข้อความ LINE ไม่ใช่ช่องทางฉุกเฉิน",
+        "Official Account ID: @794hkqhs · LINE messages are not an emergency channel."
+      ))}</p>
+    </section>
+
+    <section class="card mt" aria-labelledby="help-privacy">
+      <h3 id="help-privacy">${esc(uiText("ความเป็นส่วนตัวและปัญหาทางเทคนิค", "Privacy and technical problems"))}</h3>
+      <p>${esc(uiText(
+        "หากหน้าเว็บทำงานผิดปกติ ให้ลองเปิดใหม่ ตรวจการเชื่อมต่อ หรือดาวน์โหลดข้อมูลก่อนล้างข้อมูลเว็บไซต์ ขณะนี้ยังไม่มีช่องทางสนับสนุนที่ผ่านการยืนยันและไม่มีเวลาตอบกลับที่รับประกัน",
+        "If the site behaves unexpectedly, reopen it, check your connection, or download your data before clearing site data. There is not yet a verified support channel or guaranteed response time."
+      ))}</p>
+      <div class="row">
+        <a class="btn btn-secondary btn-sm" href="#privacy">${esc(uiText("อ่านความเป็นส่วนตัว", "Read privacy information"))}</a>
+        <a class="btn btn-ghost btn-sm" href="#profile">${esc(uiText("ดาวน์โหลดหรือลบข้อมูล", "Download or delete data"))}</a>
+      </div>
+    </section>
+
+    <p class="tiny mt">${esc(uiText(
+      "สถานะบริการ: ต้นแบบสาธารณะ · ยังไม่ผ่านการรับรองทางคลินิก กฎหมาย หรือการดำเนินงาน",
+      "Service status: public prototype · clinical, legal and operational approval is still pending."
+    ))}</p>
+    <a class="btn btn-ghost mt" href="#home">← ${esc(uiText("กลับหน้าแรก", "Back to Home"))}</a>
   </div>`);
 }
 

@@ -35,6 +35,7 @@ const EN_TRANSLATIONS = Object.freeze({
   "ความรู้": "Learn",
   "สถานพยาบาล": "Clinics",
   "ของฉัน": "My data",
+  "ความช่วยเหลือ": "Help",
 
   /* Shared controls and messages */
   "ปิด": "Close",

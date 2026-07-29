@@ -151,6 +151,10 @@ and passed as an environment variable at run time. **Never write it into a file.
   behavior is adapter-tested. Assessment deep links require consent, unknown routes
   normalise to Home, and refresh preserves partial progress, valid results, language,
   and big-text settings.
+- **Prototype v0.13 help and readiness** — `#help` gives bilingual emergency, symptom,
+  app, privacy and LINE-chat guidance without implying that support is staffed. The
+  rich-menu installer targets `?p=help`, and `docs/PRODUCTION-READINESS.md` plus
+  `docs/PILOT-RUNBOOK.md` define the evidence needed for real-world approval.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

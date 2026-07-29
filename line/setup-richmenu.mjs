@@ -25,7 +25,7 @@ if (!TOKEN) {
 const LIFF = "https://liff.line.me/2010756823-yiuPlaT0";
 const W = 2500, H = 1686, TW = 833, TH = 843;
 
-const routes = ["begin", "result", "education", "clinics", "profile", "home"];
+const routes = ["begin", "result", "education", "clinics", "profile", "help"];
 const areas = routes.map((p, i) => {
   const c = i % 3, r = Math.floor(i / 3);
   return {

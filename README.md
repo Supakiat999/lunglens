@@ -55,7 +55,7 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.12.0`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.13.0`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
 v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
 history, bilingual inline assessment validation, and an English first-visit default.
@@ -71,6 +71,9 @@ error, and removes the placeholder support email.
 Version 0.12 adds deterministic saved-state recovery, sanitises invalid answers and
 malformed results, retires old engine results while preserving usable answers, bounds
 local histories/referrals/events, enforces the consent gate, and normalises invalid routes.
+Version 0.13 adds a dedicated bilingual Help route with emergency, symptom, privacy,
+technical-support and LINE-chat boundaries; the rich-menu installer now opens Help
+directly. It also adds versioned production-readiness and controlled-pilot review packs.
 Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
 are used locally to calculate straight-line distance; clearing or reloading removes
 them. Official Air4Thai measurements and their recent history remain separate from the
@@ -159,6 +162,8 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
 - **#demo-story** — 5-slide presentation mode with next/back/reset
 - **#privacy** — versioned prototype draft plus a factual map of device-only storage,
   public air-data requests, optional LIFF profile access, export and deletion
+- **#help** — emergency and symptom next steps, app/data guidance, LINE chat limits,
+  and the current support-service status
 
 ### Demo personas (one tap on #home)
 

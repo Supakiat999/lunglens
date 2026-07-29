@@ -60,11 +60,11 @@ Remove-Item Env:LINE_CHANNEL_ACCESS_TOKEN
 | 📚 ความรู้ / Learn | บทความอ่านง่าย |
 | 🏥 สถานพยาบาล / Clinics | ค้นหาใกล้บ้าน |
 | 🔔 แจ้งเตือน / Reminders | ตั้งค่าการแจ้งเตือน |
-| ❓ ช่วยเหลือ / Help | หน้าแรก |
+| ❓ ช่วยเหลือ / Help | หน้าความช่วยเหลือ |
 
 (ถ้าอยากทำผ่านหน้าเว็บแทน: OA Manager → Home → Rich menu → Create →
 template 3×2 → upload `rich-menu.png` → ใส่ลิงก์ทั้ง 6 ช่องตามตาราง
-`https://liff.line.me/2010756823-yiuPlaT0?p=begin|result|education|clinics|profile|home`
+`https://liff.line.me/2010756823-yiuPlaT0?p=begin|result|education|clinics|profile|help`
 → Chat bar text: **รู้ทันปอด** → Save + Display)
 
 ## ขั้นที่ 4 — ข้อความต้อนรับ (แนะนำ)
