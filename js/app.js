@@ -5,71 +5,40 @@
    ===================================================================== */
 
 /* ---------------- state ---------------- */
-const DEFAULT_STATE = {
-  lang: DEFAULT_LOCALE,
-  lineLinked: false,
-  consent: null,            // { required:true, optional:{...}, version, at, lang }
-  answers: {},
-  stepIndex: 0,
-  returnToReview: false,
-  inProgress: false,
-  result: null,
-  history: [],              // [{at, bandKey, bandLabel, score, pathway}]
-  referrals: [],            // [{id, facilityId, contact, days, time, note, status, statusIdx, at}]
-  reminders: { enabled: false, time: "09:00", freq: "รายเดือน" },
-  events: []                // privacy-conscious analytics event names only
+const DEFAULT_STATE = createDefaultState(DEFAULT_LOCALE);
+const STATE_HYDRATE_OPTIONS = {
+  defaultLocale: DEFAULT_LOCALE,
+  engineVersion: ENGINE_VERSION,
+  steps: STEPS,
+  provinces: PROVINCES,
+  pruneInactive: pruneInactiveAnswers
 };
 let storageIssue = null;
 let storageIssueShown = false;
 let state = load();
 
-function hydrateState(saved) {
-  if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
-    throw new Error("Invalid saved state");
-  }
-  const next = Object.assign(structuredClone(DEFAULT_STATE), saved);
-  next.lang = saved.lang === "en" || saved.lang === "th" ? saved.lang : DEFAULT_LOCALE;
-  next.answers = saved.answers && typeof saved.answers === "object" && !Array.isArray(saved.answers)
-    ? saved.answers : {};
-  next.history = Array.isArray(saved.history) ? saved.history.slice(0, 20) : [];
-  next.referrals = Array.isArray(saved.referrals) ? saved.referrals : [];
-  next.events = Array.isArray(saved.events) ? saved.events : [];
-  next.reminders = Object.assign({}, DEFAULT_STATE.reminders,
-    saved.reminders && typeof saved.reminders === "object" ? saved.reminders : {});
-  next.stepIndex = Number.isInteger(saved.stepIndex) && saved.stepIndex >= 0 ? saved.stepIndex : 0;
-  next.returnToReview = saved.returnToReview === true;
-  next.consent = saved.consent && typeof saved.consent === "object" ? saved.consent : null;
-  const savedResult = saved.result && typeof saved.result === "object" ? saved.result : null;
-  next.result = savedResult?.model_version === ENGINE_VERSION ? savedResult : null;
-  if (savedResult && !next.result) {
-    next.inProgress = true;
-    next.returnToReview = false;
-  }
-  pruneInactiveAnswers(next.answers);
-  return next;
-}
-
 function load() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return hydrateState(JSON.parse(raw));
-  } catch (e) {
+  const loaded = loadStateFromStorage(localStorage, STORE_KEY, STATE_HYDRATE_OPTIONS);
+  if (loaded.status === "unreadable") {
     storageIssue = "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้";
   }
-  return structuredClone(DEFAULT_STATE);
+  return loaded.state;
 }
 function save() {
   if (storageIssue) return false;
-  try {
-    localStorage.setItem(STORE_KEY, JSON.stringify(state));
-    return true;
-  } catch (e) {
+  const saved = saveStateToStorage(localStorage, STORE_KEY, state);
+  if (!saved.ok) {
     storageIssue = "ไม่สามารถบันทึกข้อมูลบนอุปกรณ์นี้ได้ โปรดเปิดหน้านี้ไว้จนกว่าจะทำเสร็จ";
     showStorageIssue();
     return false;
   }
+  return true;
 }
-function track(ev) { state.events.push({ ev, at: new Date().toISOString() }); save(); }
+function track(ev) {
+  state.events.push({ ev, at: new Date().toISOString() });
+  state.events = state.events.slice(-MAX_LOCAL_EVENTS);
+  save();
+}
 
 function showStorageIssue() {
   if (!storageIssue || storageIssueShown || !document.body) return;
@@ -214,8 +183,16 @@ function route() {
     if (p) raw = "#" + p.replace(/[^a-z=-]/gi, "");
   }
   const hash = (raw || "#home").slice(1);
-  const [name, arg] = hash.split("=");
-  const routeName = name.replace(/^\//, "");
+  let [name, arg] = hash.split("=");
+  let routeName = name.replace(/^\//, "");
+  if (!ROUTES[routeName]) {
+    routeName = "home";
+    name = "home";
+    arg = undefined;
+    const cleanUrl = new URL(location.href);
+    cleanUrl.hash = "#home";
+    history.replaceState(null, "", cleanUrl);
+  }
   if (state.returnToReview && routeName !== "assess" && routeName !== "review") {
     state.returnToReview = false;
     save();
@@ -510,7 +487,11 @@ function visibleSteps() { return STEPS.filter(s => !s.cond || s.cond(state.answe
 let assessmentIssue = null;
 
 function renderAssess() {
-  if (!state.consent) { location.hash = "#begin"; return; }
+  if (!state.consent?.required) {
+    location.hash = "#consent";
+    renderConsent();
+    return;
+  }
   const steps = visibleSteps();
   if (state.stepIndex >= steps.length) state.stepIndex = steps.length - 1;
   const step = steps[state.stepIndex];
@@ -1856,7 +1837,9 @@ function submitReferral(facilityId) {
     contact: $("#rf-contact").value, days: $("#rf-days").value, time: $("#rf-time").value,
     note: $("#rf-note").value, statusIdx: 0, at: new Date().toISOString()
   };
-  state.referrals.unshift(ref); save(); track("referral_submitted");
+  state.referrals.unshift(ref);
+  state.referrals = state.referrals.slice(0, MAX_LOCAL_REFERRALS);
+  save(); track("referral_submitted");
   closeModal();
   modal(`<h3>✅ บันทึกคำขอจำลองแล้ว</h3>
     <p class="muted">คำขอนี้อยู่บนอุปกรณ์ของคุณเท่านั้น ยังไม่ได้ส่งให้โรงพยาบาลและจะไม่มีเจ้าหน้าที่ติดต่อกลับ คุณสามารถเปิดหน้าตัวอย่างสถานะเพื่อดูรูปแบบการทำงานได้</p>

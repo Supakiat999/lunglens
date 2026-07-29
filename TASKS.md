@@ -69,6 +69,9 @@ Status legend:
 - ✅ v0.11 makes optional consent and reminder controls explicitly browser-only,
   versions new consent as `consent_v2`, adds an announced required-consent error,
   removes the placeholder support email, and avoids implying live staff/research services
+- ✅ v0.12 adds a pure saved-state recovery layer, sanitises invalid answers/results,
+  bounds local records, preserves answers when retiring old engine results, enforces
+  consent on assessment deep links, and normalises unknown routes
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -376,9 +379,13 @@ Status legend:
 ## 13 — Reliability, performance, and offline behavior
 
 - [x] ✅ Add a visible offline/unstable-connection state and retry controls.
-- [ ] 🔜 Prevent data loss when the browser or LIFF view closes unexpectedly.
+- [ ] 🔜 Prevent data loss when the browser or LIFF view closes unexpectedly:
+  - [x] ✅ Autosave canonical answers and verify partial assessment recovery after refresh.
+  - [ ] Verify forced LINE WebView closure and low-storage behavior on real phones.
 - [x] ✅ Add safe cache-busting/versioning so users do not receive stale JavaScript.
-- [ ] 🔜 Define behavior when local storage is disabled, full, corrupted, or cleared.
+- [x] ✅ Define and test behavior when local storage is disabled, full, corrupted, or
+  cleared: use safe defaults, preserve unreadable raw data, disable further writes in
+  that session, and keep the in-memory journey available with a warning.
 - [x] ✅ Hydrate valid older `lunglens-v1` data safely and avoid overwriting unreadable data.
 - [ ] 🔜 Add graceful handling for LIFF SDK timeouts and blocked third-party scripts.
 - [ ] 🟡 Optimize initial load, image weight, and JavaScript execution for low-cost phones.
@@ -396,7 +403,9 @@ Status legend:
 - [ ] 🔜 Add unit tests for every risk rule boundary and conditional question.
 - [x] ✅ Add tests proving symptoms never affect the prototype score or factor band.
 - [ ] 🔜 Add tests proving language switching never changes canonical answers or bands.
-- [ ] 🔜 Add browser tests for corrupted, old, empty, and partially complete local-storage state.
+- [x] ✅ Add deterministic recovery tests for corrupted, old, empty, full/disabled, and
+  partially complete stored state, plus browser integration checks for partial/current
+  result refresh, consent-gated deep links, invalid routes, language, and big-text state.
 - [ ] 🔜 Add end-to-end tests for every public route in Thai and English.
 - [ ] 🔜 Add end-to-end tests for consent, urgent symptoms, result modals, clinics,
   referrals, profile, export, delete, reminders, big-text mode, and deep links.

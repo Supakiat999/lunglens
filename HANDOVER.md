@@ -144,6 +144,13 @@ and passed as an environment variable at run time. **Never write it into a file.
   a demo preview with local-only events, new agreements use `consent_v2`, missing
   required consent produces a focused inline alert, and the non-operational placeholder
   privacy email was removed.
+- **Prototype v0.12 saved-state recovery** — `js/state.js` now sanitises persisted
+  `lunglens-v1` data before use, rejects malformed current results, retires old engine
+  results while preserving valid answers, removes unknown/invalid answer values, and
+  caps history, demo referrals, and local events. Storage-disabled/full/corrupted/cleared
+  behavior is adapter-tested. Assessment deep links require consent, unknown routes
+  normalise to Home, and refresh preserves partial progress, valid results, language,
+  and big-text settings.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

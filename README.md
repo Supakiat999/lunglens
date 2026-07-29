@@ -55,7 +55,7 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.11.0`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.12.0`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
 v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
 history, bilingual inline assessment validation, and an English first-visit default.
@@ -68,6 +68,9 @@ and a plain-language explanation of why a later result may change.
 Version 0.11 makes optional consent and reminder controls explicitly local-only,
 distinguishes future preferences from live services, adds an announced inline consent
 error, and removes the placeholder support email.
+Version 0.12 adds deterministic saved-state recovery, sanitises invalid answers and
+malformed results, retires old engine results while preserving usable answers, bounds
+local histories/referrals/events, enforces the consent gate, and normalises invalid routes.
 Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
 are used locally to calculate straight-line distance; clearing or reloading removes
 them. Official Air4Thai measurements and their recent history remain separate from the
@@ -86,6 +89,7 @@ lunglens/
 │                               freshness handling, and model fallback
 ├── js/air-history.js           Rolling 48-hour official-station history + loader
 ├── js/validation.js            Completeness/range checks only; no clinical scoring
+├── js/state.js                 Pure saved-state sanitisation, migration, and size limits
 ├── js/engine.js                Explainable rule engine + symptom pathway ← "risk service"
 ├── js/privacy.js               Portable export + privacy-safe LINE invitation helpers
 ├── js/app.js                   Router + every screen + local state       ← "frontend"
