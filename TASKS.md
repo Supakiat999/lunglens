@@ -75,6 +75,9 @@ Status legend:
 - ✅ v0.13 adds a dedicated bilingual Help route with emergency, symptom, privacy,
   technical-support and LINE-chat boundaries; the rich-menu installer targets Help
   directly, and production-readiness plus controlled-pilot evidence packs are versioned
+- ✅ v0.14 adds an explicit unknown-smoking-amount path so users are not forced to
+  invent cigarettes per day or years smoked. Missing amounts are never converted into
+  pack-years or LDCT eligibility, and the result names the unresolved screening context.
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -159,7 +162,8 @@ Status legend:
 - [ ] 🔜 Add Thai postcode validation and province/postcode consistency checks.
 - [x] ✅ Explain why province is requested before the user enters it and state that it
   never changes the factor band or LDCT screening context.
-- [ ] 🔜 Add an explicit “I do not know” path for questions where uncertainty is common.
+- [x] ✅ Add explicit “I do not know” paths for categorical questions and for smoking
+  amount/duration; the latter never estimates pack-years or screening eligibility.
 - [ ] 🔜 Review every exclusive option and conditional step with real users.
 - [x] ✅ Add a clear progress estimate and remaining-question count.
 - [x] ✅ Allow users to return to the previous question while preserving relevant

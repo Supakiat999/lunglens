@@ -35,6 +35,18 @@ for (const text of requiredPublicCopy) {
   assert.ok(app.includes(text), `Missing safety or trust copy: ${text}`);
 }
 
+const unknownSmokingCopy = [
+  "I do not know the cigarettes per day or years smoked",
+  "LungLens will not estimate pack-years or decide LDCT criteria from missing amounts.",
+  "Pack-years were not calculated because smoking amount or duration was unknown.",
+  "This does not conclude that you meet or do not meet screening criteria."
+];
+for (const text of unknownSmokingCopy) {
+  assert.ok(app.includes(text), `Missing unknown-smoking safety copy: ${text}`);
+}
+assert.match(app, /id="\$\{step\.id\}-unknown"/,
+  "The unknown-smoking checkbox must have an explicit label association");
+
 assert.match(
   app,
   /Province is used only[\s\S]*?never changes the factor band[\s\S]*?never creates LDCT eligibility/,

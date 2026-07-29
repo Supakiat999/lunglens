@@ -83,6 +83,11 @@ function sanitiseAssessmentAnswers(savedAnswers, { steps = [], provinces = [], p
     }
     if (step.type === "numbers" && isPlainRecord(value)) {
       const current = {};
+      if (value.unknown === true) {
+        current.unknown = true;
+        answers[step.id] = current;
+        continue;
+      }
       for (const field of step.fields || []) {
         const number = Number(value[field.key]);
         if (!Number.isFinite(number) || number < field.min || number > field.max) continue;

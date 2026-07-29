@@ -514,18 +514,30 @@ function renderAssess() {
       </label>`).join("")}</div>`;
   } else if (step.type === "numbers") {
     const cur = a[step.id] || {};
+    const unknown = cur.unknown === true;
     body = step.fields.map(f => {
       const fieldIssue = issue?.fieldKey === f.key;
       const helpId = `${step.id}-${f.key}-help`;
       return `<div class="field ${fieldIssue ? "field-invalid" : ""}"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
         <input id="${step.id}-${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" step="1"
-          required aria-invalid="${fieldIssue}" aria-describedby="${helpId}${fieldIssue ? " assessment-error" : ""}"
+          required ${unknown ? "disabled" : ""} aria-invalid="${fieldIssue}" aria-describedby="${helpId}${fieldIssue ? " assessment-error" : ""}"
           value="${cur[f.key] ?? ""}" oninput="answerNum('${step.id}','${f.key}', this.value)">
         <p class="field-help" id="${helpId}">${esc(uiText(
           `ใส่จำนวนเต็มตั้งแต่ ${f.min} ถึง ${f.max}`,
           `Enter a whole number from ${f.min} to ${f.max}`
         ))}</p></div>`;
-    }).join("");
+    }).join("") + `<label class="opt ${unknown ? "sel" : ""}" for="${step.id}-unknown">
+      <input id="${step.id}-unknown" type="checkbox" ${unknown ? "checked" : ""}
+        onchange="answerNumbersUnknown('${step.id}', this.checked)">
+      ${esc(uiText(
+        "ไม่ทราบจำนวนมวนต่อวันหรือจำนวนปีที่สูบ",
+        "I do not know the cigarettes per day or years smoked"
+      ))}
+      <span class="tiny">${esc(uiText(
+        "ระบบจะไม่ประมาณ pack-years และจะไม่สรุปเกณฑ์ LDCT จากข้อมูลนี้",
+        "LungLens will not estimate pack-years or decide LDCT criteria from missing amounts."
+      ))}</span>
+    </label>`;
   } else if (step.type === "group") {
     const cur = a[step.id] || {};
     body = step.fields.map(f => {
@@ -624,9 +636,16 @@ function answerMulti(id, v, on) {
 }
 function answerNum(id, key, v) {
   state.answers[id] = state.answers[id] || {};
+  delete state.answers[id].unknown;
   state.answers[id][key] = v === "" ? null : Number(v);
   clearAssessmentIssue(id, key);
   save();
+}
+function answerNumbersUnknown(id, on) {
+  state.answers[id] = on ? { unknown: true } : {};
+  clearAssessmentIssue(id);
+  save();
+  renderAssess();
 }
 function answerGroup(id, key, v) {
   state.answers[id] = state.answers[id] || {};
@@ -746,6 +765,12 @@ function formatReviewAnswer(step) {
   }
   if (step.type === "numbers") {
     const current = value || {};
+    if (current.unknown === true) {
+      return esc(uiText(
+        "ไม่ทราบปริมาณหรือระยะเวลาที่สูบ — ไม่ได้คำนวณ pack-years",
+        "Smoking amount or duration not known — pack-years were not calculated"
+      ));
+    }
     return step.fields.map(field =>
       `<span><b>${esc(field.label)}:</b> ${current[field.key] ?? "ไม่ได้ระบุ"}</span>`
     ).join("<br>");
@@ -905,6 +930,7 @@ function renderResult() {
   const needsProfessionalNext =
     screening.key === "discuss_ldct" ||
     screening.key === "individual_review" ||
+    screening.key === "smoking_details_unknown" ||
     b === BANDS.review;
   const primaryNext = needsProfessionalNext
     ? `<a class="btn btn-primary mt" href="#clinics">ค้นหาช่องทางปรึกษาบุคลากรทางการแพทย์</a>`
@@ -954,6 +980,10 @@ function renderResult() {
     <p class="muted">${esc(screening.summary)}</p>
     <p class="tiny mt">${esc(screening.action)}</p>
     <p class="tiny mt">ส่วนนี้ใช้เกณฑ์อายุร่วมกับประวัติการสูบเพื่อให้ความรู้เท่านั้น จังหวัด เพศ และอายุเพียงอย่างเดียวไม่ทำให้เข้าเกณฑ์ และบุคลากรทางการแพทย์ต้องเป็นผู้ยืนยันความเหมาะสม</p>
+    ${state.answers.SMOKE_DETAIL?.unknown === true ? `<div class="q-note">${esc(uiText(
+      "ไม่ได้คำนวณ pack-years เพราะไม่ทราบปริมาณหรือระยะเวลาที่สูบ ข้อความนี้ไม่ใช่การสรุปว่าคุณเข้าเกณฑ์หรือไม่เข้าเกณฑ์การคัดกรอง",
+      "Pack-years were not calculated because smoking amount or duration was unknown. This does not conclude that you meet or do not meet screening criteria."
+    ))}</div>` : ""}
   </div>
 
   ${r.factors.length ? `<div class="card">

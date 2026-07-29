@@ -156,6 +156,16 @@ const partialNumbers = hydrate({
 assert.deepEqual(partialNumbers.answers.SMOKE_DETAIL, { cpd: 12 });
 assert.equal(partialNumbers.inProgress, true);
 
+const unknownNumbers = hydrate({
+  answers: {
+    SMOKE_STATUS: "ปัจจุบันยังสูบ",
+    SMOKE_DETAIL: { unknown: true, cpd: 20, years: 20 }
+  },
+  inProgress: true
+});
+assert.deepEqual(unknownNumbers.answers.SMOKE_DETAIL, { unknown: true },
+  "Explicitly unknown amounts must be preserved without stale numeric values");
+
 const emptyStorage = {
   getItem(key) {
     assert.equal(key, data.STORE_KEY);

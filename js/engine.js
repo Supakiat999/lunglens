@@ -30,10 +30,13 @@ function screeningContext(answers) {
 
   const standardAgeRange = ["50–59 ปี", "60–69 ปี", "70–79 ปี"].includes(answers.AGE);
   const ageNeedsConfirmation = answers.AGE === "80 ปีขึ้นไป";
-  const smokingExposure = packYears(answers);
   const hasScreeningSmokingHistory =
     answers.SMOKE_STATUS === "ปัจจุบันยังสูบ" ||
     answers.SMOKE_STATUS === "เคยสูบเป็นประจำ แต่เลิกแล้ว";
+  if (hasScreeningSmokingHistory && answers.SMOKE_DETAIL?.unknown === true) {
+    return SCREENING_CONTEXTS.smoking_details_unknown;
+  }
+  const smokingExposure = packYears(answers);
 
   if ((!standardAgeRange && !ageNeedsConfirmation) || !hasScreeningSmokingHistory || smokingExposure < 20) {
     return SCREENING_CONTEXTS.not_standard;
@@ -104,7 +107,8 @@ function evaluateRisk(answers) {
     recommended_next_step:
       pathway !== "standard" ? "clinical_symptom_assessment" :
       screening === SCREENING_CONTEXTS.discuss_ldct ? "discuss_ldct_screening" :
-      screening === SCREENING_CONTEXTS.individual_review ? "professional_screening_review" :
+      screening === SCREENING_CONTEXTS.individual_review ||
+      screening === SCREENING_CONTEXTS.smoking_details_unknown ? "professional_screening_review" :
       band === BANDS.review ? "professional_review" :
       band === BANDS.attention ? "learn_and_consider_consult" : "stay_informed",
     generated_at: now.toISOString(),

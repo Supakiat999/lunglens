@@ -4,7 +4,7 @@ const data = require("../js/data.js");
 Object.assign(global, data);
 const engine = require("../js/engine.js");
 
-assert.equal(data.APP_VERSION, "prototype_0.13.0");
+assert.equal(data.APP_VERSION, "prototype_0.14.0");
 
 const expected = {
   P1: { band: "professional_review", pathway: "standard" },
@@ -57,6 +57,16 @@ assert.equal(
   engine.evaluateRisk(currentSmokerScreeningDiscussion).screening_context.key,
   "discuss_ldct"
 );
+
+const currentSmokerUnknownAmounts = structuredClone(currentSmokerScreeningDiscussion);
+currentSmokerUnknownAmounts.SMOKE_DETAIL = { unknown: true };
+const unknownAmountsResult = engine.evaluateRisk(currentSmokerUnknownAmounts);
+assert.equal(unknownAmountsResult.screening_context.key, "smoking_details_unknown");
+assert.equal(unknownAmountsResult.band.key, "attention_recommended",
+  "Unknown amounts must not remove the separately reported current-smoking factor");
+assert.ok(!unknownAmountsResult.factor_codes.includes("PACK_YEARS_20_PLUS"),
+  "Unknown amounts must never be converted into a pack-years factor");
+assert.equal(unknownAmountsResult.recommended_next_step, "professional_screening_review");
 
 const recentFormerSmoker = structuredClone(currentSmokerScreeningDiscussion);
 recentFormerSmoker.SMOKE_STATUS = "เคยสูบเป็นประจำ แต่เลิกแล้ว";

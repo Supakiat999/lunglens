@@ -37,6 +37,11 @@ const integerIssue = validation.validateAssessmentStep(smokingDetail, {
 assert.equal(integerIssue.code, "number_integer");
 assert.equal(integerIssue.fieldKey, "cpd");
 
+const unknownSmokingAmount = validation.validateAssessmentStep(smokingDetail, {
+  SMOKE_DETAIL: { unknown: true }
+});
+assert.equal(unknownSmokingAmount, null, "Unknown smoking amount must be an explicit complete answer");
+
 const staleConditional = {
   SMOKE_STATUS: "ไม่เคยสูบ",
   SMOKE_DETAIL: { cpd: 20, years: 10 },
@@ -56,4 +61,4 @@ formerSmokerMissingQuitTime.SMOKE_DETAIL = { cpd: 20, years: 20 };
 const formerSmokerIssues = validation.validateAssessment(formerSmokerMissingQuitTime);
 assert.ok(formerSmokerIssues.some(issue => issue.stepId === "QUIT_YEARS"));
 
-console.log("Validation checks passed: personas, required smoking details, ranges, whole numbers, conditional cleanup.");
+console.log("Validation checks passed: personas, required/unknown smoking details, ranges, whole numbers, conditional cleanup.");

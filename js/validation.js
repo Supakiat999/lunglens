@@ -37,6 +37,7 @@ function validateAssessmentStep(step, answers) {
   }
   if (step.type === "numbers") {
     const current = value && typeof value === "object" ? value : {};
+    if (current.unknown === true) return null;
     for (const field of step.fields) {
       const number = current[field.key];
       if (number == null || number === "") {
