@@ -125,6 +125,13 @@ and passed as an environment variable at run time. **Never write it into a file.
   GitHub Actions run `30442779935` succeeded on 2026-07-29 and published the initial
   live history dataset with 173 official stations and 173 observations. A station chart
   appears after that station has at least two distinct published observation times.
+- **Prototype v0.9 result clarity and navigation trust** — results answer four plain-language
+  questions, distinguish answers that affected the factor band from information that
+  did not, keep symptoms visibly separate, and provide questions for a healthcare
+  professional. Assessment resume shows progress and shared-device guidance. Province
+  use is explained before entry. Clinic listings now state that inclusion is not an
+  endorsement, referral pages state the requirements for a real service, and users can
+  remove device-only demo requests without implying that a hospital was contacted.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

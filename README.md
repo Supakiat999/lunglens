@@ -9,7 +9,7 @@ focused initially on Asian women who have never smoked but may have other risk f
 > autonomous clinical decision-making.** ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
 > All facilities, cases, analytics, and rules in this repo are **ข้อมูลจำลอง (demo data)**.
 
-## 📍 Status — last updated 2026-07-26
+## 📍 Status — last updated 2026-07-29
 
 **The bilingual app and its LINE Official Account are live today.**
 
@@ -55,10 +55,13 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.8.0`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.9.1`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
 v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
 history, bilingual inline assessment validation, and an English first-visit default.
+Version 0.9 adds a four-question result summary, explicit explanations of information
+that did not change the result, safer resume/shared-device guidance, and clearer
+boundaries around demo clinics and referrals.
 Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
 are used locally to calculate straight-line distance; clearing or reloading removes
 them. Official Air4Thai measurements and their recent history remain separate from the

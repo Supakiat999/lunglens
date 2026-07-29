@@ -4,7 +4,7 @@ const data = require("../js/data.js");
 Object.assign(global, data);
 const engine = require("../js/engine.js");
 
-assert.equal(data.APP_VERSION, "prototype_0.8.0");
+assert.equal(data.APP_VERSION, "prototype_0.9.1");
 
 const expected = {
   P1: { band: "professional_review", pathway: "standard" },

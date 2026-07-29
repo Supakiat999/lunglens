@@ -254,10 +254,23 @@ function focusRouteHeading() {
 /* =====================================================================
    SCREEN: landing
    ===================================================================== */
+function savedAssessmentSummary() {
+  const steps = visibleSteps().filter(step => step.type !== "info");
+  const completed = steps.filter(step => !validateAssessmentStep(step, state.answers)).length;
+  const current = steps[Math.min(state.stepIndex, Math.max(0, steps.length - 1))];
+  return {
+    completed,
+    total: steps.length,
+    remaining: Math.max(0, steps.length - completed),
+    currentTitle: current?.title || ""
+  };
+}
+
 function renderHome() {
   track("landing_viewed");
   const hasResult = !!state.result;
   const resume = state.inProgress && !state.result;
+  const resumeSummary = resume ? savedAssessmentSummary() : null;
   view(`
   <div class="hero">
     <h1>ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง</h1>
@@ -269,8 +282,16 @@ function renderHome() {
 
   ${resume ? `<div class="card" style="border-color:#a5f3fc;background:var(--brand-soft)">
     <b>คุณได้บันทึกแบบประเมินสุขภาพปอดไว้</b>
-    <p class="muted">แตะเพื่อทำต่อเมื่อสะดวก</p>
+    <p class="muted">${esc(uiText(
+      `ตอบครบแล้ว ${resumeSummary.completed} จาก ${resumeSummary.total} ส่วน · เหลือ ${resumeSummary.remaining} ส่วน`,
+      `${resumeSummary.completed} of ${resumeSummary.total} sections complete · ${resumeSummary.remaining} remaining`
+    ))}</p>
+    ${resumeSummary.currentTitle ? `<p class="tiny">${esc(uiText("ทำต่อที่", "Continue at"))}: <b>${esc(resumeSummary.currentTitle)}</b></p>` : ""}
     <a class="btn btn-primary mt" href="#assess">ทำแบบประเมินต่อ</a>
+    <p class="tiny mt">${esc(uiText(
+      "ใช้อุปกรณ์ร่วมกับผู้อื่น? คำตอบอยู่ในเบราว์เซอร์นี้ โปรดทำต่อหรือลบข้อมูลในหน้า “ข้อมูลของฉัน” ก่อนส่งต่ออุปกรณ์",
+      "Using a shared device? Answers remain in this browser. Continue or delete them under “My data” before handing over the device."
+    ))}</p>
   </div>` : ""}
 
   ${hasResult ? `<div class="card">
@@ -355,6 +376,16 @@ function renderBegin() {
       <p class="muted">ไม่วินิจฉัยโรค ไม่บอกว่าคุณเป็นหรือไม่เป็นมะเร็ง ไม่สั่งตรวจ LDCT และไม่ใช่เครื่องมือที่ผ่านการรับรองทางคลินิก</p></details>
     <details><summary>ข้อมูลที่จะถูกเก็บ</summary>
       <p class="muted">ช่วงอายุ เพศกำเนิด จังหวัด ประวัติการสูบบุหรี่ ควันบุหรี่มือสอง ประวัติครอบครัวและสุขภาพ การสัมผัสจากอาชีพและในบ้าน และอาการปัจจุบัน — ไม่เก็บชื่อหรือที่อยู่เต็ม</p></details>
+    <details><summary>${esc(uiText("เหตุใดจึงถามจังหวัด", "Why the assessment asks for a province"))}</summary>
+      <p class="muted">${esc(uiText(
+        "จังหวัดใช้เพื่อแสดงคุณภาพอากาศและช่วยค้นหาบริการใกล้พื้นที่เท่านั้น ไม่ใช้คำนวณระดับปัจจัย ไม่ทำให้เข้าเกณฑ์ LDCT และไม่ขอที่อยู่เต็ม",
+        "Province is used only to show local air quality and help find nearby services. It never changes the factor band, never creates LDCT eligibility, and your full address is not requested."
+      ))}</p></details>
+    <details><summary>${esc(uiText("หากใช้อุปกรณ์ร่วมกับผู้อื่น", "If you use a shared device"))}</summary>
+      <p class="muted">${esc(uiText(
+        "คำตอบจะบันทึกในเบราว์เซอร์นี้เพื่อให้กลับมาทำต่อได้ ผู้ใช้คนถัดไปอาจเปิดดูได้ จึงควรลบข้อมูลจากหน้า “ข้อมูลของฉัน” เมื่อใช้งานเสร็จ",
+        "Answers are saved in this browser so you can continue later. Another person using the device may be able to open them, so delete the data under “My data” when finished."
+      ))}</p></details>
     <details><summary>ผลจะถูกใช้อย่างไร</summary>
       <p class="muted">แสดงให้คุณเห็นพร้อมคำอธิบาย คุณเลือกได้ว่าจะบันทึก แชร์ให้แพทย์ หรือลบทิ้ง คำแนะนำทางคลินิกต้องได้รับการทบทวนโดยผู้เชี่ยวชาญเสมอ</p></details>
     <a class="btn btn-primary mt" href="#consent">เริ่มทำแบบประเมิน</a>
@@ -502,6 +533,10 @@ function renderAssess() {
     <span class="section-tag">${esc(step.section)}</span>
     <h1 class="q-title">${esc(step.title)}</h1>
     ${step.note ? `<div class="q-note">${esc(step.note)}</div>` : ""}
+    ${step.type === "province" ? `<div class="q-note">${esc(uiText(
+      "จังหวัดช่วยแสดงข้อมูลอากาศและตัวอย่างบริการใกล้พื้นที่เท่านั้น ไม่ใช้คำนวณผลปัจจัย ไม่ทำให้เข้าเกณฑ์คัดกรอง และไม่ต้องระบุที่อยู่เต็ม",
+      "Province is used only for local air information and nearby-service examples. It never affects the factor result or screening criteria, and your full address is not requested."
+    ))}</div>` : ""}
     ${isSymptoms ? `<div class="q-note" style="background:var(--brand-soft)">อาการเหล่านี้อาจเกิดจากหลายสาเหตุและไม่ได้หมายความว่าคุณเป็นมะเร็ง แต่ควรได้รับการประเมินจากบุคลากรทางการแพทย์โดยเร็ว</div>` : ""}
     ${issue ? `<div class="assessment-error" id="assessment-error" role="alert" tabindex="-1">
       <b>${esc(uiText("โปรดตรวจสอบคำตอบ", "Check this answer"))}</b>
@@ -514,6 +549,10 @@ function renderAssess() {
     <button type="button" class="btn btn-ghost" onclick="stepBack()" ${n === 1 ? "disabled" : ""}>ย้อนกลับ</button>
     <button type="button" class="btn btn-primary" onclick="stepNext()">${n === total ? "ตรวจทานคำตอบ" : "ถัดไป"}</button>
   </div>
+  <p class="tiny mt">${esc(uiText(
+    "ปุ่มย้อนกลับจะเก็บคำตอบเดิมไว้ หากเปลี่ยนคำตอบหลัก รายละเอียดติดตามที่ไม่เกี่ยวข้องจะถูกล้างเพื่อไม่ให้มีข้อมูลซ่อนอยู่ในผล",
+    "Back keeps previous answers. If you change a controlling answer, follow-up details that no longer apply are cleared so hidden data cannot affect the result."
+  ))}</p>
   <button type="button" class="btn btn-ghost mt" onclick="saveExit()">บันทึกและกลับมาทำต่อภายหลัง</button>`);
   if (step.type === "province" && a.PROVINCE) updateAssessmentAirContext(a.PROVINCE);
 }
@@ -762,6 +801,43 @@ function renderSymptomPathway() {
 /* =====================================================================
    SCREEN: result
    ===================================================================== */
+function resultSymptomCopy(result) {
+  if (result.symptom_pathway === "urgent") {
+    return {
+      label: uiText("มีอาการที่ควรได้รับการประเมินโดยเร็ว", "A reported symptom needs prompt assessment"),
+      detail: uiText(
+        "เส้นทางอาการแยกจากผลปัจจัย หากอาการรุนแรงหรือฉุกเฉินให้โทร 1669 ในประเทศไทย",
+        "Symptoms are handled separately from the factor result. For a severe or emergency symptom, call 1669 in Thailand."
+      )
+    };
+  }
+  if (result.symptom_pathway === "prompt") {
+    return {
+      label: uiText("มีอาการที่ควรปรึกษาบุคลากรทางการแพทย์", "A reported symptom should be discussed with a healthcare professional"),
+      detail: uiText(
+        "อาการอาจเกิดจากหลายสาเหตุและไม่ใช่การวินิจฉัยมะเร็ง",
+        "A symptom can have many causes and is not a cancer diagnosis."
+      )
+    };
+  }
+  if ((state.answers.SYMPTOMS || []).includes("ไม่ต้องการตอบ")) {
+    return {
+      label: uiText("ไม่ได้ประเมินอาการจากคำตอบนี้", "Symptoms were not assessed from this answer"),
+      detail: uiText(
+        "หากมีอาการที่กังวล โปรดปรึกษาบุคลากรทางการแพทย์แม้ผลปัจจัยจะเป็นอย่างไร",
+        "If you have a concerning symptom, speak with a healthcare professional regardless of the factor result."
+      )
+    };
+  }
+  return {
+    label: uiText("ไม่พบอาการในรายการที่ต้องแยกเส้นทางจากคำตอบที่ให้", "No separately routed symptom was reported from the listed choices"),
+    detail: uiText(
+      "ข้อความนี้ไม่ยืนยันว่าไม่มีอาการหรือไม่มีโรค หากมีอาการใหม่หรือเปลี่ยนแปลงควรขอคำแนะนำ",
+      "This does not prove that no symptom or disease is present. Seek advice for a new or changing symptom."
+    )
+  };
+}
+
 function renderResult() {
   const r = state.result;
   track("result_viewed");
@@ -785,6 +861,7 @@ function renderResult() {
   const primaryNext = needsProfessionalNext
     ? `<a class="btn btn-primary mt" href="#clinics">ค้นหาช่องทางปรึกษาบุคลากรทางการแพทย์</a>`
     : `<a class="btn btn-primary mt" href="#education">เรียนรู้วิธีดูแลสุขภาพปอด</a>`;
+  const symptomCopy = resultSymptomCopy(r);
   const dt = formatDate(r.generated_at);
   view(`
   ${r.symptom_pathway !== "standard" ? `<div class="band band-urgent">
@@ -798,6 +875,32 @@ function renderResult() {
   </div>
 
   <div class="card">
+    <h2>${esc(uiText("สรุปผลแบบเข้าใจง่าย", "Your result in four questions"))}</h2>
+    <div class="result-overview">
+      <section>
+        <span>1</span>
+        <div><h3>${esc(uiText("แบบประเมินสังเกตอะไร", "What did the assessment notice?"))}</h3>
+          <p><b>${esc(b.label)}</b></p><p class="muted">${esc(b.summary)}</p></div>
+      </section>
+      <section>
+        <span>2</span>
+        <div><h3>${esc(uiText("อาการต้องได้รับความสนใจหรือไม่", "Do the reported symptoms need attention?"))}</h3>
+          <p><b>${esc(symptomCopy.label)}</b></p><p class="muted">${esc(symptomCopy.detail)}</p></div>
+      </section>
+      <section>
+        <span>3</span>
+        <div><h3>${esc(uiText("ทำอะไรได้ตอนนี้", "What can you do now?"))}</h3>
+          <p class="muted">${esc(b.action)}</p></div>
+      </section>
+      <section>
+        <span>4</span>
+        <div><h3>${esc(uiText("บุคลากรทางการแพทย์ช่วยตัดสินใจอะไรได้", "What can a healthcare professional help decide?"))}</h3>
+          <p><b>${esc(screening.label)}</b></p><p class="muted">${esc(screening.action)}</p></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="card">
     <h3>เกณฑ์การคัดกรอง LDCT หมายถึงอะไรสำหรับคุณ</h3>
     <h4>${esc(screening.label)}</h4>
     <p class="muted">${esc(screening.summary)}</p>
@@ -806,7 +909,7 @@ function renderResult() {
   </div>
 
   ${r.factors.length ? `<div class="card">
-    <h2>ทำไมจึงได้ผลนี้</h2>
+    <h2>${esc(uiText("คำตอบที่มีผลต่อระดับปัจจัย", "Answers that affected the factor band"))}</h2>
     <p class="tiny">แตะแต่ละปัจจัยเพื่อดูคำอธิบาย · ปัจจัยไม่ใช่การวินิจฉัย</p>
     ${r.factors.map((f, i) => `
       <button type="button" class="factor" onclick="factorDetail(${i})">
@@ -815,15 +918,41 @@ function renderResult() {
         <span class="ev">หลักฐาน: ${esc(f.evidence)}</span>
       </button>`).join("")}
   </div>` : `<div class="card">
-    <h2>ทำไมจึงได้ผลนี้</h2>
+    <h2>${esc(uiText("คำตอบที่มีผลต่อระดับปัจจัย", "Answers that affected the factor band"))}</h2>
     <p class="muted">จากคำตอบของคุณ ระบบยังไม่พบปัจจัยที่เข้าเงื่อนไขกฎต้นแบบรุ่นปัจจุบัน อย่างไรก็ตาม แบบประเมินนี้ประเมินได้เพียงบางปัจจัยเท่านั้น</p>
   </div>`}
 
   <div class="card">
-    <h3>สิ่งที่แบบประเมินนี้ยังไม่ได้ประเมิน</h3>
-    <p class="muted" style="font-size:13.5px">${NOT_ASSESSED.map(esc).join(" · ")}</p>
-    <p class="tiny mt">ปัจจัยเสี่ยงไม่ใช่การวินิจฉัย และผลนี้ไม่สามารถยืนยันหรือตัดโรคใด ๆ ได้</p>
+    <h3>${esc(uiText("ข้อมูลที่ไม่เพิ่มระดับปัจจัย", "Information that did not increase the factor band"))}</h3>
+    <ul class="plain-list muted">
+      <li>${esc(uiText(
+        "จังหวัด ตำแหน่ง และค่าฝุ่นปัจจุบันไม่ถูกนำไปคำนวณระดับปัจจัยหรือเกณฑ์คัดกรอง",
+        "Province, location and current pollution never enter the factor band or screening criteria."
+      ))}</li>
+      <li>${esc(uiText(
+        "อาการใช้เส้นทางแยกเพื่อความปลอดภัยและไม่เพิ่มคะแนนปัจจัย",
+        "Symptoms use a separate safety pathway and never add factor points."
+      ))}</li>
+      <li>${esc(uiText(
+        "อายุเพียงอย่างเดียวไม่เพิ่มระดับปัจจัยและไม่ทำให้เข้าเกณฑ์ LDCT",
+        "Age alone never raises the factor band or creates LDCT eligibility."
+      ))}</li>
+    </ul>
+    <p class="tiny mt">${esc(uiText(
+      "คำตอบที่ไม่แสดงเป็นปัจจัยไม่ได้แปลว่าปลอดภัย เพียงแต่ไม่เข้าเงื่อนไขกฎต้นแบบปัจจุบัน",
+      "An answer not shown as a factor does not mean it is safe; it only did not match a current prototype rule."
+    ))}</p>
   </div>
+
+  <details class="card result-limitations">
+    <summary><b>${esc(uiText("สิ่งที่แบบประเมินนี้ยังไม่ได้ประเมิน", "What this assessment does not cover"))}</b></summary>
+    <p class="muted mt">${esc(uiText(
+      "รายการต่อไปนี้ต้องอาศัยข้อมูลหรือการตรวจเพิ่มเติม แบบประเมินนี้จึงไม่สามารถสรุปแทนบุคลากรทางการแพทย์ได้",
+      "The following areas need information or testing that this assessment does not have, so it cannot make a clinical conclusion."
+    ))}</p>
+    <ul class="plain-list muted">${NOT_ASSESSED.map(item => `<li>${esc(item)}</li>`).join("")}</ul>
+    <p class="tiny mt">ปัจจัยเสี่ยงไม่ใช่การวินิจฉัย และผลนี้ไม่สามารถยืนยันหรือตัดโรคใด ๆ ได้</p>
+  </details>
 
   <div class="card">
     <h3>คุณภาพอากาศในพื้นที่ของคุณวันนี้</h3>
@@ -850,6 +979,21 @@ function renderResult() {
       ${needsProfessionalNext ? "" : `<a class="btn btn-secondary btn-sm" href="#clinics">ดูข้อมูลการหาบริการสุขภาพ</a>`}
       <button class="btn btn-ghost btn-sm" onclick="retake()">🔄 ทำแบบประเมินใหม่</button>
     </div>
+  </div>
+
+  <div class="card">
+    <h3>${esc(uiText("คำถามสั้น ๆ สำหรับบุคลากรทางการแพทย์", "Questions to take to a healthcare professional"))}</h3>
+    <ul class="plain-list muted">
+      <li>${esc(uiText("จากประวัติของฉัน ปัจจัยใดสำคัญที่สุด", "Which parts of my history are most relevant?"))}</li>
+      <li>${esc(uiText("อาการของฉันต้องได้รับการตรวจเมื่อใด", "When should my symptoms be assessed?"))}</li>
+      <li>${esc(uiText("แนวทางปัจจุบันแนะนำการคัดกรองหรือการตรวจใดสำหรับฉันหรือไม่", "Do current guidelines suggest any screening or tests for me?"))}</li>
+      <li>${esc(uiText("ประโยชน์ ผลเสีย และทางเลือกของการตรวจมีอะไรบ้าง", "What are the benefits, harms and alternatives of a test?"))}</li>
+      <li>${esc(uiText("ฉันควรติดตามหรือกลับมาพบเมื่อใด", "When should I follow up or return?"))}</li>
+    </ul>
+    <a class="btn btn-secondary mt" href="#education=questions-for-clinician">${esc(uiText(
+      "เปิดรายการเตรียมตัวฉบับเต็ม",
+      "Open the full preparation guide"
+    ))}</a>
   </div>
 
   <p class="tiny center">ประเมินเมื่อ ${dt} · ${esc(r.model_version)} · ${esc(r.clinical_validation_status)}<br>
@@ -1548,8 +1692,12 @@ function renderClinics() {
     <h2>🏥 สถานพยาบาลและช่องทางปรึกษา</h2>
     <p class="muted"><b>หน้านี้ยังไม่ใช่รายชื่อสถานพยาบาลจริงและยังไม่สามารถนัดหมายหรือส่งต่อผู้ป่วยได้</b></p>
     <p class="tiny">${esc(tr("รายการทั้งหมดเป็น ข้อมูลจำลอง เพื่อแสดงรูปแบบการค้นหาเท่านั้น หากต้องการรับบริการตอนนี้ โปรดติดต่อสถานพยาบาลที่ตรวจสอบได้หรือหน่วยบริการตามสิทธิของคุณโดยตรง หากมีอาการฉุกเฉิน โทร 1669"))}</p>
+    <p class="tiny">${esc(uiText(
+      "การปรากฏในรายการต้นแบบไม่ใช่การรับรองสถานพยาบาลหรือยืนยันว่ามีบริการ LDCT โปรดตรวจสอบกับแหล่งทางการก่อนเดินทาง",
+      "Appearing in this prototype is not an endorsement and does not confirm that LDCT is available. Check an official source before travelling."
+    ))}</p>
     <div class="row mt">
-      <select onchange="clinicFilter.province=this.value;renderClinics()">
+      <select aria-label="${esc(uiText("กรองตามจังหวัด", "Filter by province"))}" onchange="clinicFilter.province=this.value;renderClinics()">
         <option value="">ทุกจังหวัด</option>
         ${[...new Set(FACILITIES.map(f => f.province))].map(p => `<option value="${esc(p)}" ${clinicFilter.province === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
       </select>
@@ -1557,6 +1705,15 @@ function renderClinics() {
       <button class="chip ${clinicFilter.publicOnly ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.publicOnly=!clinicFilter.publicOnly;renderClinics()">รัฐเท่านั้น</button>
     </div>
   </div>
+  <details class="card">
+    <summary><b>${esc(uiText("สิ่งที่ควรตรวจสอบก่อนติดต่อบริการ", "What to verify before contacting a service"))}</b></summary>
+    <ul class="plain-list muted mt">
+      <li>${esc(uiText("ชื่อและเบอร์โทรจากเว็บไซต์หรือช่องทางทางการ", "The name and telephone number from an official website or channel"))}</li>
+      <li>${esc(uiText("บริการที่มีจริง ค่าใช้จ่าย และสิทธิการรักษา", "Available services, costs and healthcare coverage"))}</li>
+      <li>${esc(uiText("ต้องนัดหมายหรือมีใบส่งตัวหรือไม่", "Whether an appointment or referral letter is required"))}</li>
+      <li>${esc(uiText("สถานที่ เวลาเปิด และการเดินทางก่อนออกจากบ้าน", "Location, opening hours and travel details before leaving home"))}</li>
+    </ul>
+  </details>
   ${list.map(f => `
   <div class="fac">
     <h4>${esc(f.name)}</h4>
@@ -1620,7 +1777,26 @@ function submitReferral(facilityId) {
 function renderReferral() {
   view(`<div class="card"><h2>🧭 ตัวอย่างสถานะคำขอ</h2>
     <p class="muted"><b>ยังไม่มีการส่งข้อมูลไปยังโรงพยาบาลหรือระบบสุขภาพจริง</b></p>
-    <p class="tiny">ข้อมูลนี้บันทึกบนอุปกรณ์เพื่อสาธิตว่าระบบสถานะในอนาคตอาจทำงานอย่างไร</p></div>
+    <p class="tiny">ข้อมูลนี้บันทึกบนอุปกรณ์เพื่อสาธิตว่าระบบสถานะในอนาคตอาจทำงานอย่างไร</p>
+    <div class="q-note mt">${esc(uiText(
+      "ห้ามใช้คำขอจำลองนี้สำหรับอาการฉุกเฉิน หากมีอาการรุนแรง โทร 1669 ในประเทศไทยหรือไปห้องฉุกเฉิน",
+      "Never use this demo request for an emergency. For severe symptoms, call 1669 in Thailand or go to an emergency department."
+    ))}</div>
+  </div>
+  <details class="card">
+    <summary><b>${esc(uiText("ระบบส่งต่อจริงจะต้องทำอะไร", "What a live referral service must do"))}</b></summary>
+    <ol class="plain-list muted mt">
+      <li>${esc(uiText("บอกผู้ใช้ว่าข้อมูลใดจะถูกส่งและขอความยินยอม", "Explain what will be sent and obtain consent"))}</li>
+      <li>${esc(uiText("ส่งไปยังองค์กรที่ระบุชื่อและยืนยันว่าได้รับคำขอ", "Send to a named organization and confirm receipt"))}</li>
+      <li>${esc(uiText("แจ้งเวลาตอบกลับ ผู้รับผิดชอบ และทางเลือกหากไม่มีใครติดต่อ", "State the response time, responsible team and what to do if nobody responds"))}</li>
+      <li>${esc(uiText("อนุญาตให้แก้ไข ยกเลิก ติดตาม และปิดคำขอ", "Allow correction, cancellation, tracking and closure"))}</li>
+      <li>${esc(uiText("ปกป้องข้อมูลและไม่แสดงรายละเอียดสุขภาพในตัวอย่างแจ้งเตือน", "Protect data and keep health details out of notification previews"))}</li>
+    </ol>
+    <p class="tiny">${esc(uiText(
+      "ยังไม่มีองค์กรผู้รับคำขอหรือเวลาตอบกลับที่ได้รับอนุมัติ จึงยังเปิดใช้ระบบจริงไม่ได้",
+      "No receiving organization or approved response time exists yet, so live submission cannot be enabled."
+    ))}</p>
+  </details>
   ${state.referrals.length === 0 ? `<div class="card center muted">ยังไม่มีคำขอ<br><a class="btn btn-secondary mt" href="#clinics">ค้นหาสถานพยาบาล</a></div>` : ""}
   ${state.referrals.map((r, i) => {
     const f = FACILITIES.find(x => x.id === r.facilityId);
@@ -1633,6 +1809,10 @@ function renderReferral() {
       ${r.statusIdx < REF_TIMELINE.length - 1
         ? `<button class="btn btn-secondary btn-sm" onclick="advanceReferral(${i})">🧪 จำลองการอัปเดตสถานะถัดไป</button>`
         : `<span class="badge none">เสร็จสิ้น</span>`}
+      <button class="btn btn-ghost btn-sm mt" onclick="confirmRemoveDemoReferral(${i})">${esc(uiText(
+        "ลบคำขอจำลองจากอุปกรณ์นี้",
+        "Delete this demo request from this device"
+      ))}</button>
     </div>`;
   }).join("")}`);
 }
@@ -1640,6 +1820,25 @@ function advanceReferral(i) {
   state.referrals[i].statusIdx++;
   save(); renderReferral();
   toast("อัปเดตสถานะ (จำลอง): " + REF_TIMELINE[state.referrals[i].statusIdx]);
+}
+
+function confirmRemoveDemoReferral(i) {
+  if (!state.referrals[i]) return;
+  modal(`<h3>${esc(uiText("ลบคำขอจำลองหรือไม่", "Delete this demo request?"))}</h3>
+    <p class="muted">${esc(uiText(
+      "รายการนี้อยู่บนอุปกรณ์เท่านั้น การลบจะนำรายการออกจากประวัติในเบราว์เซอร์นี้และไม่กระทบโรงพยาบาลใด ๆ",
+      "This item exists only on this device. Deleting it removes the item from this browser and does not affect any hospital."
+    ))}</p>
+    <button class="btn btn-primary mt" onclick="removeDemoReferral(${i})">${esc(uiText("ยืนยันการลบ", "Confirm deletion"))}</button>`);
+}
+
+function removeDemoReferral(i) {
+  if (!state.referrals[i]) return;
+  state.referrals.splice(i, 1);
+  save();
+  closeModal();
+  renderReferral();
+  toast(uiText("ลบคำขอจำลองแล้ว", "Demo request deleted"));
 }
 
 /* =====================================================================
@@ -1879,7 +2078,10 @@ function renderStory() {
 function renderPrivacy() {
   view(`<div class="card">
     <h2>นโยบายความเป็นส่วนตัว</h2>
-    <p class="q-note">ฉบับร่าง privacy_prototype_v2 · อัปเดต 28 กรกฎาคม 2569 · ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง</p>
+    <p class="q-note">${esc(uiText(
+      "ฉบับร่าง privacy_prototype_v3 · อัปเดต 29 กรกฎาคม 2569 · ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง",
+      "Draft privacy_prototype_v3 · updated 29 July 2026 · legal review is required before production use"
+    ))}</p>
     <h3>หลักการ</h3>
     <p class="muted">เก็บข้อมูลเท่าที่จำเป็น · แยกข้อจำเป็นออกจากข้อเลือกได้ · อธิบายเหตุผลของทุกคำถามอ่อนไหว · ไม่ขายข้อมูล · ไม่ใช้ข้อมูลความเสี่ยงสุขภาพเพื่อโฆษณา · ไม่แสดงข้อมูลสุขภาพในตัวอย่างการแจ้งเตือน LINE · ผู้ใช้ลบและแก้ไขข้อมูลได้</p>
     <h3>ข้อมูลอยู่ที่ไหนในต้นแบบนี้</h3>
@@ -1890,6 +2092,25 @@ function renderPrivacy() {
       <li>หากกดค้นหาสถานีใกล้ฉันและอนุญาตตำแหน่ง พิกัดจะอยู่ในหน่วยความจำของหน้านี้เพื่อคำนวณระยะเส้นตรงเท่านั้น ไม่บันทึกและไม่ส่งไปยัง LungLens</li>
       <li>LINE อาจให้ข้อมูลโปรไฟล์พื้นฐานเมื่อผู้ใช้เลือกเข้าสู่ระบบใน LIFF แต่เว็บไซต์สาธารณะใช้ได้โดยไม่เข้าสู่ระบบ LINE</li>
       <li>บันทึกเหตุการณ์การใช้งานในต้นแบบอยู่บนอุปกรณ์และมีเพียงชื่อเหตุการณ์กับเวลา ไม่มีระบบวิเคราะห์ภายนอก</li>
+    </ul>
+    <h3>${esc(uiText("อุปกรณ์ที่ใช้ร่วมกันและข้อมูลในเบราว์เซอร์", "Shared devices and browser storage"))}</h3>
+    <ul class="plain-list muted">
+      <li>${esc(uiText(
+        "ผู้ใช้คนถัดไปบนเบราว์เซอร์เดียวกันอาจเปิดดูคำตอบ ผล และคำขอจำลองที่บันทึกไว้ได้",
+        "Another person using the same browser may be able to open saved answers, results and demo requests."
+      ))}</li>
+      <li>${esc(uiText(
+        "หลังใช้งานอุปกรณ์ร่วม ให้เปิด “ข้อมูลของฉัน” และลบข้อมูลทั้งหมดก่อนส่งต่ออุปกรณ์",
+        "After using a shared device, open “My data” and delete all data before handing over the device."
+      ))}</li>
+      <li>${esc(uiText(
+        "โหมดส่วนตัวหรือไม่ระบุตัวตนอาจไม่เก็บความคืบหน้าเมื่อปิดหน้าต่าง",
+        "Private or incognito browsing may not keep your progress after the window closes."
+      ))}</li>
+      <li>${esc(uiText(
+        "การล้างข้อมูลเว็บไซต์ของเบราว์เซอร์จะลบข้อมูลต้นแบบบนอุปกรณ์นี้ และไม่มีสำเนาบนเซิร์ฟเวอร์ LungLens ให้กู้คืน",
+        "Clearing this site's browser data removes the prototype data from this device. LungLens has no server copy to restore."
+      ))}</li>
     </ul>
     <h3>การส่งออกและลบข้อมูล</h3>
     <p class="muted">ไฟล์ดาวน์โหลดมีข้อมูลสุขภาพที่คุณให้ จึงควรเก็บอย่างปลอดภัย คะแนนภายในและน้ำหนักกฎต้นแบบจะไม่ถูกส่งออก การลบข้อมูลจะลบคีย์ ${esc(STORE_KEY)} ออกจากเบราว์เซอร์นี้เท่านั้น</p>

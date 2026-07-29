@@ -60,6 +60,9 @@ Status legend:
 - ✅ v0.8 adds rolling 48-hour official station-measurement history, keeps it separate
   from the CAMS forecast, adds bilingual inline assessment errors, and opens first visits
   in English while remembering each user's language choice
+- ✅ v0.9 adds a four-question result explanation, makes excluded and unassessed
+  information explicit, improves resume/shared-device guidance, and strengthens
+  clinic/referral demo warnings and local deletion controls
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -142,13 +145,16 @@ Status legend:
 - [x] ✅ Add the full list of 77 Thai provinces.
 - [ ] 🔜 Add district/subdistrict selection where operationally necessary.
 - [ ] 🔜 Add Thai postcode validation and province/postcode consistency checks.
-- [ ] 🔜 Explain why location data is requested before the user enters it.
+- [x] ✅ Explain why province is requested before the user enters it and state that it
+  never changes the factor band or LDCT screening context.
 - [ ] 🔜 Add an explicit “I do not know” path for questions where uncertainty is common.
 - [ ] 🔜 Review every exclusive option and conditional step with real users.
 - [x] ✅ Add a clear progress estimate and remaining-question count.
-- [ ] 🟡 Allow users to return to the previous question without losing conditional answers.
-- [ ] 🟡 Add a compact answer summary when resuming an unfinished assessment.
-- [ ] 🟡 Add a safe timeout/session-expiry explanation for shared devices.
+- [x] ✅ Allow users to return to the previous question while preserving relevant
+  answers; clearly explain that newly irrelevant conditional answers are removed.
+- [x] ✅ Add a compact completion/remaining/current-section summary when resuming an
+  unfinished assessment.
+- [x] ✅ Add shared-device guidance before assessment, on resume, and in privacy copy.
 - [ ] 🟡 Improve recovery after a browser refresh, failed LIFF initialization, or lost connection.
 - [ ] 🟡 Add optional print-friendly results without exposing sensitive data by default.
 - [ ] 🩺 Review the urgent symptom list and the Thailand 1669 wording with a clinician.
@@ -167,13 +173,15 @@ Status legend:
 - [ ] 🔜 Add a visible model/rule version and content-review date to exported results.
 - [x] ✅ Export the model version and an explicit `pending_medical_review` status with
   a null review date until a real reviewer signs off.
-- [ ] 🔜 Make “not assessed” factors easier to understand without causing alarm.
+- [x] ✅ Make “not assessed” factors easier to understand with a collapsed explanation
+  and explicit non-reassuring safety wording.
 - [x] ✅ Add a clearer path from each factor to relevant sourced education, questions
   for a healthcare professional, and the explicitly demonstrational clinic route.
 - [ ] 🔜 Add a user-friendly explanation of why a result can change after new information.
 - [ ] 🟡 Improve the factor modal layout on very small screens.
 - [ ] 🟡 Add print and screen-reader checks for result explanations.
-- [ ] 🟡 Add a safe “questions to ask a healthcare professional” section.
+- [x] ✅ Add a safe “questions to ask a healthcare professional” section and link to
+  the full sourced preparation guide.
 
 ## 5 — Education centre
 
@@ -231,7 +239,8 @@ Status legend:
 - [ ] 🔜 Provide a correction/reporting path for inaccurate facility information.
 - [ ] 🟡 Add distance sorting only with explicit location permission.
 - [ ] 🟡 Add alternatives when no suitable facility is found nearby.
-- [ ] 🟡 Add a plain-language explanation that listing does not equal endorsement.
+- [x] ✅ Add a plain-language explanation that listing does not equal endorsement or
+  confirm LDCT availability, plus a pre-contact verification checklist.
 
 ## 7 — Referrals and reminders
 
@@ -245,8 +254,10 @@ Status legend:
 - [ ] 🧱 Design reminders around replies and menu taps to respect LINE's free-tier quota.
 - [ ] 🧱 Add retry, dead-letter, duplicate-prevention, and delivery-status handling.
 - [ ] 🔜 Define expected response times and what users should do if nobody contacts them.
-- [ ] 🔜 Add a clear emergency disclaimer so referrals are never used for urgent care.
-- [ ] 🔜 Add user-visible cancellation and correction flows.
+- [x] ✅ Add a clear emergency disclaimer so demo referrals are never used for urgent care.
+- [ ] 🔜 Add user-visible cancellation and correction flows:
+  - [x] ✅ Delete/cancel a device-only demo request with an explicit no-hospital-impact warning.
+  - [ ] Add correction and cancellation to the future live referral service.
 - [ ] 🩺 Review referral eligibility, wording, escalation, and duty-of-care responsibilities.
 - [ ] 🩺 Review reminder content for clinical safety and privacy.
 

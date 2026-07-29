@@ -254,6 +254,23 @@ code {
 }
 .field-help { color: var(--ink-2); font-size: 12px; margin-top: 5px; }
 
+/* ---------- result clarity ---------- */
+.result-overview { display: grid; gap: 10px; }
+.result-overview section {
+  align-items: flex-start; background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; display: grid; gap: 10px; grid-template-columns: 30px 1fr;
+  padding: 12px;
+}
+.result-overview section > span {
+  align-items: center; background: var(--brand); border-radius: 50%; color: #fff;
+  display: flex; font-size: 13px; font-weight: 700; height: 28px; justify-content: center;
+  width: 28px;
+}
+.result-overview h3 { color: var(--brand-deep); font-size: 15px; margin: 2px 0 5px; }
+.result-overview p { font-size: 13.5px; margin: 2px 0; }
+.result-limitations summary { color: var(--brand-deep); cursor: pointer; }
+.result-limitations summary::marker { color: var(--brand); }
+
 /* ---------- live air quality ---------- */
 .air-compact {
   background: var(--brand-soft); border: 1px solid #a5f3fc; border-radius: 10px;
