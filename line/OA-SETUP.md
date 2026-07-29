@@ -50,6 +50,15 @@ node setup-richmenu.mjs
 Remove-Item Env:LINE_CHANNEL_ACCESS_TOKEN
 ```
 
+Preferred private prompt on Windows:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install-richmenu-private.ps1
+```
+
+The helper hides the pasted token, keeps it only in the installer process, clears the
+environment variable immediately, and zeroes the temporary unmanaged token buffer.
+
 สคริปต์จะสร้างเมนู 6 ปุ่ม (ภาพ `rich-menu.png` — ตัวอักษรใหญ่ อ่านง่ายทุกวัย),
 อัปโหลดภาพ และตั้งเป็นเมนูหลักให้ผู้ใช้ทุกคนโดยอัตโนมัติ:
 
