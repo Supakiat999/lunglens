@@ -5,9 +5,10 @@
    ต้องยืนยันกับผู้เชี่ยวชาญก่อนใช้งานจริง
    ===================================================================== */
 
-const APP_VERSION = "prototype_0.7.0";
+const APP_VERSION = "prototype_0.8.0";
 const ENGINE_VERSION = "prototype_rules_v2";
 const STORE_KEY = "lunglens-v1";
+const DEFAULT_LOCALE = "en";
 
 /* ---------------- Thailand provinces ----------------
    Thai names remain canonical stored values. English names are display-only.
@@ -131,8 +132,8 @@ const STEPS = [
     why: "ระบบคำนวณ pack-years = (มวนต่อวัน ÷ 20) × จำนวนปีที่สูบ เพื่อประกอบการอธิบายปัจจัย",
     type: "numbers",
     fields: [
-      { key: "cpd",   label: "จำนวนมวนต่อวันโดยเฉลี่ย", min: 0, max: 100 },
-      { key: "years", label: "จำนวนปีที่สูบทั้งหมด",     min: 0, max: 80 }
+      { key: "cpd",   label: "จำนวนมวนต่อวันโดยเฉลี่ย", min: 0, max: 100, integer: true },
+      { key: "years", label: "จำนวนปีที่สูบทั้งหมด",     min: 0, max: 80, integer: true }
     ],
     cond: a => a.SMOKE_STATUS === "เคยสูบเป็นประจำ แต่เลิกแล้ว" || a.SMOKE_STATUS === "ปัจจุบันยังสูบ"
   },
@@ -761,6 +762,6 @@ if (typeof module !== "undefined") {
   module.exports = {
     PROVINCE_META, PROVINCES, STEPS, RULES, BANDS, SCREENING_CONTEXTS, FACILITIES,
     EDU_CATEGORIES, ARTICLES, FACTOR_EDUCATION_MAP, PERSONAS, packYears,
-    APP_VERSION, ENGINE_VERSION, STORE_KEY
+    APP_VERSION, ENGINE_VERSION, STORE_KEY, DEFAULT_LOCALE
   };
 }

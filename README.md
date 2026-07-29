@@ -55,13 +55,15 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.7.0`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.8.0`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
-then adds explicit-permission nearest-station sorting. Browser coordinates remain only
-in page memory, are never written to `lunglens-v1`, and are used locally to calculate
-straight-line distance; clearing or reloading removes them. Official Air4Thai readings
-remain primary, and no pollution or location data enters the factor band or LDCT
-screening context. The engine remains versioned as `prototype_rules_v2`.
+v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
+history, bilingual inline assessment validation, and an English first-visit default.
+Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
+are used locally to calculate straight-line distance; clearing or reloading removes
+them. Official Air4Thai measurements and their recent history remain separate from the
+CAMS forecast. No pollution or location data enters the factor band or LDCT screening
+context. The engine remains versioned as `prototype_rules_v2`.
 
 Location on disk: `C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\`
 
@@ -73,6 +75,7 @@ lunglens/
 │                               facilities, articles, personas   ← "database + config"
 ├── js/air-quality.js           Air4Thai station matching, Thai PM2.5 guidance,
 │                               freshness handling, and model fallback
+├── js/air-history.js           Rolling 48-hour official-station history + loader
 ├── js/validation.js            Completeness/range checks only; no clinical scoring
 ├── js/engine.js                Explainable rule engine + symptom pathway ← "risk service"
 ├── js/privacy.js               Portable export + privacy-safe LINE invitation helpers
@@ -86,7 +89,7 @@ lunglens/
 ├── line/make-richmenu-image.ps1  Regenerates rich-menu.png (ASCII-only script)
 ├── line/flex-messages.json     Flex Message templates (privacy-safe copy)
 ├── data/air4thai-latest.json   Validated public station snapshot (automatic fallback)
-├── scripts/update-air-quality.mjs  Fetches, sanitises, and validates Air4Thai data
+├── scripts/update-air-quality.mjs  Validates Air4Thai data + maintains rolling history
 ├── .github/workflows/update-air-quality.yml  Hourly live-data refresh
 ├── .env.example                Env vars for the future backend (no secrets)
 ├── HANDOVER.md                 ▶ Status, all links/IDs, next steps — start here
@@ -118,15 +121,17 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
   second-hand smoke, family/medical, occupational, household cooking, symptom safety check.
   Province is used only for healthcare navigation and never changes the result.
   Current pollution context is displayed separately and never changes the result.
-  Autosave per answer, "บันทึกและกลับมาทำต่อภายหลัง", resume card on home.
+  Autosave per answer, bilingual field-level validation, safer whole-number smoking
+  inputs, "บันทึกและกลับมาทำต่อภายหลัง", resume card on home.
 - **#review** — bilingual answer summary with per-question editing before result creation
 - **#symptom** — symptom pathway interstitial (urgent = red + 1669 guidance; never diagnostic)
 - **#result** — band, separate LDCT screening context, "ทำไมจึงได้ผลนี้" factor cards
   (tap → why/next/evidence/related sourced education), embedded local air context,
   not-assessed list, privacy-safe sharing, retake
 - **#air** — current province/station PM2.5, PM10 and AQI from Air4Thai; model fallback,
-  timestamps, freshness warning, health guidance, source attribution, limitations, and
-  a separate responsive 24-hour CAMS Global model forecast with cautious trend wording;
+  timestamps, freshness warning, health guidance, source attribution, limitations,
+  rolling official station-measurement history, and a separate responsive 24-hour CAMS
+  Global model forecast with cautious trend wording;
   optional nearest-station sorting requires an explicit permission tap and keeps
   coordinates in page memory only
 - **#education** — 12 sourced bilingual articles, search, myth/fact explanations,

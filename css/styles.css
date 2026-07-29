@@ -241,6 +241,19 @@ code {
   padding: 1px 5px;
 }
 
+/* ---------- assessment validation ---------- */
+.assessment-error {
+  align-items: flex-start; background: var(--warn-soft); border: 1px solid #d97706;
+  border-left: 5px solid #d97706; border-radius: 10px; color: var(--ink);
+  display: flex; flex-direction: column; gap: 2px; margin: 12px 0; padding: 11px 13px;
+}
+.assessment-error:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+.assessment-error span { color: var(--ink-2); font-size: 14px; }
+.field-invalid input, .field-invalid select, .field-invalid .chips {
+  border-color: #b45309; box-shadow: 0 0 0 2px rgba(217, 119, 6, .18);
+}
+.field-help { color: var(--ink-2); font-size: 12px; margin-top: 5px; }
+
 /* ---------- live air quality ---------- */
 .air-compact {
   background: var(--brand-soft); border: 1px solid #a5f3fc; border-radius: 10px;
@@ -281,11 +294,17 @@ code {
   color: var(--ink-2); display: inline-block; font-size: 10px; font-weight: 600;
   margin-left: 5px; padding: 1px 7px; vertical-align: middle;
 }
+.station-badge {
+  background: var(--brand-soft); border: 1px solid #67e8f9; border-radius: 999px;
+  color: var(--brand-deep); display: inline-block; font-size: 10px; font-weight: 700;
+  margin-left: 5px; padding: 1px 7px; vertical-align: middle;
+}
 .air-forecast-chart {
   background: linear-gradient(180deg, var(--brand-soft), #fff); border: 1px solid var(--line);
   border-radius: 10px; display: block; height: auto; margin-top: 10px;
   max-height: 220px; overflow: visible; width: 100%;
 }
+.air-history-chart { background: linear-gradient(180deg, #ecfeff, #fff); }
 .air-forecast-chart text {
   fill: var(--ink-2); font-family: var(--font); font-size: 11px;
 }
@@ -293,6 +312,12 @@ code {
 .chart-grid { stroke: var(--line); stroke-dasharray: 5 5; stroke-width: 1; }
 .chart-line { fill: none; stroke: var(--brand); stroke-linecap: round; stroke-linejoin: round; stroke-width: 4; }
 .chart-point { fill: var(--card); stroke: var(--brand-deep); stroke-width: 2; }
+.chart-line-history { stroke: #0891b2; }
+.chart-point-history { stroke: #0e7490; }
+.air-history-stale {
+  background: var(--warn-soft); border: 1px solid #f59e0b; border-radius: 8px;
+  color: var(--ink-2); font-size: 13px; margin: 8px 0; padding: 8px 10px;
+}
 .air-forecast-stats { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 8px; }
 .air-forecast-stats span { color: var(--ink-2); font-size: 12px; }
 .article-forecast {

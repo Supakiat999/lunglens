@@ -1,8 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { mergeAirHistory } = require("../js/air-history.js");
 
 const SOURCE_URL = "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php";
 const outputPath = resolve(process.env.OUTPUT_PATH || "data/air4thai-latest.json");
+const historyPath = resolve(process.env.HISTORY_OUTPUT_PATH || "data/air4thai-history.json");
 
 function numberOrNull(value, { min = 0, max = 10000 } = {}) {
   const parsed = Number(value);
@@ -70,6 +75,17 @@ const snapshot = {
   stations
 };
 
+let existingHistory = null;
+try {
+  existingHistory = JSON.parse(await readFile(historyPath, "utf8"));
+} catch (error) {
+  if (error?.code !== "ENOENT") throw error;
+}
+const history = mergeAirHistory(existingHistory, snapshot, { nowMs: Date.now() });
+
 await mkdir(dirname(outputPath), { recursive: true });
+await mkdir(dirname(historyPath), { recursive: true });
 await writeFile(outputPath, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
+await writeFile(historyPath, `${JSON.stringify(history, null, 2)}\n`, "utf8");
 console.log(`Wrote ${stations.length} validated Air4Thai stations to ${outputPath}`);
+console.log(`Wrote ${history.point_count} recent official observations to ${historyPath}`);

@@ -57,6 +57,14 @@ function validateAssessmentStep(step, answers) {
           max: field.max
         };
       }
+      if (field.integer !== false && !Number.isInteger(Number(number))) {
+        return {
+          code: "number_integer",
+          stepId: step.id,
+          fieldKey: field.key,
+          fieldLabel: field.label
+        };
+      }
     }
     return null;
   }

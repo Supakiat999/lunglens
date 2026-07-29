@@ -1,6 +1,6 @@
 # TASKS.md — LungLens / รู้ทันปอด roadmap
 
-Last reviewed: **2026-07-28**
+Last reviewed: **2026-07-29**
 
 Status legend:
 
@@ -57,6 +57,9 @@ Status legend:
   while keeping official Air4Thai station readings visibly separate and primary
 - ✅ v0.7 adds explicit-permission nearest-Air4Thai-station sorting with local-only,
   session-memory coordinates and straight-line distance labels
+- ✅ v0.8 adds rolling 48-hour official station-measurement history, keeps it separate
+  from the CAMS forecast, adds bilingual inline assessment errors, and opens first visits
+  in English while remembering each user's language choice
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -69,8 +72,8 @@ Status legend:
 ## Recommended order of work
 
 1. 📱 Complete the real-phone LINE check and collect the add-friend link/QR code.
-2. 🔜 Decide whether the public app should continue to open in Thai or open in English.
-3. 🔜 Fix the remaining public-app usability and accessibility gaps.
+2. 🔜 Continue human review of English and Thai health-literacy wording.
+3. 🔜 Fix the remaining public-app accessibility gaps.
 4. 🩺 Obtain clinical, content, facility, privacy, and legal review.
 5. 🧱 Build the backend, real referrals, secure LINE webhook, and provider authentication.
 6. 🔜 Run a controlled pilot before any public healthcare promotion.
@@ -103,11 +106,12 @@ Status legend:
 
 ## 2 — Language and content experience
 
-- [ ] 🔜 Decide the default-language rule:
+- [x] ✅ Default-language rule decided:
   - [ ] Keep Thai as the default, matching the original product plan; or
-  - [ ] Make English the default, matching the newer account preference; or
+  - [x] ✅ Make English the first-visit default, matching the account preference, and
+    remember an existing user's explicit Thai/English choice.
   - [ ] Use the browser/LINE locale on first visit and remember the user's choice.
-- [ ] 🔜 Add a visible first-visit language choice if automatic detection is not used.
+- [x] ✅ Keep the Thai/English switch visible in the header from the first visit.
 - [ ] 🔜 Review every English screen for natural, consistent international English.
 - [ ] 🔜 Review every Thai screen for clarity, tone, spelling, and health literacy.
 - [ ] 🔜 Create a terminology guide for repeated words such as risk factor, result,
@@ -130,8 +134,11 @@ Status legend:
   - [x] ✅ Enforce mutually exclusive multi-select options and validate required grouped fields
   - [ ] End year earlier than start year
   - [x] ✅ Reject numeric smoking details outside their configured ranges
-- [ ] 🔜 Add clear inline validation messages in both languages.
-- [ ] 🔜 Improve numeric inputs for age, years, cigarettes per day, and duration.
+- [x] ✅ Add clear inline validation messages in both languages and move focus to the
+  field that needs attention.
+- [x] ✅ Improve the smoking-detail numeric inputs with whole-number keyboards, bounds,
+  range guidance, and whole-number validation. Age and exposure duration intentionally
+  remain canonical ranges rather than exact identifying values.
 - [x] ✅ Add the full list of 77 Thai provinces.
 - [ ] 🔜 Add district/subdistrict selection where operationally necessary.
 - [ ] 🔜 Add Thai postcode validation and province/postcode consistency checks.
@@ -204,6 +211,8 @@ Status legend:
   coordinates in page memory only and provide an immediate clear control.
 - [x] ✅ Add a 24-hour CAMS Global model chart and cautious trend wording, clearly
   separated from official station measurements and personal risk.
+- [ ] 🔜 Publish and verify a rolling 48-hour official Air4Thai station-measurement
+  history, with retention, deduplication, stale-data handling, and a separate chart.
 - [ ] 🧱 Add monitoring/alerting when the hourly snapshot workflow fails repeatedly.
 - [ ] 🩺 Review PM2.5 activity guidance and vulnerable-group wording with a Thai clinician.
 

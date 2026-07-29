@@ -6,7 +6,7 @@
 
 /* ---------------- state ---------------- */
 const DEFAULT_STATE = {
-  lang: "th",
+  lang: DEFAULT_LOCALE,
   lineLinked: false,
   consent: null,            // { required:true, optional:{...}, version, at, lang }
   answers: {},
@@ -28,7 +28,7 @@ function hydrateState(saved) {
     throw new Error("Invalid saved state");
   }
   const next = Object.assign(structuredClone(DEFAULT_STATE), saved);
-  next.lang = saved.lang === "en" ? "en" : "th";
+  next.lang = saved.lang === "en" || saved.lang === "th" ? saved.lang : DEFAULT_LOCALE;
   next.answers = saved.answers && typeof saved.answers === "object" && !Array.isArray(saved.answers)
     ? saved.answers : {};
   next.history = Array.isArray(saved.history) ? saved.history.slice(0, 20) : [];
@@ -410,6 +410,7 @@ function acceptConsent() {
    SCREEN: assessment wizard
    ===================================================================== */
 function visibleSteps() { return STEPS.filter(s => !s.cond || s.cond(state.answers)); }
+let assessmentIssue = null;
 
 function renderAssess() {
   if (!state.consent) { location.hash = "#begin"; return; }
@@ -418,6 +419,7 @@ function renderAssess() {
   const step = steps[state.stepIndex];
   const n = state.stepIndex + 1, total = steps.length;
   const a = state.answers;
+  const issue = assessmentIssue?.stepId === step.id ? assessmentIssue : null;
 
   let body = "";
   if (step.type === "choice") {
@@ -433,36 +435,48 @@ function renderAssess() {
       </label>`).join("")}</div>`;
   } else if (step.type === "numbers") {
     const cur = a[step.id] || {};
-    body = step.fields.map(f => `
-      <div class="field"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
-        <input id="${step.id}-${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" value="${cur[f.key] ?? ""}"
-          onchange="answerNum('${step.id}','${f.key}', this.value)"></div>`).join("");
+    body = step.fields.map(f => {
+      const fieldIssue = issue?.fieldKey === f.key;
+      const helpId = `${step.id}-${f.key}-help`;
+      return `<div class="field ${fieldIssue ? "field-invalid" : ""}"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
+        <input id="${step.id}-${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" step="1"
+          required aria-invalid="${fieldIssue}" aria-describedby="${helpId}${fieldIssue ? " assessment-error" : ""}"
+          value="${cur[f.key] ?? ""}" oninput="answerNum('${step.id}','${f.key}', this.value)">
+        <p class="field-help" id="${helpId}">${esc(uiText(
+          `ใส่จำนวนเต็มตั้งแต่ ${f.min} ถึง ${f.max}`,
+          `Enter a whole number from ${f.min} to ${f.max}`
+        ))}</p></div>`;
+    }).join("");
   } else if (step.type === "group") {
     const cur = a[step.id] || {};
     body = step.fields.map(f => {
+      const fieldIssue = issue?.fieldKey === f.key;
       if (f.type === "multi") {
         const sel = cur[f.key] || [];
-        return `<div class="field"><label>${esc(f.label)}</label><div class="chips">
+        return `<div class="field ${fieldIssue ? "field-invalid" : ""}"><label id="${step.id}-${f.key}-label">${esc(f.label)}</label><div class="chips"
+          role="group" aria-labelledby="${step.id}-${f.key}-label" aria-invalid="${fieldIssue}" ${fieldIssue ? 'aria-describedby="assessment-error"' : ""}>
           ${f.options.map(o => `<button type="button" class="chip ${sel.includes(o) ? "on" : ""}"
             aria-pressed="${sel.includes(o)}" onclick="answerGroupMulti('${step.id}','${f.key}', this.dataset.v)"
             data-v="${esc(o)}">${esc(o)}</button>`).join("")}
         </div></div>`;
       }
-      return `<div class="field"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
-        <select id="${step.id}-${f.key}" onchange="answerGroup('${step.id}','${f.key}', this.value)">
-          <option value="">— เลือก —</option>
+      return `<div class="field ${fieldIssue ? "field-invalid" : ""}"><label for="${step.id}-${f.key}">${esc(f.label)}</label>
+        <select id="${step.id}-${f.key}" required aria-invalid="${fieldIssue}" ${fieldIssue ? 'aria-describedby="assessment-error"' : ""}
+          onchange="answerGroup('${step.id}','${f.key}', this.value)">
+          <option value="">${esc(uiText("— เลือก —", "— Select —"))}</option>
           ${f.options.map(o => `<option value="${esc(o)}" ${cur[f.key] === o ? "selected" : ""}>${esc(o)}</option>`).join("")}
         </select></div>`;
     }).join("");
   } else if (step.type === "province") {
-    body = `<div class="field"><label for="province-select">จังหวัด</label>
-      <select id="province-select" onchange="answerChoice('PROVINCE', this.value)">
-        <option value="">— เลือกจังหวัด —</option>
+    body = `<div class="field ${issue ? "field-invalid" : ""}"><label for="province-select">${esc(uiText("จังหวัด", "Province"))}</label>
+      <select id="province-select" required aria-invalid="${!!issue}" ${issue ? 'aria-describedby="assessment-error"' : ""}
+        onchange="answerChoice('PROVINCE', this.value)">
+        <option value="">${esc(uiText("— เลือกจังหวัด —", "— Select a province —"))}</option>
         ${PROVINCES.map(p => `<option value="${esc(p)}" ${a.PROVINCE === p ? "selected" : ""}>${esc(provinceDisplay(p))}</option>`).join("")}
       </select></div>
-      <div class="field"><label for="district-input">อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)</label>
+      <div class="field"><label for="district-input">${esc(uiText("อำเภอ/เขต หรือรหัสไปรษณีย์ (ไม่บังคับ)", "District or postcode (optional)"))}</label>
         <input id="district-input" type="text" value="${esc(a.DISTRICT || "")}"
-          onchange="answerChoice('DISTRICT', this.value)" placeholder="ข้ามได้"></div>
+          onchange="answerChoice('DISTRICT', this.value)" placeholder="${esc(uiText("ข้ามได้", "Optional"))}"></div>
       ${a.PROVINCE ? `<div id="assessment-air-context" class="air-compact" role="status" aria-live="polite">
         ${esc(uiText("กำลังโหลดข้อมูลคุณภาพอากาศล่าสุด…", "Loading current air-quality data…"))}
       </div>` : ""}
@@ -480,7 +494,7 @@ function renderAssess() {
       n === total ? "คำถามสุดท้าย" : `เหลืออีก ${total - n} คำถาม`,
       n === total ? "Final question" : `${total - n} questions remaining`
     ))}</div>
-    <div class="progress-bar" role="progressbar" aria-label="ความคืบหน้าแบบประเมิน"
+    <div class="progress-bar" role="progressbar" aria-label="${esc(uiText("ความคืบหน้าแบบประเมิน", "Assessment progress"))}"
       aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}">
       <div style="width:${Math.round(n / total * 100)}%"></div></div>
   </div>
@@ -489,6 +503,10 @@ function renderAssess() {
     <h1 class="q-title">${esc(step.title)}</h1>
     ${step.note ? `<div class="q-note">${esc(step.note)}</div>` : ""}
     ${isSymptoms ? `<div class="q-note" style="background:var(--brand-soft)">อาการเหล่านี้อาจเกิดจากหลายสาเหตุและไม่ได้หมายความว่าคุณเป็นมะเร็ง แต่ควรได้รับการประเมินจากบุคลากรทางการแพทย์โดยเร็ว</div>` : ""}
+    ${issue ? `<div class="assessment-error" id="assessment-error" role="alert" tabindex="-1">
+      <b>${esc(uiText("โปรดตรวจสอบคำตอบ", "Check this answer"))}</b>
+      <span>${esc(validationMessage(issue))}</span>
+    </div>` : ""}
     ${body}
     ${step.why ? `<button class="why-btn" onclick="modal('<h3>ทำไมเราจึงถามคำถามนี้</h3><p class=muted>${esc(step.why)}</p>')">ทำไมเราจึงถามคำถามนี้</button>` : ""}
   </div>
@@ -502,6 +520,7 @@ function renderAssess() {
 
 function answerChoice(id, v) {
   state.answers[id] = v;
+  clearAssessmentIssue(id);
   pruneInactiveAnswers(state.answers);
   save();
   if (id !== "DISTRICT" && id !== "PROVINCE") stepNext();
@@ -514,16 +533,17 @@ function answerMulti(id, v, on) {
     if ((step.exclusive || []).includes(v)) cur = [v];
     else cur = cur.filter(x => !(step.exclusive || []).includes(x)).concat(v);
   } else cur = cur.filter(x => x !== v);
-  state.answers[id] = cur; save(); renderAssess();
+  state.answers[id] = cur; clearAssessmentIssue(id); save(); renderAssess();
 }
 function answerNum(id, key, v) {
   state.answers[id] = state.answers[id] || {};
   state.answers[id][key] = v === "" ? null : Number(v);
+  clearAssessmentIssue(id, key);
   save();
 }
 function answerGroup(id, key, v) {
   state.answers[id] = state.answers[id] || {};
-  state.answers[id][key] = v || null; save();
+  state.answers[id][key] = v || null; clearAssessmentIssue(id, key); save();
 }
 function answerGroupMulti(id, key, v) {
   state.answers[id] = state.answers[id] || {};
@@ -532,10 +552,32 @@ function answerGroupMulti(id, key, v) {
   if (cur.includes(v)) cur = cur.filter(x => x !== v);
   else if ((stepField.exclusive || []).includes(v)) cur = [v];
   else cur = cur.filter(x => !(stepField.exclusive || []).includes(x)).concat(v);
-  state.answers[id][key] = cur; save(); renderAssess();
+  state.answers[id][key] = cur; clearAssessmentIssue(id, key); save(); renderAssess();
 }
 
-function stepBack() { if (state.stepIndex > 0) { state.stepIndex--; save(); renderAssess(); } }
+function clearAssessmentIssue(stepId, fieldKey = null) {
+  if (!assessmentIssue || assessmentIssue.stepId !== stepId) return;
+  if (fieldKey && assessmentIssue.fieldKey && assessmentIssue.fieldKey !== fieldKey) return;
+  assessmentIssue = null;
+  $("#assessment-error")?.remove();
+  document.querySelectorAll("[aria-invalid='true']").forEach(element => {
+    element.setAttribute("aria-invalid", "false");
+    const describedBy = (element.getAttribute("aria-describedby") || "")
+      .split(/\s+/).filter(id => id && id !== "assessment-error");
+    if (describedBy.length) element.setAttribute("aria-describedby", describedBy.join(" "));
+    else element.removeAttribute("aria-describedby");
+  });
+  document.querySelectorAll(".field-invalid").forEach(element => element.classList.remove("field-invalid"));
+}
+
+function stepBack() {
+  if (state.stepIndex > 0) {
+    assessmentIssue = null;
+    state.stepIndex--;
+    save();
+    renderAssess();
+  }
+}
 function validationMessage(issue) {
   if (!issue) return "";
   if (state.lang === "en") {
@@ -545,6 +587,7 @@ function validationMessage(issue) {
     if (issue.code === "number_range") {
       return `Enter “${tr(issue.fieldLabel, "en")}” between ${issue.min} and ${issue.max}.`;
     }
+    if (issue.code === "number_integer") return `Enter a whole number for “${tr(issue.fieldLabel, "en")}”.`;
     return "Choose an answer or select “Not sure”.";
   }
   if (issue.code === "province_required") return "กรุณาเลือกจังหวัด";
@@ -553,7 +596,19 @@ function validationMessage(issue) {
   if (issue.code === "number_range") {
     return `กรุณาใส่ “${issue.fieldLabel}” ระหว่าง ${issue.min} ถึง ${issue.max}`;
   }
+  if (issue.code === "number_integer") return `กรุณาใส่จำนวนเต็มสำหรับ “${issue.fieldLabel}”`;
   return "กรุณาเลือกคำตอบ หรือเลือก “ไม่แน่ใจ”";
+}
+
+function showAssessmentIssue(issue) {
+  assessmentIssue = issue;
+  renderAssess();
+  requestAnimationFrame(() => {
+    const field = issue.fieldKey ? $(`#${issue.stepId}-${issue.fieldKey}`) : null;
+    const target = field || $("#province-select") || $("#assessment-error");
+    target?.focus();
+    if (field?.select) field.select();
+  });
 }
 
 function goToValidationIssue(issue) {
@@ -572,7 +627,8 @@ function stepNext() {
   const steps = visibleSteps();
   const step = steps[state.stepIndex];
   const issue = validateAssessmentStep(step, state.answers);
-  if (issue) { toast(validationMessage(issue)); return; }
+  if (issue) { showAssessmentIssue(issue); return; }
+  assessmentIssue = null;
   track("assessment_section_completed");
   if (state.returnToReview) {
     state.returnToReview = false;
@@ -865,6 +921,7 @@ let selectedAirStation = "";
 let latestAirData = null;
 let airRequestId = 0;
 let airForecastRequestId = 0;
+let airHistoryRequestId = 0;
 let airUserLocation = null; // session memory only; never saved to lunglens-v1
 let airLocationStatus = "idle";
 
@@ -1035,7 +1092,7 @@ function forecastTimeLabel(value) {
   }).format(new Date(value));
 }
 
-function renderForecastChart(points) {
+function renderPm25Chart(points, { mode = "forecast" } = {}) {
   const width = 600, height = 190, left = 44, right = 16, top = 18, bottom = 38;
   const values = points.map(point => point.pm25).filter(Number.isFinite);
   if (values.length < 2) return "";
@@ -1046,28 +1103,38 @@ function renderForecastChart(points) {
   const plotHeight = height - top - bottom;
   const x = index => left + (index / Math.max(1, points.length - 1)) * plotWidth;
   const y = value => top + (1 - (value - minValue) / (maxValue - minValue)) * plotHeight;
+  const pointTime = point => point.at || point.observed_at;
   const path = points.map((point, index) =>
     `${index === 0 ? "M" : "L"} ${x(index).toFixed(1)} ${y(point.pm25).toFixed(1)}`
   ).join(" ");
   const labelIndexes = [...new Set([0, Math.floor((points.length - 1) / 3),
     Math.floor((points.length - 1) * 2 / 3), points.length - 1])];
-  const ariaLabel = uiText(
-    `กราฟแบบจำลอง PM2.5 24 ชั่วโมง ค่าต่ำสุด ${formatAirNumber(Math.min(...values))} และสูงสุด ${formatAirNumber(Math.max(...values))} ไมโครกรัมต่อลูกบาศก์เมตร`,
-    `24-hour model PM2.5 chart, minimum ${formatAirNumber(Math.min(...values))} and maximum ${formatAirNumber(Math.max(...values))} micrograms per cubic metre`
-  );
-  return `<svg class="air-forecast-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(ariaLabel)}">
+  const ariaLabel = mode === "history"
+    ? uiText(
+      `กราฟประวัติค่า PM2.5 ที่สถานี Air4Thai ตรวจวัด ค่าต่ำสุด ${formatAirNumber(Math.min(...values))} และสูงสุด ${formatAirNumber(Math.max(...values))} ไมโครกรัมต่อลูกบาศก์เมตร`,
+      `Official Air4Thai station PM2.5 history chart, minimum ${formatAirNumber(Math.min(...values))} and maximum ${formatAirNumber(Math.max(...values))} micrograms per cubic metre`
+    )
+    : uiText(
+      `กราฟแบบจำลอง PM2.5 24 ชั่วโมง ค่าต่ำสุด ${formatAirNumber(Math.min(...values))} และสูงสุด ${formatAirNumber(Math.max(...values))} ไมโครกรัมต่อลูกบาศก์เมตร`,
+      `24-hour model PM2.5 chart, minimum ${formatAirNumber(Math.min(...values))} and maximum ${formatAirNumber(Math.max(...values))} micrograms per cubic metre`
+    );
+  return `<svg class="air-forecast-chart ${mode === "history" ? "air-history-chart" : ""}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(ariaLabel)}">
     <line x1="${left}" y1="${top}" x2="${left}" y2="${height - bottom}" class="chart-axis"></line>
     <line x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}" class="chart-axis"></line>
     <line x1="${left}" y1="${top}" x2="${width - right}" y2="${top}" class="chart-grid"></line>
     <text x="${left - 8}" y="${top + 5}" text-anchor="end">${formatAirNumber(maxValue)}</text>
     <text x="${left - 8}" y="${height - bottom + 5}" text-anchor="end">${formatAirNumber(minValue)}</text>
-    <path d="${path}" class="chart-line"></path>
+    <path d="${path}" class="chart-line ${mode === "history" ? "chart-line-history" : ""}"></path>
     ${points.map((point, index) => index % 3 === 0 || index === points.length - 1
-      ? `<circle cx="${x(index).toFixed(1)}" cy="${y(point.pm25).toFixed(1)}" r="3" class="chart-point">
-          <title>${esc(forecastTimeLabel(point.at))}: PM2.5 ${formatAirNumber(point.pm25)} µg/m³</title>
+      ? `<circle cx="${x(index).toFixed(1)}" cy="${y(point.pm25).toFixed(1)}" r="3" class="chart-point ${mode === "history" ? "chart-point-history" : ""}">
+          <title>${esc(forecastTimeLabel(pointTime(point)))}: PM2.5 ${formatAirNumber(point.pm25)} µg/m³</title>
         </circle>` : "").join("")}
-    ${labelIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${height - 12}" text-anchor="${index === 0 ? "start" : index === points.length - 1 ? "end" : "middle"}">${esc(forecastTimeLabel(points[index].at))}</text>`).join("")}
+    ${labelIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${height - 12}" text-anchor="${index === 0 ? "start" : index === points.length - 1 ? "end" : "middle"}">${esc(forecastTimeLabel(pointTime(points[index])))}</text>`).join("")}
   </svg>`;
+}
+
+function renderForecastChart(points) {
+  return renderPm25Chart(points, { mode: "forecast" });
 }
 
 async function updateAirForecast(targetId, province, station = null, { compact = false } = {}) {
@@ -1110,6 +1177,66 @@ async function updateAirForecast(targetId, province, station = null, { compact =
     ))}</p>
       <button class="btn btn-ghost btn-sm mt" onclick="updateAirForecast('${esc(targetId)}','${esc(province.th || province)}')">${esc(uiText("ลองอีกครั้ง", "Try again"))}</button>`;
   }
+}
+
+async function updateAirHistory(targetId, station) {
+  const target = $(`#${targetId}`);
+  if (!target || !station?.station_id) return;
+  const requestToken = String(++airHistoryRequestId);
+  target.dataset.requestToken = requestToken;
+  try {
+    const history = await loadAirHistoryForStation(station.station_id);
+    if (!target.isConnected || target.dataset.requestToken !== requestToken) return;
+    const points = history?.station?.points || [];
+    if (points.length < 2) {
+      target.innerHTML = `<p class="muted">${esc(uiText(
+        "ระบบเริ่มเก็บประวัติอย่างเป็นทางการของสถานีนี้แล้ว เมื่อ Air4Thai เผยแพร่ค่ารายชั่วโมงเพิ่ม กราฟจะปรากฏที่นี่ ค่าปัจจุบันด้านบนยังใช้งานได้ตามปกติ",
+        "Official history collection has started for this station. The chart will appear after Air4Thai publishes more hourly observations. The current reading above remains available."
+      ))}</p>
+      <p class="tiny mt">${esc(uiText(
+        "ระบบจะเก็บเฉพาะข้อมูลสถานีล่าสุดไม่เกิน 48 ชั่วโมง ไม่ใช่ประวัติการสัมผัสส่วนบุคคล",
+        "Only the station's most recent 48 hours are retained. This is not a record of your personal exposure."
+      ))}</p>`;
+      return;
+    }
+    const values = points.map(point => point.pm25);
+    const earliest = points[0].observed_at;
+    const latest = points.at(-1).observed_at;
+    target.innerHTML = `
+      ${history.stale ? `<div class="air-history-stale"><b>${esc(uiText("ประวัติสถานีอาจอัปเดตล่าช้า", "Station history may be delayed"))}</b></div>` : ""}
+      ${renderPm25Chart(points, { mode: "history" })}
+      <div class="air-forecast-stats">
+        <span>${esc(uiText("ต่ำสุด", "Minimum"))}: <b>${formatAirNumber(Math.min(...values))}</b> µg/m³</span>
+        <span>${esc(uiText("สูงสุด", "Maximum"))}: <b>${formatAirNumber(Math.max(...values))}</b> µg/m³</span>
+        <span>${esc(uiText("จำนวนค่าที่วัด", "Observations"))}: <b>${points.length}</b></span>
+      </div>
+      <p class="tiny mt">${esc(uiText("ช่วงเวลาที่สถานีรายงาน", "Station observation period"))}:
+        ${esc(formatDate(earliest, { dateTime: true }))} – ${esc(formatDate(latest, { dateTime: true }))}</p>
+      <p class="tiny mt">${esc(uiText(
+        `รวบรวมล่าสุด ${formatDate(history.generated_at, { dateTime: true })} · เก็บย้อนหลังไม่เกิน ${history.retention_hours || 48} ชั่วโมง`,
+        `History last assembled ${formatDate(history.generated_at, { dateTime: true })} · retains up to ${history.retention_hours || 48} hours`
+      ))}</p>
+      <p class="tiny mt">${esc(uiText(
+        "นี่คือค่าที่สถานี Air4Thai ตรวจวัด ไม่ใช่แบบจำลอง ไม่ใช่ประวัติการสัมผัสส่วนบุคคล และไม่ใช้คำนวณผลปัจจัยสุขภาพหรือเกณฑ์คัดกรอง",
+        "These are Air4Thai station measurements, not model values or personal exposure history. They never change the health-factor result or screening criteria."
+      ))}</p>
+      <p class="tiny mt"><a href="${esc(history.source_url || "https://air4thai.pcd.go.th/")}" target="_blank" rel="noopener">${esc(uiText(
+        "ที่มา: Air4Thai — กรมควบคุมมลพิษ",
+        "Source: Air4Thai — Thailand Pollution Control Department"
+      ))}</a></p>`;
+  } catch (error) {
+    if (!target.isConnected || target.dataset.requestToken !== requestToken) return;
+    target.innerHTML = `<p class="muted">${esc(uiText(
+      "ยังโหลดประวัติสถานีไม่ได้ ค่าปัจจุบันและแบบจำลอง 24 ชั่วโมงยังใช้งานได้ตามปกติ",
+      "Station history is unavailable. The current reading and 24-hour model forecast remain available."
+    ))}</p>
+      <button class="btn btn-ghost btn-sm mt" onclick="retryAirHistory('${esc(targetId)}','${esc(station.station_id)}')">${esc(uiText("ลองอีกครั้ง", "Try again"))}</button>`;
+  }
+}
+
+function retryAirHistory(targetId, stationId) {
+  const station = latestAirData?.stations?.find(item => item.station_id === stationId);
+  if (station) updateAirHistory(targetId, station);
 }
 
 function renderAirQuality() {
@@ -1244,6 +1371,17 @@ function renderAirResults(data) {
     </div>
 
     <div class="card">
+      <h3>${esc(uiText("ประวัติค่าที่สถานีตรวจวัดล่าสุด", "Recent official station history"))}
+        <span class="station-badge">${esc(uiText("ค่าตรวจวัด Air4Thai", "Air4Thai measurements"))}</span></h3>
+      ${isOfficial && station ? `<div id="air-history" aria-live="polite">
+        <p class="muted">${esc(uiText("กำลังโหลดประวัติค่าตรวจวัดของสถานี…", "Loading station measurement history…"))}</p>
+      </div>` : `<p class="muted">${esc(uiText(
+        "จังหวัดนี้ไม่มีค่าตรวจวัด PM2.5 จากสถานี Air4Thai ในชุดข้อมูลล่าสุด จึงยังแสดงประวัติสถานีไม่ได้ แบบจำลอง 24 ชั่วโมงด้านล่างมีป้ายกำกับแยกต่างหาก",
+        "No Air4Thai station in this province reported PM2.5 in the latest snapshot, so official station history is unavailable. The separately labelled 24-hour model forecast is shown below."
+      ))}</p>`}
+    </div>
+
+    <div class="card">
       <h3>${esc(uiText("แนวโน้ม 24 ชั่วโมงข้างหน้า", "Next 24 hours"))}
         <span class="model-badge">${esc(uiText("แบบจำลอง", "model forecast"))}</span></h3>
       <div id="air-forecast" aria-live="polite">
@@ -1263,6 +1401,7 @@ function renderAirResults(data) {
         <a href="https://hpc10app.anamai.moph.go.th/hdc/airpollution/pm25/index" target="_blank" rel="noopener">${esc(uiText("เกณฑ์และคำแนะนำ PM2.5 ของกรมอนามัย", "Thai Department of Health PM2.5 categories and advice"))}</a>
       </p>
     </div>`;
+  if (isOfficial && station) updateAirHistory("air-history", station);
   updateAirForecast("air-forecast", data.province, station);
 }
 

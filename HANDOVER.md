@@ -1,7 +1,7 @@
 # HANDOVER — LungLens / รู้ทันปอด
 
 **Read this first.** It assumes you know nothing about the project and have not seen any
-prior conversation. Last updated **2026-07-28**.
+prior conversation. Last updated **2026-07-29**.
 
 ---
 
@@ -116,6 +116,12 @@ and passed as an environment variable at run time. **Never write it into a file.
   are held only in page memory, never saved to `lunglens-v1` or sent to LungLens, can be
   cleared immediately, and never affect the assessment. Distance calculation and
   non-mutating station sorting have automated boundary checks.
+- **Prototype v0.8 history, validation, and language flow** — first visits open in
+  English while an existing explicit Thai/English choice remains saved; assessment
+  errors appear inline beside the affected field with bilingual whole-number guidance;
+  and the air page shows rolling official station-measurement history separately from
+  the 24-hour CAMS model forecast. The history updater retains at most 48 hours,
+  deduplicates station timestamps, and never mixes model data or personal coordinates.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
@@ -159,6 +165,7 @@ Where things live:
 - `js/validation.js` — questionnaire completeness/range checks; never clinical scoring
 - `js/engine.js` — the rule evaluation + symptom pathway (the safety-critical logic)
 - `js/air-quality.js` — official station matching, PM2.5 guidance, freshness and fallback
+- `js/air-history.js` — rolling official station history, validation, retention and loading
 - `js/app.js` — router and every screen
 - `js/liff.js` — everything LINE-related
 - `line/` — the Official Account kit
@@ -170,10 +177,9 @@ Deploying = `git push`. Nothing else.
 [TASKS.md](TASKS.md) holds the detailed roadmap. The highest-value next items:
 
 1. Complete the real-phone OA greeting/rich-menu test and collect the add-friend link/QR
-2. Decide whether first visit defaults to Thai, English, or the device language
-3. Have a clinician review the rules, four result bands, PM2.5 guidance, and 12 articles 🩺
-4. Monitor the hourly Air4Thai workflow and add operational alerts
-5. Replace demo facilities with verified real ones
+2. Have a clinician review the rules, four result bands, PM2.5 guidance, and 12 articles 🩺
+3. Monitor the hourly Air4Thai workflow and add operational alerts
+4. Replace demo facilities with verified real ones
 5. Then Phase 3 — real backend (Next.js + Supabase) so results persist server-side and
    referrals reach actual staff
 

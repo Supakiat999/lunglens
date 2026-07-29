@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const data = require("../js/data.js");
-const { EN_TRANSLATIONS, I18N_UI } = require("../js/i18n.js");
+const { EN_TRANSLATIONS, I18N_UI, tr } = require("../js/i18n.js");
 
 const THAI = /[ก-๙]/;
 const missing = new Set();
@@ -32,6 +32,7 @@ assert.deepEqual([...missing].sort(), [], `Missing English translations:\n${[...
 assert.ok(I18N_UI.en.document_title);
 assert.ok(I18N_UI.en.document_description);
 assert.ok(I18N_UI.en.language_changed_en);
+assert.equal(data.DEFAULT_LOCALE, "en", "First visits should open in English");
 assert.equal(data.ARTICLES.length, data.EDU_CATEGORIES.length, "Every education topic must have a complete article");
 for (const category of data.EDU_CATEGORIES) {
   assert.ok(data.ARTICLES.some(article => article.category === category), `Missing article for ${category}`);
@@ -48,6 +49,11 @@ for (const article of data.ARTICLES) {
 for (const [code, slug] of Object.entries(data.FACTOR_EDUCATION_MAP)) {
   assert.ok(data.RULES.some(rule => rule.code === code), `Education map references unknown rule: ${code}`);
   assert.ok(data.ARTICLES.some(article => article.slug === slug), `Education map references unknown article: ${slug}`);
+}
+for (const persona of data.PERSONAS) {
+  const before = structuredClone(persona.answers);
+  inspect(tr(persona.label, "en"));
+  assert.deepEqual(persona.answers, before, `${persona.id} canonical answers changed during English display`);
 }
 [
   "ข้ามไปยังเนื้อหาหลัก",
@@ -70,4 +76,4 @@ for (const [code, slug] of Object.entries(data.FACTOR_EDUCATION_MAP)) {
   "ไม่สามารถอ่านข้อมูลที่บันทึกไว้ได้ แอปจะไม่เขียนทับข้อมูลเดิมในครั้งนี้"
 ].forEach(source => assert.ok(EN_TRANSLATIONS[source], `Missing public UI translation: ${source}`));
 
-console.log(`English coverage passed: ${Object.keys(EN_TRANSLATIONS).length} translated source strings.`);
+console.log(`English coverage passed: ${Object.keys(EN_TRANSLATIONS).length} translated source strings, English first-visit default, and canonical-answer preservation.`);
