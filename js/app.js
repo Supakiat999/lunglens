@@ -154,7 +154,29 @@ function modal(html, { closable = true } = {}) {
     dialog.setAttribute("aria-label", tr("ข้อมูลเพิ่มเติม"));
   }
   back.addEventListener("keydown", e => {
-    if (closable && e.key === "Escape") closeModal();
+    if (closable && e.key === "Escape") {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    if (e.key !== "Tab") return;
+    const focusable = [...dialog.querySelectorAll(
+      'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    )].filter(element => !element.hidden && element.getAttribute("aria-hidden") !== "true");
+    if (!focusable.length) {
+      e.preventDefault();
+      dialog.focus();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   });
   if (!isThaiOnlyRoute()) localizeSubtree(back);
   (dialog.querySelector("button,a,input,select,textarea") || dialog).focus();
@@ -308,9 +330,12 @@ function renderHome() {
 
   <div class="card mt">
     <h2>🎬 “ฉันไม่เคยสูบบุหรี่ แล้วทำไมต้องสนใจมะเร็งปอด?”</h2>
-    <div style="background:var(--ink);color:#fff;border-radius:10px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="showStoryboard()">
-      <span style="font-size:40px">▶️</span>
-    </div>
+    <button type="button" class="storyboard-trigger" aria-label="${esc(uiText(
+      "เปิดสตอรีบอร์ดวิดีโอแคมเปญ",
+      "Open the campaign video storyboard"
+    ))}" onclick="showStoryboard()">
+      <span aria-hidden="true">▶️</span>
+    </button>
     <p class="tiny mt">วิดีโอแคมเปญ 45 วินาที (สตอรีบอร์ดต้นแบบ) — มีคำบรรยายไทยและปุ่มถอดความ</p>
   </div>
 
@@ -943,6 +968,28 @@ function renderResult() {
       "An answer not shown as a factor does not mean it is safe; it only did not match a current prototype rule."
     ))}</p>
   </div>
+
+  <details class="card">
+    <summary><b>${esc(uiText("เหตุใดผลอาจเปลี่ยนเมื่อประเมินครั้งถัดไป", "Why a future result may change"))}</b></summary>
+    <ul class="plain-list muted mt">
+      <li>${esc(uiText(
+        "คำตอบใหม่หรือการแก้ไขประวัติการสัมผัส สุขภาพ ครอบครัว หรือการสูบบุหรี่อาจทำให้เข้าเงื่อนไขปัจจัยต่างจากเดิม",
+        "New or corrected exposure, health, family or smoking information may match different factor rules."
+      ))}</li>
+      <li>${esc(uiText(
+        "อาการใหม่อาจเปลี่ยนเฉพาะคำแนะนำด้านอาการ แต่อาการไม่เคยเพิ่มคะแนนหรือเปลี่ยนระดับปัจจัย",
+        "A new symptom may change the separate symptom guidance, but symptoms never add points or change the factor band."
+      ))}</li>
+      <li>${esc(uiText(
+        "กฎรุ่นใหม่จะใช้ได้ต่อเมื่อผ่านกระบวนการทบทวนที่กำหนด ผลที่บันทึกไว้จะแสดงรุ่นกฎและวันที่ของตนเอง",
+        "A future rule version may change after the required review process. Saved results retain their own rule version and date."
+      ))}</li>
+    </ul>
+    <p class="tiny">${esc(uiText(
+      "ผลที่เปลี่ยนไม่ได้ยืนยันว่าโรคเกิดขึ้น ดีขึ้น หรือแย่ลง เป็นเพียงภาพรวมจากคำตอบและกฎรุ่นที่ใช้ในเวลานั้น",
+      "A changed result does not confirm that disease appeared, improved or worsened. It is only a snapshot of the answers and rule version used at that time."
+    ))}</p>
+  </details>
 
   <details class="card result-limitations">
     <summary><b>${esc(uiText("สิ่งที่แบบประเมินนี้ยังไม่ได้ประเมิน", "What this assessment does not cover"))}</b></summary>
@@ -1604,13 +1651,13 @@ function renderEducation(slug) {
     <p id="education-count" class="tiny">${ARTICLES.length} ${esc(uiText("บทความ", "articles"))}</p>
   </div>
   ${ARTICLES.map(a => `
-  <div class="card edu-article-card" data-search="${esc(`${a.category} ${a.title} ${a.summary} ${tr(a.category, "en")} ${tr(a.title, "en")} ${tr(a.summary, "en")}`.toLocaleLowerCase())}"
-    style="cursor:pointer" onclick="location.hash='#education=${a.slug}'">
+  <a class="card edu-article-card" href="#education=${esc(a.slug)}"
+    data-search="${esc(`${a.category} ${a.title} ${a.summary} ${tr(a.category, "en")} ${tr(a.title, "en")} ${tr(a.summary, "en")}`.toLocaleLowerCase())}">
     <span class="section-tag">${esc(a.category)}</span>
     <h3 style="margin-top:2px">${esc(a.title)}</h3>
     <p class="muted" style="font-size:13.5px">${esc(a.summary)}</p>
     <p class="tiny mt">อ่าน ${a.minutes} นาที · ${esc(a.evidence)} · ${esc(a.reviewed)}</p>
-  </div>`).join("")}
+  </a>`).join("")}
   <div class="card">
     <h3>หัวข้อทั้งหมด</h3>
     <div class="edu-grid">${EDU_CATEGORIES.map(c => {
@@ -1748,13 +1795,13 @@ function startReferral(facilityId) {
   }
   modal(`<h3>ทดลองคำขอให้เจ้าหน้าที่ติดต่อ</h3>
     <p class="tiny">${esc(f.name)} · ข้อมูลจะบันทึกไว้บนอุปกรณ์นี้เพื่อสาธิตเท่านั้น ไม่มีโรงพยาบาลหรือเจ้าหน้าที่ได้รับคำขอ และระบบไม่ส่งผลประเมินของคุณออกจากอุปกรณ์</p>
-    <div class="field"><label>ช่องทางที่สะดวก</label>
+    <div class="field"><label for="rf-contact">ช่องทางที่สะดวก</label>
       <select id="rf-contact"><option value="LINE">LINE</option><option value="โทรศัพท์">โทรศัพท์</option></select></div>
-    <div class="field"><label>วันที่สะดวก</label>
+    <div class="field"><label for="rf-days">วันที่สะดวก</label>
       <select id="rf-days"><option value="จันทร์–ศุกร์">จันทร์–ศุกร์</option><option value="เสาร์–อาทิตย์">เสาร์–อาทิตย์</option><option value="ได้ทุกวัน">ได้ทุกวัน</option></select></div>
-    <div class="field"><label>ช่วงเวลาที่สะดวก</label>
+    <div class="field"><label for="rf-time">ช่วงเวลาที่สะดวก</label>
       <select id="rf-time"><option value="เช้า (9:00–12:00)">เช้า (9:00–12:00)</option><option value="บ่าย (13:00–16:00)">บ่าย (13:00–16:00)</option><option value="เย็น (16:00–18:00)">เย็น (16:00–18:00)</option></select></div>
-    <div class="field"><label>ความต้องการด้านการเข้าถึง / หมายเหตุ (ไม่บังคับ)</label>
+    <div class="field"><label for="rf-note">ความต้องการด้านการเข้าถึง / หมายเหตุ (ไม่บังคับ)</label>
       <textarea id="rf-note" rows="2" placeholder="เช่น ต้องการล่าม ต้องการทางลาด"></textarea></div>
     <button class="btn btn-primary" onclick="submitReferral('${facilityId}')">บันทึกคำขอจำลอง</button>`);
 }
@@ -1867,7 +1914,7 @@ function renderProfile() {
     ${state.reminders.enabled ? `
     <div class="row mt">
       <div class="field"><label for="reminder-time">เวลา</label><input id="reminder-time" type="time" value="${esc(state.reminders.time)}" onchange="state.reminders.time=this.value;save()"></div>
-      <div class="field"><label>ความถี่</label><select onchange="state.reminders.freq=this.value;save()">
+      <div class="field"><label for="reminder-frequency">ความถี่</label><select id="reminder-frequency" onchange="state.reminders.freq=this.value;save()">
         ${["รายเดือน","ราย 3 เดือน","รายปี (ประเมินซ้ำ)"].map(o => `<option value="${esc(o)}" ${state.reminders.freq === o ? "selected" : ""}>${o}</option>`).join("")}
       </select></div>
     </div>

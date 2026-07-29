@@ -55,13 +55,16 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.9.1`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.10.0`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
 v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
 history, bilingual inline assessment validation, and an English first-visit default.
 Version 0.9 adds a four-question result summary, explicit explanations of information
 that did not change the result, safer resume/shared-device guidance, and clearer
 boundaries around demo clinics and referrals.
+Version 0.10 adds keyboard-contained dialogs, explicit form-label connections,
+keyboard-operable campaign and education cards, narrow-screen accessibility checks,
+and a plain-language explanation of why a later result may change.
 Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
 are used locally to calculate straight-line distance; clearing or reloading removes
 them. Official Air4Thai measurements and their recent history remain separate from the

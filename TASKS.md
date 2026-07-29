@@ -63,6 +63,9 @@ Status legend:
 - ✅ v0.9 adds a four-question result explanation, makes excluded and unassessed
   information explicit, improves resume/shared-device guidance, and strengthens
   clinic/referral demo warnings and local deletion controls
+- ✅ v0.10 adds dialog focus containment, keyboard-accessible storyboard/article cards,
+  explicit referral/reminder labels, 320px reflow checks, and an explanation of why a
+  future result may change without implying disease progression
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -177,7 +180,9 @@ Status legend:
   and explicit non-reassuring safety wording.
 - [x] ✅ Add a clearer path from each factor to relevant sourced education, questions
   for a healthcare professional, and the explicitly demonstrational clinic route.
-- [ ] 🔜 Add a user-friendly explanation of why a result can change after new information.
+- [x] ✅ Add a user-friendly explanation of how corrected/new factor answers, new
+  symptoms, or a future reviewed rule version can change what is shown, while stating
+  that this does not prove disease progression.
 - [ ] 🟡 Improve the factor modal layout on very small screens.
 - [ ] 🟡 Add print and screen-reader checks for result explanations.
 - [x] ✅ Add a safe “questions to ask a healthcare professional” section and link to
@@ -346,6 +351,10 @@ Status legend:
 - [ ] 🔜 Test with at least one Windows and one mobile screen reader.
 - [x] ✅ Move focus to the page heading after route changes and restore focus after modals.
 - [ ] 🔜 Add or verify accessible names for every remaining button, icon, form field, alert, and modal.
+  - [x] ✅ Add explicit label connections for referral preferences and reminder frequency.
+  - [x] ✅ Convert the campaign storyboard and education cards from mouse-only elements
+    to keyboard-operable controls with accessible names.
+  - [x] ✅ Keep Tab/Shift+Tab inside dialogs, support Escape, and restore launch-control focus.
 - [ ] 🔜 Verify error messages are announced and linked to their inputs.
 - [ ] 🔜 Verify color contrast in normal and big-text modes.
 - [ ] 🔜 Verify 200% zoom, text reflow, landscape mode, and narrow phone widths.

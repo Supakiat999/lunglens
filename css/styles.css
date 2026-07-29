@@ -148,6 +148,14 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 @media (min-width: 480px) { .benefits { grid-template-columns: repeat(3, 1fr); } }
 .benefit { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; font-size: 14px; }
 .benefit .em { font-size: 22px; display: block; margin-bottom: 6px; }
+.storyboard-trigger {
+  align-items: center; aspect-ratio: 16 / 9; background: var(--ink); border: 0;
+  border-radius: 10px; color: #fff; cursor: pointer; display: flex;
+  justify-content: center; width: 100%;
+}
+.storyboard-trigger span { font-size: 40px; }
+.edu-article-card { color: inherit; display: block; text-decoration: none; }
+.edu-article-card:hover { border-color: var(--brand); }
 .disclaimer {
   background: var(--warn-soft); border: 1px solid #fde68a; border-radius: 12px;
   padding: 12px 14px; font-size: 13px; color: #78350f; margin-top: 14px;

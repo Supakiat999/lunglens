@@ -25,7 +25,10 @@ const requiredPublicCopy = [
   "No receiving organization or approved response time exists yet, so live submission cannot be enabled.",
   "Delete this demo request from this device",
   "Shared devices and browser storage",
-  "LungLens has no server copy to restore."
+  "LungLens has no server copy to restore.",
+  "Why a future result may change",
+  "A new symptom may change the separate symptom guidance, but symptoms never add points or change the factor band.",
+  "A changed result does not confirm that disease appeared, improved or worsened."
 ];
 
 for (const text of requiredPublicCopy) {

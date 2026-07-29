@@ -132,6 +132,12 @@ and passed as an environment variable at run time. **Never write it into a file.
   use is explained before entry. Clinic listings now state that inclusion is not an
   endorsement, referral pages state the requirements for a real service, and users can
   remove device-only demo requests without implying that a hospital was contacted.
+- **Prototype v0.10 keyboard and result-change clarity** — public dialogs contain
+  Tab/Shift+Tab focus, close with Escape, and restore focus. The campaign storyboard
+  is a labelled button, article cards are links, and referral/reminder fields have
+  explicit labels. Results explain how new answers, separate symptom guidance, or a
+  future reviewed rule version can change what is shown without implying that disease
+  appeared, improved, or worsened. English and Thai result reflow was verified at 320px.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
