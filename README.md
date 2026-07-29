@@ -55,7 +55,7 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.10.0`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.11.0`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
 v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
 history, bilingual inline assessment validation, and an English first-visit default.
@@ -65,6 +65,9 @@ boundaries around demo clinics and referrals.
 Version 0.10 adds keyboard-contained dialogs, explicit form-label connections,
 keyboard-operable campaign and education cards, narrow-screen accessibility checks,
 and a plain-language explanation of why a later result may change.
+Version 0.11 makes optional consent and reminder controls explicitly local-only,
+distinguishes future preferences from live services, adds an announced inline consent
+error, and removes the placeholder support email.
 Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
 are used locally to calculate straight-line distance; clearing or reloading removes
 them. Official Air4Thai measurements and their recent history remain separate from the
@@ -145,7 +148,7 @@ localhost the app runs in browser/demo mode — use the live URL to test inside 
   selected-province reading plus 24-hour model chart inside the PM2.5 topic
 - **#clinics** — 6 demo facilities, filters (province / LDCT / public), CTAs
 - **#referral** — referral request form (consent-gated) + status timeline with demo advance button
-- **#profile** — history, reminder prefs, consent withdrawal, confirmed portable JSON
+- **#profile** — history, local-only demo reminder preferences, consent withdrawal, confirmed portable JSON
   export without internal scoring points, app version, full delete
 - **#provider** — role-based demo login (Navigator / Clinical reviewer / Programme manager),
   case list + detail, referrals, versioned rules table, funnel + distribution analytics

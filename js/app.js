@@ -325,7 +325,13 @@ function renderHome() {
   <div class="benefits">
     <div class="benefit"><span class="em">🔍</span><b>รู้ปัจจัยเสี่ยงของตนเอง</b><br>เข้าใจว่าปัจจัยใดของคุณควรให้ความสำคัญ</div>
     <div class="benefit"><span class="em">💬</span><b>รับคำแนะนำที่เข้าใจง่าย</b><br>อธิบายเป็นภาษาคน ไม่ใช่ศัพท์แพทย์</div>
-    <div class="benefit"><span class="em">🏥</span><b>เชื่อมต่อบริการสุขภาพที่เหมาะสม</b><br>ค้นหาสถานพยาบาลและขอรับการติดต่อ</div>
+    <div class="benefit"><span class="em">🏥</span><b>${esc(uiText(
+      "เตรียมหาบริการสุขภาพ",
+      "Prepare to find health services"
+    ))}</b><br>${esc(uiText(
+      "ดูตัวอย่างวิธีตรวจสอบบริการและขั้นตอนขอความช่วยเหลือ",
+      "Preview how to verify services and request help"
+    ))}</div>
   </div>
 
   <div class="card mt">
@@ -377,7 +383,7 @@ function fillPersona(id) {
   if (!p) return;
   if (!state.consent) {
     // demo shortcut still records a demo consent so flow stays honest
-    state.consent = { required: true, optional: { history: true }, version: "consent_v1_demo", at: new Date().toISOString(), lang: state.lang, source: "demo-persona" };
+    state.consent = { required: true, optional: { history: true }, version: "consent_v2_demo", at: new Date().toISOString(), lang: state.lang, source: "demo-persona" };
   }
   state.answers = structuredClone(p.answers);
   state.inProgress = false;
@@ -396,7 +402,10 @@ function renderBegin() {
     <h2>ก่อนเริ่มแบบประเมิน</h2>
     <p class="muted">ใช้เวลาประมาณ 2–3 นาที · ${visibleSteps().length} คำถาม · หยุดพักและกลับมาทำต่อได้</p>
     <details class="mt" open><summary>แบบประเมินนี้ทำอะไร</summary>
-      <p class="muted">รวบรวมข้อมูลปัจจัยเสี่ยงของคุณ อธิบายว่าปัจจัยใดควรให้ความสำคัญ และช่วยเชื่อมต่อบริการสุขภาพที่เหมาะสม</p></details>
+      <p class="muted">${esc(uiText(
+        "รวบรวมข้อมูลปัจจัยของคุณ อธิบายว่าปัจจัยใดควรให้ความสำคัญ และช่วยเตรียมข้อมูลสำหรับค้นหาบริการที่ตรวจสอบได้",
+        "It reviews your reported factors, explains which may deserve attention, and helps you prepare to find a verified health service."
+      ))}</p></details>
     <details><summary>แบบประเมินนี้ไม่ทำอะไร</summary>
       <p class="muted">ไม่วินิจฉัยโรค ไม่บอกว่าคุณเป็นหรือไม่เป็นมะเร็ง ไม่สั่งตรวจ LDCT และไม่ใช่เครื่องมือที่ผ่านการรับรองทางคลินิก</p></details>
     <details><summary>ข้อมูลที่จะถูกเก็บ</summary>
@@ -424,20 +433,47 @@ function renderConsent() {
   const c = state.consent;
   view(`<div class="card">
     <h2>ความยินยอม</h2>
-    <p class="tiny">เวอร์ชัน consent_v1 · ภาษาไทย · แยกข้อจำเป็นออกจากข้อเลือกได้เสมอ</p>
-    <h3>จำเป็นต่อการใช้งาน</h3>
-    <div class="opts">
-      <label class="opt"><input type="checkbox" id="c-req1"> ยินยอมให้ประมวลผลคำตอบเพื่อสร้างผลประเมินเบื้องต้น</label>
-      <label class="opt"><input type="checkbox" id="c-req2"> เข้าใจว่าเครื่องมือนี้ไม่ใช่การวินิจฉัยโรค</label>
-      <label class="opt"><input type="checkbox" id="c-req3"> ยืนยันว่าข้อมูลที่ให้ถูกต้องตามความเข้าใจของตนเอง</label>
+    <p class="tiny">${esc(uiText(
+      "เวอร์ชัน consent_v2 · แยกข้อจำเป็นออกจากข้อเลือกได้เสมอ",
+      "Version consent_v2 · Required and optional choices remain separate"
+    ))}</p>
+    <h3 id="consent-required-heading">จำเป็นต่อการใช้งาน</h3>
+    <div class="opts" id="consent-required" role="group" aria-labelledby="consent-required-heading"
+      aria-describedby="consent-required-error">
+      <label class="opt"><input type="checkbox" id="c-req1" aria-required="true"> ยินยอมให้ประมวลผลคำตอบเพื่อสร้างผลประเมินเบื้องต้น</label>
+      <label class="opt"><input type="checkbox" id="c-req2" aria-required="true"> เข้าใจว่าเครื่องมือนี้ไม่ใช่การวินิจฉัยโรค</label>
+      <label class="opt"><input type="checkbox" id="c-req3" aria-required="true"> ยืนยันว่าข้อมูลที่ให้ถูกต้องตามความเข้าใจของตนเอง</label>
+    </div>
+    <div class="assessment-error" id="consent-required-error" role="alert" tabindex="-1" hidden>
+      <b>${esc(uiText("กรุณาเลือกข้อจำเป็นทั้ง 3 ข้อ", "Select all three required choices"))}</b>
+      <span>${esc(uiText("ข้อเลือกได้ด้านล่างไม่จำเป็นต่อการใช้แบบประเมิน", "The optional choices below are not required to use the assessment."))}</span>
     </div>
     <h3 class="mt">เลือกได้ (ไม่บังคับ)</h3>
+    <div class="q-note">${esc(uiText(
+      "ข้อเลือกได้เหล่านี้บันทึกความต้องการไว้ในเบราว์เซอร์นี้เท่านั้น ไม่ส่งข้อความ ไม่ส่งข้อมูลวิจัย ไม่แชร์ตำแหน่ง และไม่ทำให้เจ้าหน้าที่ติดต่อคุณ",
+      "These optional choices only save preferences in this browser. They do not send messages or research data, share location, or cause staff to contact you."
+    ))}</div>
     <div class="opts">
-      <label class="opt"><input type="checkbox" id="c-hist" ${c?.optional?.history ? "checked" : ""}> บันทึกประวัติการประเมินของฉัน</label>
-      <label class="opt"><input type="checkbox" id="c-remind" ${c?.optional?.remind ? "checked" : ""}> รับการแจ้งเตือนผ่าน LINE</label>
-      <label class="opt"><input type="checkbox" id="c-contact" ${c?.optional?.contact ? "checked" : ""}> ให้เจ้าหน้าที่ที่ได้รับอนุญาตติดต่อฉันได้</label>
-      <label class="opt"><input type="checkbox" id="c-research" ${c?.optional?.research ? "checked" : ""}> ใช้ข้อมูลแบบไม่ระบุตัวตนเพื่อประเมินโครงการ/วิจัย</label>
-      <label class="opt"><input type="checkbox" id="c-loc" ${c?.optional?.loc ? "checked" : ""}> ใช้ตำแหน่งโดยประมาณเพื่อแนะนำบริการใกล้เคียง</label>
+      <label class="opt"><input type="checkbox" id="c-hist" ${c?.optional?.history ? "checked" : ""}> ${esc(uiText(
+        "บันทึกประวัติการประเมินบนอุปกรณ์นี้",
+        "Save assessment history on this device"
+      ))}</label>
+      <label class="opt"><input type="checkbox" id="c-remind" ${c?.optional?.remind ? "checked" : ""}> ${esc(uiText(
+        "บันทึกว่าฉันอาจต้องการการแจ้งเตือน LINE ในบริการอนาคต (ยังไม่ส่งข้อความ)",
+        "Save that I may want LINE reminders in a future service (no messages are sent)"
+      ))}</label>
+      <label class="opt"><input type="checkbox" id="c-contact" ${c?.optional?.contact ? "checked" : ""}> ${esc(uiText(
+        "บันทึกว่าฉันอาจต้องการให้เจ้าหน้าที่ติดต่อในบริการอนาคต (ยังไม่มีเจ้าหน้าที่เชื่อมต่อ)",
+        "Save that I may want staff contact in a future service (no staff are connected)"
+      ))}</label>
+      <label class="opt"><input type="checkbox" id="c-research" ${c?.optional?.research ? "checked" : ""}> ${esc(uiText(
+        "บันทึกความสนใจต่อการประเมินโครงการ/วิจัยในอนาคต (ไม่ส่งข้อมูล)",
+        "Save my interest in future programme evaluation or research (no data are sent)"
+      ))}</label>
+      <label class="opt"><input type="checkbox" id="c-loc" ${c?.optional?.loc ? "checked" : ""}> ${esc(uiText(
+        "บันทึกว่าฉันอาจเลือกใช้ตำแหน่งโดยประมาณ (เบราว์เซอร์จะถามอนุญาตแยกต่างหาก)",
+        "Save that I may choose approximate-location features (browser permission is separate)"
+      ))}</label>
     </div>
     <p class="tiny mt">ถอนความยินยอมได้ทุกเมื่อที่หน้า “ข้อมูลของฉัน” · ข้อมูลของคุณจะไม่ถูกนำไปใช้โฆษณาตามความเสี่ยงสุขภาพ</p>
     <button class="btn btn-primary mt" onclick="acceptConsent()">ยอมรับและเริ่มแบบประเมิน</button>
@@ -447,7 +483,12 @@ function renderConsent() {
 
 function acceptConsent() {
   if (!($("#c-req1").checked && $("#c-req2").checked && $("#c-req3").checked)) {
-    toast("กรุณาติ๊กข้อจำเป็นทั้ง 3 ข้อก่อนเริ่ม"); return;
+    const error = $("#consent-required-error");
+    const group = $("#consent-required");
+    error.hidden = false;
+    group.setAttribute("aria-invalid", "true");
+    error.focus();
+    return;
   }
   state.consent = {
     required: true,
@@ -455,7 +496,7 @@ function acceptConsent() {
       history: $("#c-hist").checked, remind: $("#c-remind").checked,
       contact: $("#c-contact").checked, research: $("#c-research").checked, loc: $("#c-loc").checked
     },
-    version: "consent_v1", at: new Date().toISOString(), lang: state.lang, source: "liff"
+    version: "consent_v2", at: new Date().toISOString(), lang: state.lang, source: "liff"
   };
   state.inProgress = true; state.stepIndex = 0; state.returnToReview = false;
   save(); track("consent_completed"); track("assessment_started");
@@ -1893,10 +1934,21 @@ function removeDemoReferral(i) {
    ===================================================================== */
 function renderProfile() {
   const c = state.consent;
+  const optionalPreferences = [
+    ["history", uiText("บันทึกประวัติบนอุปกรณ์นี้", "Save history on this device")],
+    ["remind", uiText("ความสนใจต่อการแจ้งเตือนในอนาคต (ยังไม่ส่งข้อความ)", "Interest in future reminders (no messages sent)")],
+    ["contact", uiText("ความสนใจให้เจ้าหน้าที่ติดต่อในอนาคต (ยังไม่มีเจ้าหน้าที่)", "Interest in future staff contact (no staff connected)")],
+    ["research", uiText("ความสนใจต่อการวิจัยในอนาคต (ไม่ส่งข้อมูล)", "Interest in future research (no data sent)")],
+    ["loc", uiText("ความสนใจต่อฟีเจอร์ตำแหน่ง (ต้องอนุญาตแยก)", "Interest in location features (separate permission required)")]
+  ];
   view(`<div class="card">
     <h2>👤 ข้อมูลของฉัน</h2>
     <p class="tiny">${esc(liffStatusText())}
       <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="liffLogin()">${(LIFF_STATE.loggedIn || state.lineLinked) ? "ยกเลิกการเชื่อมต่อ LINE" : "เชื่อมต่อ LINE"}</button></p>
+    <div class="q-note mt">${esc(uiText(
+      "การตั้งค่าแจ้งเตือนและความยินยอมแบบเลือกได้ด้านล่างเป็นเพียงค่าที่บันทึกในเบราว์เซอร์ ยังไม่ส่งข้อความ สมัครวิจัย แชร์ตำแหน่ง หรือขอให้เจ้าหน้าที่ติดต่อ",
+      "Reminder settings and optional choices below are saved only in this browser. They do not send messages, enrol you in research, share location, or request staff contact."
+    ))}</div>
   </div>
 
   <div class="card"><h3>ประวัติการประเมิน</h3>
@@ -1907,9 +1959,12 @@ function renderProfile() {
       </div>`).join("")}
   </div>
 
-  <div class="card"><h3>การแจ้งเตือน</h3>
+  <div class="card"><h3>${esc(uiText("ตัวอย่างการตั้งค่าแจ้งเตือน", "Reminder settings preview"))}</h3>
     <label class="opt ${state.reminders.enabled ? "sel" : ""}">
-      <input type="checkbox" ${state.reminders.enabled ? "checked" : ""} onchange="toggleRemind(this.checked)"> เปิดการแจ้งเตือนผ่าน LINE
+      <input type="checkbox" ${state.reminders.enabled ? "checked" : ""} onchange="toggleRemind(this.checked)"> ${esc(uiText(
+        "บันทึกตารางแจ้งเตือนจำลองบนอุปกรณ์นี้",
+        "Save a demo reminder schedule on this device"
+      ))}
     </label>
     ${state.reminders.enabled ? `
     <div class="row mt">
@@ -1918,17 +1973,23 @@ function renderProfile() {
         ${["รายเดือน","ราย 3 เดือน","รายปี (ประเมินซ้ำ)"].map(o => `<option value="${esc(o)}" ${state.reminders.freq === o ? "selected" : ""}>${o}</option>`).join("")}
       </select></div>
     </div>
-    <button class="btn btn-ghost btn-sm" onclick="toggleRemind(false)">หยุดการแจ้งเตือนทั้งหมด</button>` : ""}
-    <p class="tiny mt">เราไม่ส่งข้อความสร้างความกลัว และไม่ใช้การแจ้งเตือนเพื่อโฆษณา</p>
+    <button class="btn btn-ghost btn-sm" onclick="toggleRemind(false)">${esc(uiText(
+      "ล้างตารางแจ้งเตือนจำลอง",
+      "Clear demo reminder schedule"
+    ))}</button>` : ""}
+    <p class="tiny mt">${esc(uiText(
+      "ไม่มีข้อความ LINE ถูกส่ง ระบบส่งข้อความ เนื้อหาที่อนุมัติ และการติดตามการส่งยังไม่ได้เชื่อมต่อ",
+      "No LINE message is sent. Messaging, approved reminder content and delivery tracking are not connected."
+    ))}</p>
   </div>
 
   <div class="card"><h3>ความยินยอม</h3>
     ${!c ? `<p class="muted">ยังไม่ได้ให้ความยินยอม</p>` : `
     <p class="tiny">เวอร์ชัน ${esc(c.version)} · ให้ไว้เมื่อ ${formatDate(c.at, { dateTime: true })}</p>
     <div class="opts mt">
-      ${[["history","บันทึกประวัติการประเมิน"],["remind","รับการแจ้งเตือนผ่าน LINE"],["contact","ให้เจ้าหน้าที่ติดต่อได้"],["research","ข้อมูลไม่ระบุตัวตนเพื่อวิจัย"],["loc","ใช้ตำแหน่งโดยประมาณ"]].map(([k, lbl]) => `
+      ${optionalPreferences.map(([k, lbl]) => `
       <label class="opt ${c.optional[k] ? "sel" : ""}">
-        <input type="checkbox" ${c.optional[k] ? "checked" : ""} onchange="state.consent.optional['${k}']=this.checked;save();renderProfile();toast(this.checked?'บันทึกความยินยอมแล้ว':'ถอนความยินยอมแล้ว')"> ${lbl}
+        <input type="checkbox" ${c.optional[k] ? "checked" : ""} onchange="state.consent.optional['${k}']=this.checked;save();renderProfile();toast(this.checked?'บันทึกความยินยอมแล้ว':'ถอนความยินยอมแล้ว')"> ${esc(lbl)}
       </label>`).join("")}
     </div>`}
   </div>
@@ -1940,14 +2001,20 @@ function renderProfile() {
     </div>
     <p class="tiny mt">${esc(uiText("เวอร์ชันแอป", "App version"))}: ${esc(APP_VERSION)} ·
       ${esc(uiText("ข้อมูลต้นแบบอยู่บนอุปกรณ์นี้", "Prototype data stays on this device"))}</p>
-    <p class="tiny mt">ติดต่อเจ้าหน้าที่คุ้มครองข้อมูล: privacy@lunglens.example (ตัวอย่าง)</p>
+    <p class="tiny mt">${esc(uiText(
+      "ยังไม่มีช่องทางติดต่อด้านความเป็นส่วนตัวหรือการสนับสนุนที่เปิดใช้งาน อย่าส่งข้อมูลสุขภาพไปยังที่อยู่อีเมลที่ไม่ได้รับการยืนยัน",
+      "No operational privacy or support contact is connected yet. Do not send health information to an unverified email address."
+    ))}</p>
   </div>`);
 }
 function toggleRemind(on) {
   state.reminders.enabled = on; save();
-  track(on ? "reminder_opted_in" : "reminder_opted_out");
+  track(on ? "demo_reminder_preference_enabled" : "demo_reminder_preference_cleared");
   renderProfile();
-  toast(on ? "เปิดการแจ้งเตือนแล้ว" : "ปิดการแจ้งเตือนแล้ว");
+  toast(uiText(
+    on ? "บันทึกตารางแจ้งเตือนจำลองแล้ว — ยังไม่มีข้อความถูกส่ง" : "ล้างตารางแจ้งเตือนจำลองแล้ว",
+    on ? "Demo reminder schedule saved — no message was sent" : "Demo reminder schedule cleared"
+  ));
 }
 function exportData() {
   track("data_export_requested");
@@ -2126,8 +2193,8 @@ function renderPrivacy() {
   view(`<div class="card">
     <h2>นโยบายความเป็นส่วนตัว</h2>
     <p class="q-note">${esc(uiText(
-      "ฉบับร่าง privacy_prototype_v3 · อัปเดต 29 กรกฎาคม 2569 · ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง",
-      "Draft privacy_prototype_v3 · updated 29 July 2026 · legal review is required before production use"
+      "ฉบับร่าง privacy_prototype_v4 · อัปเดต 29 กรกฎาคม 2569 · ต้องผ่านการตรวจสอบทางกฎหมายก่อนใช้งานจริง",
+      "Draft privacy_prototype_v4 · updated 29 July 2026 · legal review is required before production use"
     ))}</p>
     <h3>หลักการ</h3>
     <p class="muted">เก็บข้อมูลเท่าที่จำเป็น · แยกข้อจำเป็นออกจากข้อเลือกได้ · อธิบายเหตุผลของทุกคำถามอ่อนไหว · ไม่ขายข้อมูล · ไม่ใช้ข้อมูลความเสี่ยงสุขภาพเพื่อโฆษณา · ไม่แสดงข้อมูลสุขภาพในตัวอย่างการแจ้งเตือน LINE · ผู้ใช้ลบและแก้ไขข้อมูลได้</p>
@@ -2139,6 +2206,10 @@ function renderPrivacy() {
       <li>หากกดค้นหาสถานีใกล้ฉันและอนุญาตตำแหน่ง พิกัดจะอยู่ในหน่วยความจำของหน้านี้เพื่อคำนวณระยะเส้นตรงเท่านั้น ไม่บันทึกและไม่ส่งไปยัง LungLens</li>
       <li>LINE อาจให้ข้อมูลโปรไฟล์พื้นฐานเมื่อผู้ใช้เลือกเข้าสู่ระบบใน LIFF แต่เว็บไซต์สาธารณะใช้ได้โดยไม่เข้าสู่ระบบ LINE</li>
       <li>บันทึกเหตุการณ์การใช้งานในต้นแบบอยู่บนอุปกรณ์และมีเพียงชื่อเหตุการณ์กับเวลา ไม่มีระบบวิเคราะห์ภายนอก</li>
+      <li>${esc(uiText(
+        "การตั้งค่าแจ้งเตือน ความสนใจด้านการติดต่อ การวิจัย และตำแหน่งเป็นเพียงค่าบนเบราว์เซอร์ ไม่เปิดใช้บริการและไม่ส่งข้อมูล",
+        "Reminder, contact, research and location preferences are browser-only settings. They do not activate a service or send data."
+      ))}</li>
     </ul>
     <h3>${esc(uiText("อุปกรณ์ที่ใช้ร่วมกันและข้อมูลในเบราว์เซอร์", "Shared devices and browser storage"))}</h3>
     <ul class="plain-list muted">
@@ -2161,6 +2232,11 @@ function renderPrivacy() {
     </ul>
     <h3>การส่งออกและลบข้อมูล</h3>
     <p class="muted">ไฟล์ดาวน์โหลดมีข้อมูลสุขภาพที่คุณให้ จึงควรเก็บอย่างปลอดภัย คะแนนภายในและน้ำหนักกฎต้นแบบจะไม่ถูกส่งออก การลบข้อมูลจะลบคีย์ ${esc(STORE_KEY)} ออกจากเบราว์เซอร์นี้เท่านั้น</p>
+    <h3>${esc(uiText("สถานะช่องทางติดต่อ", "Contact-channel status"))}</h3>
+    <p class="muted">${esc(uiText(
+      "ยังไม่มีช่องทางติดต่อด้านความเป็นส่วนตัวหรือการสนับสนุนที่เปิดใช้งาน อย่าส่งข้อมูลสุขภาพไปยังอีเมลหรือบัญชีที่ไม่ได้รับการยืนยัน ช่องทางจริงต้องระบุผู้รับผิดชอบและเวลาตอบกลับก่อนเปิดใช้",
+      "No operational privacy or support contact is connected yet. Do not send health information to an unverified email or account. A live channel must name the responsible organization and response time before launch."
+    ))}</p>
     <h3>เอกสารที่เกี่ยวข้อง (โครงร่าง)</h3>
     <div class="opts">
       ${["ข้อกำหนดการใช้งาน","ข้อจำกัดความรับผิดทางการแพทย์","นโยบายเก็บรักษาข้อมูล","ความยินยอมเพื่อการวิจัย","ถ้อยแถลงการเข้าถึง (Accessibility)"].map(d => `

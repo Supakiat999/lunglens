@@ -66,6 +66,9 @@ Status legend:
 - ✅ v0.10 adds dialog focus containment, keyboard-accessible storyboard/article cards,
   explicit referral/reminder labels, 320px reflow checks, and an explanation of why a
   future result may change without implying disease progression
+- ✅ v0.11 makes optional consent and reminder controls explicitly browser-only,
+  versions new consent as `consent_v2`, adds an announced required-consent error,
+  removes the placeholder support email, and avoids implying live staff/research services
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -256,6 +259,8 @@ Status legend:
 - [ ] 🧱 Add safe user notifications that never reveal health details in previews.
 - [ ] 🧱 Add consent checks before every referral or reminder message.
 - [ ] 🧱 Implement reminders with opt-in, frequency, time, pause, resume, and stop controls.
+  - [x] ✅ Keep current reminder scheduling visibly demonstrational and browser-only;
+    no LINE message, live opt-in event, or delivery claim is produced.
 - [ ] 🧱 Design reminders around replies and menu taps to respect LINE's free-tier quota.
 - [ ] 🧱 Add retry, dead-letter, duplicate-prevention, and delivery-status handling.
 - [ ] 🔜 Define expected response times and what users should do if nobody contacts them.
@@ -341,6 +346,8 @@ Status legend:
 - [x] ✅ Add a version and update date to the prototype privacy draft; production
   effective dates remain pending legal approval.
 - [ ] 🔜 Add a real privacy/support contact instead of prototype placeholders.
+  - [x] ✅ Remove the placeholder email from the public interface and state that no
+    operational contact channel or response time exists yet.
 - [x] ✅ Document which current prototype data stays only on the device and which
   limited requests leave it.
 - [ ] 🔜 Confirm analytics never collect assessment answers or identifiable health information.
@@ -356,6 +363,7 @@ Status legend:
     to keyboard-operable controls with accessible names.
   - [x] ✅ Keep Tab/Shift+Tab inside dialogs, support Escape, and restore launch-control focus.
 - [ ] 🔜 Verify error messages are announced and linked to their inputs.
+  - [x] ✅ Assessment and required-consent errors use linked inline alerts and receive focus.
 - [ ] 🔜 Verify color contrast in normal and big-text modes.
 - [ ] 🔜 Verify 200% zoom, text reflow, landscape mode, and narrow phone widths.
 - [ ] 🔜 Verify tap targets and spacing for older users and users with limited dexterity.

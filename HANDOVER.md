@@ -138,6 +138,12 @@ and passed as an environment variable at run time. **Never write it into a file.
   explicit labels. Results explain how new answers, separate symptom guidance, or a
   future reviewed rule version can change what is shown without implying that disease
   appeared, improved, or worsened. English and Thai result reflow was verified at 320px.
+- **Prototype v0.11 honest operational boundaries** — optional choices now state that
+  they only save preferences in the browser and do not send LINE messages, upload
+  research data, share location, or contact staff. Reminder scheduling is labelled as
+  a demo preview with local-only events, new agreements use `consent_v2`, missing
+  required consent produces a focused inline alert, and the non-operational placeholder
+  privacy email was removed.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.

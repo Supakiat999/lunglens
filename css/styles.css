@@ -255,6 +255,7 @@ code {
   border-left: 5px solid #d97706; border-radius: 10px; color: var(--ink);
   display: flex; flex-direction: column; gap: 2px; margin: 12px 0; padding: 11px 13px;
 }
+.assessment-error[hidden] { display: none !important; }
 .assessment-error:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
 .assessment-error span { color: var(--ink-2); font-size: 14px; }
 .field-invalid input, .field-invalid select, .field-invalid .chips {
