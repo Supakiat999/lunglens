@@ -211,7 +211,7 @@ Status legend:
   coordinates in page memory only and provide an immediate clear control.
 - [x] ✅ Add a 24-hour CAMS Global model chart and cautious trend wording, clearly
   separated from official station measurements and personal risk.
-- [ ] 🔜 Publish and verify a rolling 48-hour official Air4Thai station-measurement
+- [x] ✅ Publish and verify a rolling 48-hour official Air4Thai station-measurement
   history, with retention, deduplication, stale-data handling, and a separate chart.
 - [ ] 🧱 Add monitoring/alerting when the hourly snapshot workflow fails repeatedly.
 - [ ] 🩺 Review PM2.5 activity guidance and vulnerable-group wording with a Thai clinician.

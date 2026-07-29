@@ -122,6 +122,9 @@ and passed as an environment variable at run time. **Never write it into a file.
   and the air page shows rolling official station-measurement history separately from
   the 24-hour CAMS model forecast. The history updater retains at most 48 hours,
   deduplicates station timestamps, and never mixes model data or personal coordinates.
+  GitHub Actions run `30442779935` succeeded on 2026-07-29 and published the initial
+  live history dataset with 173 official stations and 173 observations. A station chart
+  appears after that station has at least two distinct published observation times.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
