@@ -16,13 +16,21 @@ const ROUTES = new Set([
 const COPY = {
   en: {
     machinePreview: "Machine Preview",
+    brandSubtitle: "LungLens — Machine preliminary assessment",
+    demoBadge: "MACHINE PREVIEW · DEMO DATA",
+    navHome: "Home",
+    navIdentity: "ID",
+    navAssess: "Assess",
+    navResult: "My result",
+    navClinics: "Clinics",
+    navDraft: "My draft",
     publicDemo: "Public demonstration",
     strip: "No real ID card, live sensor, hospital booking, or government benefit is connected.",
     footer: "Based on engine 0.15.1 · Not clinically validated",
     welcomeEyebrow: "Shared-machine preview",
-    welcomeTitle: "A private, guided lung-health check for a public machine",
-    welcomeLead: "Review reported lung-health factors in plain language. This demonstration does not diagnose disease, calculate cancer probability, or replace a healthcare professional.",
-    begin: "Begin private session",
+    welcomeTitle: "Not smoking does not mean no risk",
+    welcomeLead: "Lung cancer does not affect only people who smoke. Family history, existing lung conditions, work exposures, smoke and other factors may all deserve attention. This machine preview does not diagnose disease.",
+    begin: "Take the machine assessment",
     originalApp: "Open regular LungLens 0.15.1",
     simulatedIdentity: "Simulated identity",
     simulatedIdentityBody: "Try a fictional card profile. No real Thai national ID number is requested or stored.",
@@ -177,13 +185,21 @@ const COPY = {
   },
   th: {
     machinePreview: "เวอร์ชันเครื่องสาธิต",
+    brandSubtitle: "LungLens — แบบประเมินเบื้องต้นสำหรับเครื่องสาธิต",
+    demoBadge: "MACHINE PREVIEW · ข้อมูลจำลอง",
+    navHome: "หน้าแรก",
+    navIdentity: "บัตร",
+    navAssess: "ประเมิน",
+    navResult: "ผลของฉัน",
+    navClinics: "สถานพยาบาล",
+    navDraft: "ร่างของฉัน",
     publicDemo: "การสาธิตสาธารณะ",
     strip: "ยังไม่เชื่อมบัตรประชาชน เซนเซอร์จริง ระบบนัดโรงพยาบาล หรือสิทธิภาครัฐ",
     footer: "ใช้เครื่องมือประเมินเวอร์ชัน 0.15.1 · ยังไม่ผ่านการรับรองทางคลินิก",
     welcomeEyebrow: "ต้นแบบสำหรับเครื่องที่ใช้ร่วมกัน",
-    welcomeTitle: "ตรวจทานปัจจัยสุขภาพปอดแบบเป็นส่วนตัวบนเครื่องสาธิต",
-    welcomeLead: "ทบทวนปัจจัยสุขภาพปอดที่คุณรายงานด้วยภาษาที่เข้าใจง่าย ต้นแบบนี้ไม่วินิจฉัยโรค ไม่คำนวณโอกาสเป็นมะเร็ง และไม่แทนบุคลากรทางการแพทย์",
-    begin: "เริ่มเซสชันส่วนตัว",
+    welcomeTitle: "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง",
+    welcomeLead: "มะเร็งปอดไม่ได้เกิดเฉพาะกับผู้สูบบุหรี่ ประวัติครอบครัว โรคปอดเดิม การสัมผัสจากงาน ควัน และปัจจัยอื่นอาจควรได้รับความสำคัญ เครื่องสาธิตนี้ไม่วินิจฉัยโรค",
+    begin: "ทำแบบประเมินบนเครื่อง",
     originalApp: "เปิด LungLens ปกติ 0.15.1",
     simulatedIdentity: "ข้อมูลตัวตนจำลอง",
     simulatedIdentityBody: "ทดลองใช้บุคคลสมมติ โดยไม่ขอหรือบันทึกเลขบัตรประชาชนจริง",
@@ -488,18 +504,37 @@ function allowedRoute(requested) {
 
 function syncShell() {
   document.documentElement.lang = state.lang;
-  document.body.classList.toggle("large-text", !!state.largeText);
+  document.body.classList.toggle("big", !!state.largeText);
   const langButton = document.getElementById("language-toggle");
   langButton.textContent = state.lang === "en" ? "ไทย" : "EN";
   langButton.setAttribute("aria-label", state.lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English");
   const textButton = document.getElementById("text-toggle");
   textButton.setAttribute("aria-pressed", String(!!state.largeText));
   textButton.textContent = state.largeText ? "A−" : "A+";
-  document.getElementById("brand-subtitle").textContent = c("machinePreview");
+  document.getElementById("brand-subtitle").textContent = c("brandSubtitle");
+  document.getElementById("machine-demo-badge").textContent = c("demoBadge");
   const strip = document.getElementById("prototype-strip");
   strip.innerHTML = `<strong>${esc(c("publicDemo"))}</strong><span>${esc(c("strip"))}</span>`;
-  document.querySelector(".machine-footer").innerHTML =
-    `<span>LungLens ${esc(c("machinePreview"))}</span><span>${esc(c("footer"))}</span>`;
+  const navLabels = {
+    home: c("navHome"),
+    identity: c("navIdentity"),
+    assess: c("navAssess"),
+    result: c("navResult"),
+    clinics: c("navClinics"),
+    draft: c("navDraft")
+  };
+  document.querySelectorAll("[data-nav-label]").forEach(label => {
+    label.textContent = navLabels[label.dataset.navLabel] || "";
+  });
+  const navRoute = ["manual-identity", "consent", "location"].includes(state.route)
+    ? "identity"
+    : state.route;
+  document.querySelectorAll("nav.bottom [data-nav]").forEach(link => {
+    const active = link.dataset.nav === navRoute;
+    link.classList.toggle("active", active);
+    if (active) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
   document.title = state.lang === "en"
     ? "LungLens Machine Preview"
     : "LungLens เวอร์ชันเครื่องสาธิต";
@@ -1015,7 +1050,6 @@ function renderDraft() {
 }
 
 function render() {
-  syncShell();
   const requested = (location.hash || "#welcome").slice(1).split(/[?=]/)[0];
   const route = allowedRoute(ROUTES.has(requested) ? requested : "welcome");
   if (route !== requested) {
@@ -1023,6 +1057,7 @@ function render() {
     return;
   }
   state.route = route;
+  syncShell();
   const renderers = {
     welcome: renderWelcome,
     identity: renderIdentity,

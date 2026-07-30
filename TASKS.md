@@ -96,6 +96,9 @@ Status legend:
   `lunglens-v1` data unchanged.
 - ✅ Add an isolated English-first bilingual shared-machine journey under
   `/lunglens/machinever/` with the separate `lunglens-machine-v1` storage key.
+- ✅ Reuse the complete public LungLens 0.15.1 interface system for the machine
+  preview: header, typography, teal hero, cards, question controls, progress,
+  large-text behavior, and six-item bottom navigation.
 - ✅ Add fictional card profiles and a no-card fallback that collects only the
   minimum assessment details; never request or store a real 13-digit ID number.
 - ✅ Add three environmental-location choices and timestamped simulated PM2.5,

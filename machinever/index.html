@@ -7,36 +7,40 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="A bilingual demonstration of a shared-machine LungLens journey. No real identity, hospital booking, or government benefit is connected.">
   <title>LungLens Machine Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=0.15.1">
   <link rel="stylesheet" href="styles.css?v=0.1.0">
 </head>
 <body>
   <a class="skip-link" href="#machine-main">Skip to main content</a>
 
-  <header class="machine-header">
-    <a class="brand" href="#welcome" aria-label="LungLens Machine Preview home">
-      <span class="brand-mark" aria-hidden="true">LL</span>
-      <span>
-        <strong>LungLens</strong>
-        <small id="brand-subtitle">Machine Preview</small>
-      </span>
+  <header class="app">
+    <a class="logo machine-logo" href="#welcome" aria-label="LungLens Machine Preview home">
+      🫁 LungLens
+      <small id="brand-subtitle">LungLens — Machine preliminary assessment</small>
     </a>
-    <div class="header-actions">
-      <button id="text-toggle" class="header-button" type="button" aria-pressed="false">A+</button>
-      <button id="language-toggle" class="header-button language-button" type="button" aria-label="เปลี่ยนเป็นภาษาไทย">ไทย</button>
-    </div>
+    <div class="spacer"></div>
+    <span id="machine-demo-badge" class="demo-badge">MACHINE PREVIEW · DEMO DATA</span>
+    <button id="text-toggle" class="lang-btn" type="button" aria-pressed="false" aria-label="Change text size">A+</button>
+    <button id="language-toggle" class="lang-btn" type="button" aria-label="เปลี่ยนเป็นภาษาไทย">ไทย</button>
   </header>
 
-  <div id="prototype-strip" class="prototype-strip" role="status">
+  <div id="prototype-strip" class="connection-status machine-status" role="status">
     <strong>Public demonstration</strong>
     <span>No real ID card, live sensor, hospital booking, or government benefit is connected.</span>
   </div>
 
   <main id="machine-main" tabindex="-1"></main>
 
-  <footer class="machine-footer">
-    <span>LungLens Machine Preview</span>
-    <span>Based on engine 0.15.1 · Not clinically validated</span>
-  </footer>
+  <nav class="bottom" aria-label="Machine preview navigation">
+    <a href="#welcome" data-nav="welcome"><span class="ic">🏠</span><span data-nav-label="home">Home</span></a>
+    <a href="#identity" data-nav="identity"><span class="ic">🪪</span><span data-nav-label="identity">ID</span></a>
+    <a href="#assessment" data-nav="assessment"><span class="ic">📋</span><span data-nav-label="assess">Assess</span></a>
+    <a href="#result" data-nav="result"><span class="ic">📊</span><span data-nav-label="result">My result</span></a>
+    <a href="#facilities" data-nav="facilities"><span class="ic">🏥</span><span data-nav-label="clinics">Clinics</span></a>
+    <a href="#draft" data-nav="draft"><span class="ic">📄</span><span data-nav-label="draft">My draft</span></a>
+  </nav>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 

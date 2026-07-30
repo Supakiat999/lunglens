@@ -99,6 +99,9 @@ for (const required of [
   "No real ID card",
   "No real ID card, live sensor, hospital booking, or government benefit is connected.",
   "../js/engine.js",
+  "../css/styles.css",
+  "class=\"app\"",
+  "class=\"bottom\"",
   "model.js",
   "app.js"
 ]) {
@@ -128,10 +131,10 @@ for (const forbidden of [
   assert.ok(!app.toLowerCase().includes(forbidden), `Unsafe machine claim found: ${forbidden}`);
 }
 
-assert.match(css, /@media \(max-width: 760px\)/);
-assert.match(css, /@media \(min-width: 1200px\)/);
+assert.match(css, /@media \(max-width: 520px\)/);
 assert.match(css, /@media print/);
-assert.match(css, /:focus-visible/);
-assert.match(css, /--tap: 54px/);
+assert.match(css, /The shared LungLens interface/);
+assert.match(css, /var\(--brand\)/);
+assert.match(css, /body\.big/);
 
 console.log("Machine-preview checks passed: isolated storage, unchanged v0.15.1 engine, three display colors, urgent separation, simulated identity/sensors, local-only drafts, and safety wording.");
