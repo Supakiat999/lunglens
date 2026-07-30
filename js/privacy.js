@@ -62,6 +62,8 @@ function buildPortableExport(sourceState, {
       model_version: item.engine || null
     })) : [],
     demo_referrals: Array.isArray(source.referrals) ? structuredClone(source.referrals) : [],
+    appointment_request_drafts: Array.isArray(source.appointmentRequests)
+      ? structuredClone(source.appointmentRequests) : [],
     reminder_preferences: source.reminders && typeof source.reminders === "object"
       ? structuredClone(source.reminders) : null,
     local_event_log: Array.isArray(source.events) ? structuredClone(source.events) : []

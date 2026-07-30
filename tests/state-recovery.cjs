@@ -50,6 +50,25 @@ const manyReferrals = Array.from({ length: 30 }, (_, index) => ({
   statusIdx: index === 0 ? 99 : 0,
   at: now
 }));
+const validAppointmentRequest = {
+  schema: "appointment_request_v1",
+  id: "DRAFT-20260729-A1B2",
+  facilityId: "F1",
+  status: "draft_unconfirmed",
+  name: "",
+  contactMethod: "phone",
+  contactValue: "",
+  preferredDay: "any",
+  preferredTime: "any",
+  accessibilityNote: "",
+  includeFactorSummary: false,
+  factorCodes: [],
+  resultBandKey: "professional_review",
+  engineVersion: data.ENGINE_VERSION,
+  createdAt: now,
+  updatedAt: now,
+  consentAt: now
+};
 
 const corrupted = {
   lang: "invalid",
@@ -79,6 +98,7 @@ const corrupted = {
   },
   history: manyHistory,
   referrals: manyReferrals,
+  appointmentRequests: [{ ...validAppointmentRequest, status: "confirmed" }],
   reminders: { enabled: "yes", time: "35:99", freq: "weekly" },
   events: manyEvents
 };
@@ -105,6 +125,7 @@ assert.equal(recovered.returnToReview, false, "Invalid results must not reopen r
 assert.equal(recovered.history.length, recovery.MAX_LOCAL_HISTORY);
 assert.equal(recovered.referrals.length, recovery.MAX_LOCAL_REFERRALS);
 assert.equal(recovered.referrals[0].statusIdx, 3);
+assert.deepEqual(recovered.appointmentRequests, [], "Unsupported or confirmed appointment records must be rejected");
 assert.deepEqual(recovered.reminders, { enabled: false, time: "09:00", freq: "รายเดือน" });
 assert.equal(recovered.events.length, recovery.MAX_LOCAL_EVENTS);
 assert.equal(recovered.events[0].ev, "event_50", "Newest bounded local events should be retained");
@@ -125,6 +146,7 @@ const validState = {
   answers,
   inProgress: true,
   result: currentResult,
+  appointmentRequests: [validAppointmentRequest],
   reminders: { enabled: true, time: "08:30", freq: "ราย 3 เดือน" }
 };
 const validRecovered = hydrate(validState);
@@ -135,6 +157,8 @@ assert.equal(validRecovered.consent.version, "consent_v2");
 assert.equal(validRecovered.consent.optional.history, true);
 assert.equal(validRecovered.consent.optional.remind, false, "Optional choices require strict booleans");
 assert.equal(validRecovered.consent.optional.contact, true);
+assert.equal(validRecovered.appointmentRequests.length, 1);
+assert.equal(validRecovered.appointmentRequests[0].status, "draft_unconfirmed");
 assert.deepEqual(validRecovered.reminders, { enabled: true, time: "08:30", freq: "ราย 3 เดือน" });
 
 const retiredState = structuredClone(validState);

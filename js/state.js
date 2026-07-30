@@ -7,9 +7,13 @@
 
 const MAX_LOCAL_HISTORY = 20;
 const MAX_LOCAL_REFERRALS = 20;
+const MAX_LOCAL_APPOINTMENT_REQUESTS = 20;
 const MAX_LOCAL_EVENTS = 200;
 const REMINDER_FREQUENCIES = ["รายเดือน", "ราย 3 เดือน", "รายปี (ประเมินซ้ำ)"];
 const SYMPTOM_PATHWAYS = new Set(["standard", "prompt", "urgent"]);
+const APPOINTMENT_CONTACT_METHODS = new Set(["phone", "email", "other"]);
+const APPOINTMENT_DAY_PREFERENCES = new Set(["weekdays", "weekends", "any"]);
+const APPOINTMENT_TIME_PREFERENCES = new Set(["morning", "afternoon", "evening", "any"]);
 
 function isPlainRecord(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
@@ -37,6 +41,7 @@ function createDefaultState(defaultLocale = "en") {
     result: null,
     history: [],
     referrals: [],
+    appointmentRequests: [],
     reminders: { enabled: false, time: "09:00", freq: "รายเดือน" },
     events: [],
     bigText: false,
@@ -226,6 +231,50 @@ function sanitiseReferrals(value) {
     }));
 }
 
+function sanitiseAppointmentRequests(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(isPlainRecord)
+    .filter(item =>
+      item.schema === "appointment_request_v1" &&
+      typeof item.id === "string" &&
+      /^DRAFT-[A-Z0-9-]{6,40}$/.test(item.id) &&
+      item.status === "draft_unconfirmed" &&
+      validDate(item.createdAt) &&
+      validDate(item.updatedAt) &&
+      validDate(item.consentAt) &&
+      item.resultBandKey === "professional_review"
+    )
+    .slice(0, MAX_LOCAL_APPOINTMENT_REQUESTS)
+    .map(item => {
+      const includeFactorSummary = item.includeFactorSummary === true;
+      const factorCodes = includeFactorSummary && Array.isArray(item.factorCodes)
+        ? [...new Set(item.factorCodes
+          .filter(code => typeof code === "string" && /^[A-Z0-9_]{1,80}$/.test(code))
+          .slice(0, 20))]
+        : [];
+      return {
+        schema: "appointment_request_v1",
+        id: safeText(item.id, 80),
+        facilityId: safeText(item.facilityId, 80),
+        status: "draft_unconfirmed",
+        name: safeText(item.name, 120),
+        contactMethod: APPOINTMENT_CONTACT_METHODS.has(item.contactMethod) ? item.contactMethod : "other",
+        contactValue: safeText(item.contactValue, 200),
+        preferredDay: APPOINTMENT_DAY_PREFERENCES.has(item.preferredDay) ? item.preferredDay : "any",
+        preferredTime: APPOINTMENT_TIME_PREFERENCES.has(item.preferredTime) ? item.preferredTime : "any",
+        accessibilityNote: safeText(item.accessibilityNote, 1000),
+        includeFactorSummary,
+        factorCodes,
+        resultBandKey: "professional_review",
+        engineVersion: safeText(item.engineVersion, 80),
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        consentAt: item.consentAt
+      };
+    });
+}
+
 function sanitiseEvents(value) {
   if (!Array.isArray(value)) return [];
   return value
@@ -264,6 +313,7 @@ function hydrateSavedState(saved, {
   next.consent = sanitiseConsent(saved.consent, next.lang);
   next.history = sanitiseHistory(saved.history);
   next.referrals = sanitiseReferrals(saved.referrals);
+  next.appointmentRequests = sanitiseAppointmentRequests(saved.appointmentRequests);
   next.reminders = sanitiseReminders(saved.reminders);
   next.events = sanitiseEvents(saved.events);
   next.stepIndex = Number.isInteger(saved.stepIndex)
@@ -315,11 +365,13 @@ if (typeof module !== "undefined") {
     MAX_LOCAL_EVENTS,
     MAX_LOCAL_HISTORY,
     MAX_LOCAL_REFERRALS,
+    MAX_LOCAL_APPOINTMENT_REQUESTS,
     createDefaultState,
     hydrateSavedState,
     loadStateFromStorage,
     saveStateToStorage,
     sanitiseAssessmentAnswers,
-    sanitiseCurrentResult
+    sanitiseCurrentResult,
+    sanitiseAppointmentRequests
   };
 }

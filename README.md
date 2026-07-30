@@ -55,7 +55,7 @@ Key safety invariants baked into the code:
 local journeys usable during a connection loss with a visible offline warning, and is
 deliberately structured so each layer maps 1:1 onto the target production stack.
 
-Current app version: **`prototype_0.14.0`**. It preserves the v0.3 screening-safety
+Current app version: **`prototype_0.15.1`**. It preserves the v0.3 screening-safety
 correction, v0.4 live-data foundation, v0.5 privacy controls, and v0.6 24-hour forecast,
 v0.7 explicit-permission nearest-station sorting, and v0.8 rolling official station
 history, bilingual inline assessment validation, and an English first-visit default.
@@ -78,6 +78,10 @@ Version 0.14 lets regular past or current smokers finish when they do not know c
 per day or years smoked. It never estimates the missing pack-years, never creates LDCT
 eligibility, preserves the separately reported smoking factor, and shows an explicit
 “screening criteria cannot be compared yet” result context.
+Version 0.15 keeps the unchanged green, yellow and blue factor bands, reserves red for
+the separate urgent-symptom pathway, and lets eligible blue-result users prepare a
+consent-gated, local-only appointment-request draft. The bilingual print view is always
+marked unconfirmed, uses browser Print/Save as PDF, and never claims hospital delivery.
 Browser coordinates remain only in page memory, are never written to `lunglens-v1`, and
 are used locally to calculate straight-line distance; clearing or reloading removes
 them. Official Air4Thai measurements and their recent history remain separate from the
@@ -111,6 +115,8 @@ lunglens/
 ├── data/air4thai-latest.json   Validated public station snapshot (automatic fallback)
 ├── scripts/update-air-quality.mjs  Validates Air4Thai data + maintains rolling history
 ├── .github/workflows/update-air-quality.yml  Hourly live-data refresh
+├── .github/workflows/validate.yml  Push/PR syntax, safety, privacy, i18n and regression CI
+├── .gitignore                  Blocks local secrets, exports, logs and test artifacts
 ├── .env.example                Env vars for the future backend (no secrets)
 ├── HANDOVER.md                 ▶ Status, all links/IDs, next steps — start here
 ├── CLAUDE.md                   Operating guide + safety invariants for AI sessions
@@ -238,6 +244,10 @@ Messaging-API webhook (Phase 2):
 - OA Manager: rich menu (6 areas per spec §6.2), **Auto-response OFF** (it steals webhook reply tokens).
 - Webhook: verify `X-Line-Signature` (HMAC-SHA256 of body with channel secret); dedupe by `webhookEventId`.
 - Secrets only in env vars — never in the client bundle. See `.env.example`.
+- Every push and pull request runs all zero-dependency syntax, engine, privacy, i18n,
+  accessibility, recovery, trust-boundary and repository-safety checks in GitHub Actions.
+- `.gitignore` blocks local environment files, credentials, user exports and test artifacts;
+  CI also rejects tracked secret-like files and embedded long tokens.
 - Note: LIFF endpoints must be **HTTPS**, so localhost testing of real LINE login needs a tunnel
   (or just test the deployed GitHub Pages URL); browser/demo mode works on localhost as-is.
 

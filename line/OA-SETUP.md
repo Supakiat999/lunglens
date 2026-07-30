@@ -43,16 +43,10 @@ business-signup site, by LINE's design).
 
 เปิด PowerShell แล้วรัน (ต้องมี Node 18+ · token อยู่กับเจ้าของเท่านั้น ไม่ถูกบันทึกลงไฟล์ใด):
 
+Use the private prompt on Windows:
+
 ```powershell
 cd "C:\Users\ASUS\OneDrive\Desktop\Astra Project\lunglens\line"
-$env:LINE_CHANNEL_ACCESS_TOKEN = Read-Host "Paste channel access token"
-node setup-richmenu.mjs
-Remove-Item Env:LINE_CHANNEL_ACCESS_TOKEN
-```
-
-Preferred private prompt on Windows:
-
-```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install-richmenu-private.ps1
 ```
 

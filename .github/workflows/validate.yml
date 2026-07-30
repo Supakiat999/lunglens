@@ -1,0 +1,52 @@
+name: Validate LungLens safety contracts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Syntax, regression, privacy and UI contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in js/*.js tests/*.cjs line/*.mjs scripts/*.mjs; do
+            node --check "$file"
+          done
+
+      - name: Run every safety and regression test
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in tests/*.cjs; do
+            echo "::group::$file"
+            node "$file"
+            echo "::endgroup::"
+          done
+
+      - name: Confirm clean generated state
+        run: git diff --exit-code

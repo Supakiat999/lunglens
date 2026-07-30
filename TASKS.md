@@ -78,6 +78,9 @@ Status legend:
 - ✅ v0.14 adds an explicit unknown-smoking-amount path so users are not forced to
   invent cigarettes per day or years smoked. Missing amounts are never converted into
   pack-years or LDCT eligibility, and the result names the unresolved screening context.
+- ✅ v0.15 preserves the existing factor thresholds, reserves red for urgent symptoms,
+  and adds a consent-gated local appointment-request draft for blue professional-review
+  results with bilingual Print/Save as PDF and no hospital-delivery claim.
 - ✅ Explainable prototype risk engine with symptoms kept outside scoring
 - ✅ Education, clinic finder, referral, profile, privacy, provider demo, and presentation routes
 - ✅ Privacy-safe LINE sharing copy that does not include the user's health result in previews
@@ -407,6 +410,12 @@ Status legend:
 - ✅ Engine regression tests for four personas, incomplete answers, and exclusive schemas.
 - ✅ English canonical-data coverage test.
 - ✅ JavaScript syntax checks.
+- [x] ✅ Run syntax, regression, privacy, i18n, accessibility, recovery, UI-contract,
+  trust-boundary and repository-safety tests automatically on every push and pull request.
+- [x] ✅ Add `.gitignore` coverage for local environment files, credentials, user
+  exports, logs, dependencies and browser-test artifacts.
+- [x] ✅ Add CI checks that reject tracked secret/user-data files, private keys,
+  embedded long tokens, literal LINE secrets and the removed placeholder privacy address.
 - [ ] 🔜 Add unit tests for every risk rule boundary and conditional question.
 - [x] ✅ Add tests proving symptoms never affect the prototype score or factor band.
 - [ ] 🔜 Add tests proving language switching never changes canonical answers or bands.

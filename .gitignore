@@ -1,0 +1,31 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*token*.txt
+*secret*.txt
+*credentials*.json
+
+# User exports and local health-data artifacts
+lunglens-export-*.json
+lunglens-data-*.json
+exports/
+
+# Dependencies, logs and editor/OS files
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary local test output
+coverage/
+test-results/
+playwright-report/
+.tmp/
+tmp/

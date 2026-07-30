@@ -587,7 +587,6 @@ const EN_TRANSLATIONS = Object.freeze({
   "จัดการข้อมูล": "Manage data",
   "ดาวน์โหลดข้อมูลของฉัน": "Download my data",
   "ลบข้อมูลทั้งหมด": "Delete all data",
-  "ติดต่อเจ้าหน้าที่คุ้มครองข้อมูล: privacy@lunglens.example (ตัวอย่าง)": "Data protection contact: privacy@lunglens.example (example)",
   "เปิดการแจ้งเตือนแล้ว": "Reminders enabled.",
   "ปิดการแจ้งเตือนแล้ว": "Reminders disabled.",
   "ดาวน์โหลดข้อมูลแล้ว": "Data downloaded.",
@@ -850,12 +849,14 @@ function localizeSubtree(root, lang = currentLang()) {
   const nodes = [];
   while (walker.nextNode()) nodes.push(walker.currentNode);
   for (const node of nodes) {
+    if (node.parentElement?.closest("[data-no-localize]")) continue;
     if (!I18N_ORIGINAL_TEXT.has(node)) I18N_ORIGINAL_TEXT.set(node, node.nodeValue);
     const original = I18N_ORIGINAL_TEXT.get(node);
     node.nodeValue = lang === "en" ? tr(original, "en") : original;
   }
   const elements = root.nodeType === 1 ? [root, ...root.querySelectorAll("*")] : [...root.querySelectorAll("*")];
   for (const el of elements) {
+    if (el.closest("[data-no-localize]")) continue;
     if (!I18N_ORIGINAL_ATTRS.has(el)) {
       const original = {};
       for (const attr of I18N_ATTRS) if (el.hasAttribute(attr)) original[attr] = el.getAttribute(attr);

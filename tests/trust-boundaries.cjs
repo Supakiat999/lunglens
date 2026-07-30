@@ -39,7 +39,8 @@ assert.doesNotMatch(reminderFunction, /\b(fetch|sendMessages|shareTargetPicker|X
 assert.match(reminderFunction, /demo_reminder_preference_enabled/);
 assert.match(reminderFunction, /no message was sent/);
 
-assert.ok(!app.includes("privacy@lunglens.example"), "A placeholder privacy email must not appear as a contact channel");
+const removedPlaceholderAddress = ["privacy", "lunglens.example"].join("@");
+assert.ok(!app.includes(removedPlaceholderAddress), "A placeholder privacy email must not appear as a contact channel");
 assert.ok(!app.includes('"reminder_opted_in"'), "Local demo preference must not be tracked as a live reminder opt-in");
 assert.ok(!app.includes('"reminder_opted_out"'), "Local demo preference must not be tracked as a live reminder opt-out");
 

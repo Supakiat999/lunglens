@@ -4,9 +4,8 @@
    Creates the 6-button rich menu (image: rich-menu.png), uploads it,
    and sets it as the default menu for everyone who adds the OA.
 
-   Usage (PowerShell) — paste your own token, Claude never handles it:
-     $env:LINE_CHANNEL_ACCESS_TOKEN = "<long-lived token from OA's Messaging API channel>"
-     node setup-richmenu.mjs
+   Preferred usage (PowerShell) — the private helper hides and clears the token:
+     powershell -NoProfile -ExecutionPolicy Bypass -File .\install-richmenu-private.ps1
 
    Requires Node 18+ (built-in fetch). Token comes from:
    LINE Developers Console -> (your new OA's Messaging API channel)

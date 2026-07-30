@@ -30,6 +30,7 @@ const exported = buildPortableExport(sourceState, {
   storageKey: data.STORE_KEY,
   exportedAt: "2026-07-28T05:00:00.000Z"
 });
+assert.deepEqual(exported.appointment_request_drafts, []);
 
 function assertNoInternalScoringKeys(value, path = "export") {
   if (Array.isArray(value)) {

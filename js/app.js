@@ -171,6 +171,7 @@ const ROUTES = {
   home: renderHome, begin: renderBegin, consent: renderConsent, assess: renderAssess,
   review: renderReview, symptom: renderSymptomPathway, result: renderResult, education: renderEducation,
   air: renderAirQuality, clinics: renderClinics, referral: renderReferral, profile: renderProfile,
+  "appointment-request": renderAppointmentRequest,
   help: renderHelp, provider: renderProvider, "demo-story": renderStory, privacy: renderPrivacy
 };
 function route() {
@@ -932,6 +933,9 @@ function renderResult() {
     screening.key === "individual_review" ||
     screening.key === "smoking_details_unknown" ||
     b === BANDS.review;
+  const canPrepareAppointmentRequest =
+    b === BANDS.review &&
+    r.symptom_pathway === "standard";
   const primaryNext = needsProfessionalNext
     ? `<a class="btn btn-primary mt" href="#clinics">ค้นหาช่องทางปรึกษาบุคลากรทางการแพทย์</a>`
     : `<a class="btn btn-primary mt" href="#education">เรียนรู้วิธีดูแลสุขภาพปอด</a>`;
@@ -1071,6 +1075,18 @@ function renderResult() {
     <p class="muted">${esc(b.action)}</p>
     ${b === BANDS.review ? `<p class="muted mt" style="font-size:13.5px">บุคลากรทางการแพทย์สามารถช่วยพิจารณาว่าจำเป็นต้องตรวจเพิ่มเติม เช่น การประเมินทางคลินิกหรือการถ่ายภาพรังสีชนิดใด</p>` : ""}
     ${primaryNext}
+    ${canPrepareAppointmentRequest ? `<a class="btn btn-secondary mt" href="#clinics=appointment">${esc(uiText(
+      "เตรียมร่างคำขอนัดหมาย",
+      "Prepare appointment request"
+    ))}</a>
+    <p class="tiny">${esc(uiText(
+      "เป็นเพียงร่างที่บันทึกบนอุปกรณ์นี้ โรงพยาบาลยังไม่ได้รับหรือยืนยันคำขอ",
+      "This is only a draft saved on this device. No hospital receives or confirms it."
+    ))}</p>` : ""}
+    ${state.appointmentRequests?.length ? `<div class="mt">
+      <p class="tiny"><b>${esc(uiText("ร่างที่บันทึกบนอุปกรณ์นี้", "Drafts saved on this device"))}</b></p>
+      ${state.appointmentRequests.map(request => `<a class="btn btn-ghost btn-sm mt" href="#appointment-request=${esc(request.id)}">${esc(request.id)}</a>`).join("")}
+    </div>` : ""}
     <div class="row mt">
       <button class="btn btn-secondary btn-sm" onclick="toast('บันทึกผลไว้ใน “ข้อมูลของฉัน” แล้ว')">💾 บันทึกผล</button>
       <button class="btn btn-secondary btn-sm" onclick="shareCard()">📤 แชร์แบบปลอดภัย</button>
@@ -1783,13 +1799,30 @@ function renderArticle(slug) {
    SCREEN: clinics / navigation
    ===================================================================== */
 let clinicFilter = { province: "", ldct: false, publicOnly: false };
-function renderClinics() {
+let clinicMode = "browse";
+function appointmentRequestEligible() {
+  return state.result?.assessment_status === "completed" &&
+    state.result?.band?.key === "professional_review" &&
+    state.result?.symptom_pathway === "standard";
+}
+function renderClinics(mode) {
+  if (mode === "appointment" && appointmentRequestEligible()) clinicMode = "appointment";
+  else if (mode !== "keep") clinicMode = "browse";
+  if (!appointmentRequestEligible()) clinicMode = "browse";
+  const choosingForAppointment = clinicMode === "appointment";
   const list = FACILITIES.filter(f =>
     (!clinicFilter.province || f.province === clinicFilter.province) &&
     (!clinicFilter.ldct || f.ldct) &&
     (!clinicFilter.publicOnly || f.public));
   view(`<div class="card">
     <h2>🏥 สถานพยาบาลและช่องทางปรึกษา</h2>
+    ${choosingForAppointment ? `<div class="q-note"><b>${esc(uiText(
+      "เลือกข้อมูลสถานพยาบาลสำหรับร่างคำขอนัดหมาย",
+      "Choose a facility for your appointment-request draft"
+    ))}</b><br>${esc(uiText(
+      "รายการนี้ยังไม่ได้รับการยืนยันและไม่ได้แสดงถึงความร่วมมือกับ LungLens โปรดตรวจสอบข้อมูลกับช่องทางทางการ",
+      "This directory is unverified and does not indicate a LungLens partnership. Verify details through an official source."
+    ))}</div>` : ""}
     <p class="muted"><b>หน้านี้ยังไม่ใช่รายชื่อสถานพยาบาลจริงและยังไม่สามารถนัดหมายหรือส่งต่อผู้ป่วยได้</b></p>
     <p class="tiny">${esc(tr("รายการทั้งหมดเป็น ข้อมูลจำลอง เพื่อแสดงรูปแบบการค้นหาเท่านั้น หากต้องการรับบริการตอนนี้ โปรดติดต่อสถานพยาบาลที่ตรวจสอบได้หรือหน่วยบริการตามสิทธิของคุณโดยตรง หากมีอาการฉุกเฉิน โทร 1669"))}</p>
     <p class="tiny">${esc(uiText(
@@ -1797,12 +1830,12 @@ function renderClinics() {
       "Appearing in this prototype is not an endorsement and does not confirm that LDCT is available. Check an official source before travelling."
     ))}</p>
     <div class="row mt">
-      <select aria-label="${esc(uiText("กรองตามจังหวัด", "Filter by province"))}" onchange="clinicFilter.province=this.value;renderClinics()">
+      <select aria-label="${esc(uiText("กรองตามจังหวัด", "Filter by province"))}" onchange="clinicFilter.province=this.value;renderClinics('keep')">
         <option value="">ทุกจังหวัด</option>
         ${[...new Set(FACILITIES.map(f => f.province))].map(p => `<option value="${esc(p)}" ${clinicFilter.province === p ? "selected" : ""}>${esc(p)}</option>`).join("")}
       </select>
-      <button class="chip ${clinicFilter.ldct ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.ldct=!clinicFilter.ldct;renderClinics()">มี LDCT</button>
-      <button class="chip ${clinicFilter.publicOnly ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.publicOnly=!clinicFilter.publicOnly;renderClinics()">รัฐเท่านั้น</button>
+      <button class="chip ${clinicFilter.ldct ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.ldct=!clinicFilter.ldct;renderClinics('keep')">มี LDCT</button>
+      <button class="chip ${clinicFilter.publicOnly ? "on" : ""}" style="min-height:44px" onclick="clinicFilter.publicOnly=!clinicFilter.publicOnly;renderClinics('keep')">รัฐเท่านั้น</button>
     </div>
   </div>
   <details class="card">
@@ -1822,14 +1855,382 @@ function renderClinics() {
     <p class="tiny">นัดหมาย: ${esc(f.appointment)} · การส่งตัว: ${esc(f.referral)} · ภาษา: ${f.lang.join("/")} · การเข้าถึง: ${esc(f.access)}</p>
     <p class="tiny" style="color:var(--warn)">${esc(f.verified)}</p>
     <div class="row mt">
-      <button class="btn btn-primary btn-sm" onclick="startReferral('${f.id}')">ทดลองขั้นตอนขอรับการติดต่อ</button>
+      ${choosingForAppointment
+        ? `<button class="btn btn-primary btn-sm" onclick="startAppointmentRequest('${f.id}')">${esc(uiText(
+          "ใช้สถานพยาบาลนี้ในร่างคำขอ",
+          "Use this facility in the draft"
+        ))}</button>`
+        : `<button class="btn btn-primary btn-sm" onclick="startReferral('${f.id}')">ทดลองขั้นตอนขอรับการติดต่อ</button>`}
       <button class="btn btn-secondary btn-sm" onclick="protoPopup('โทร ${esc(f.phone)}','เวอร์ชันจริงจะเปิดแอปโทรศัพท์')">โทรสอบถาม</button>
       <button class="btn btn-secondary btn-sm" onclick="protoPopup('เปิดแผนที่','เวอร์ชันจริงจะเปิดแผนที่ไปยังตำแหน่งสถานพยาบาล')">เปิดแผนที่</button>
       <button class="btn btn-ghost btn-sm" onclick="toast('บันทึกสถานพยาบาลไว้แล้ว (จำลอง)')">บันทึกไว้</button>
     </div>
   </div>`).join("") || `<div class="card center muted">ไม่พบสถานพยาบาลตามตัวกรอง</div>`}
-  ${state.referrals.length ? `<a class="btn btn-secondary" href="#referral">ดูสถานะคำขอของฉัน (${state.referrals.length})</a>` : ""}`);
+  ${state.referrals.length ? `<a class="btn btn-secondary" href="#referral">ดูสถานะคำขอของฉัน (${state.referrals.length})</a>` : ""}
+  ${state.appointmentRequests?.length ? `<div class="card">
+    <h3>${esc(uiText("ร่างคำขอนัดหมายบนอุปกรณ์นี้", "Appointment-request drafts on this device"))}</h3>
+    ${state.appointmentRequests.map(request => `<a class="btn btn-secondary btn-sm mt" href="#appointment-request=${esc(request.id)}">${esc(request.id)}</a>`).join("")}
+  </div>` : ""}`);
   track("facility_viewed");
+}
+
+/* =====================================================================
+   SCREEN: local appointment-request draft
+   ===================================================================== */
+let pendingAppointmentRequest = null;
+
+function appointmentContactLabel(value, locale = state.lang) {
+  const labels = {
+    phone: { th: "โทรศัพท์", en: "Phone" },
+    email: { th: "อีเมล", en: "Email" },
+    other: { th: "ช่องทางอื่น", en: "Other" }
+  };
+  return labels[value]?.[locale] || labels.other[locale];
+}
+
+function appointmentDayLabel(value, locale = state.lang) {
+  const labels = {
+    weekdays: { th: "วันจันทร์–ศุกร์", en: "Weekdays" },
+    weekends: { th: "วันเสาร์–อาทิตย์", en: "Weekends" },
+    any: { th: "วันใดก็ได้", en: "Any day" }
+  };
+  return labels[value]?.[locale] || labels.any[locale];
+}
+
+function appointmentTimeLabel(value, locale = state.lang) {
+  const labels = {
+    morning: { th: "ช่วงเช้า", en: "Morning" },
+    afternoon: { th: "ช่วงบ่าย", en: "Afternoon" },
+    evening: { th: "ช่วงเย็น", en: "Evening" },
+    any: { th: "เวลาใดก็ได้", en: "Any time" }
+  };
+  return labels[value]?.[locale] || labels.any[locale];
+}
+
+function appointmentFactorNames(request) {
+  if (!request?.includeFactorSummary) return [];
+  const allowed = new Set(request.factorCodes || []);
+  return RULES.filter(rule => allowed.has(rule.code)).map(rule => tr(rule.name));
+}
+
+function startAppointmentRequest(facilityId) {
+  if (!appointmentRequestEligible()) {
+    toast(uiText(
+      "ร่างคำขอนัดหมายเปิดได้จากผลระดับที่แนะนำให้รับการประเมินเพิ่มเติมและไม่มีเส้นทางอาการฉุกเฉินเท่านั้น",
+      "An appointment-request draft is available only from the professional-review result when there is no urgent symptom pathway."
+    ));
+    location.hash = state.result?.symptom_pathway === "urgent" ? "#symptom" : "#result";
+    return;
+  }
+  if (!FACILITIES.some(facility => facility.id === facilityId)) {
+    toast(uiText("ไม่พบข้อมูลสถานพยาบาลต้นแบบ", "The prototype facility could not be found."));
+    return;
+  }
+  track("appointment_request_started");
+  location.hash = `#appointment-request=new-${facilityId}`;
+}
+
+function appointmentFieldOptions(current, options) {
+  return options.map(option => `<option value="${option.value}" ${current === option.value ? "selected" : ""}>${esc(option.label)}</option>`).join("");
+}
+
+function renderAppointmentRequestForm(facilityId, existing = null) {
+  const facility = FACILITIES.find(item => item.id === facilityId);
+  if (!facility) {
+    view(`<div class="card center"><h2>${esc(uiText("ไม่พบสถานพยาบาล", "Facility not found"))}</h2>
+      <a class="btn btn-primary mt" href="#clinics=appointment">${esc(uiText("เลือกสถานพยาบาลอีกครั้ง", "Choose another facility"))}</a></div>`);
+    return;
+  }
+  if (!existing && !appointmentRequestEligible()) {
+    location.hash = state.result?.symptom_pathway === "urgent" ? "#symptom" : "#result";
+    return;
+  }
+  const contactMethod = existing?.contactMethod || "phone";
+  const preferredDay = existing?.preferredDay || "any";
+  const preferredTime = existing?.preferredTime || "any";
+  const factorNames = existing
+    ? appointmentFactorNames(existing)
+    : (state.result?.factors || []).map(factor => tr(factor.name));
+  view(`<div class="card">
+    <h2>${esc(uiText("เตรียมร่างคำขอนัดหมาย", "Prepare appointment-request draft"))}</h2>
+    <div class="q-note"><b>${esc(uiText(
+      "ร่างนี้ยังไม่ใช่ใบนัดและยังไม่ได้ส่ง",
+      "This draft is not an appointment and has not been sent."
+    ))}</b><br>${esc(uiText(
+      "ไม่มีโรงพยาบาลหรือเจ้าหน้าที่ได้รับข้อมูลจากหน้านี้ กรุณาตรวจสอบสถานพยาบาลและติดต่อผ่านช่องทางทางการ",
+      "No hospital or staff member receives information from this page. Verify the facility and use an official contact channel."
+    ))}</div>
+    <p><b>${esc(facility.name)}</b></p>
+    <p class="tiny">${esc(uiText(
+      "ข้อมูลสถานพยาบาลเป็นข้อมูลต้นแบบที่ยังไม่ได้รับการยืนยัน",
+      "This facility information is unverified prototype data."
+    ))}</p>
+  </div>
+  <div class="card appointment-form">
+    <div class="field">
+      <label for="appointment-name">${esc(uiText("ชื่อ (ไม่บังคับ)", "Name (optional)"))}</label>
+      <input id="appointment-name" type="text" maxlength="120" autocomplete="name" value="${esc(existing?.name || "")}">
+    </div>
+    <div class="field">
+      <label for="appointment-contact-method">${esc(uiText("ช่องทางติดต่อ", "Contact method"))}</label>
+      <select id="appointment-contact-method">${appointmentFieldOptions(contactMethod, [
+        { value: "phone", label: uiText("โทรศัพท์", "Phone") },
+        { value: "email", label: uiText("อีเมล", "Email") },
+        { value: "other", label: uiText("ช่องทางอื่น", "Other") }
+      ])}</select>
+    </div>
+    <div class="field">
+      <label for="appointment-contact-value">${esc(uiText(
+        "ข้อมูลติดต่อ (ไม่บังคับและกรอกด้วยตนเอง)",
+        "Contact details (optional and entered manually)"
+      ))}</label>
+      <input id="appointment-contact-value" type="text" maxlength="200" autocomplete="off" value="${esc(existing?.contactValue || "")}">
+      <p class="tiny">${esc(uiText(
+        "LungLens จะไม่ดึงชื่อหรือข้อมูลติดต่อจาก LINE",
+        "LungLens never copies your name or contact details from LINE."
+      ))}</p>
+    </div>
+    <div class="field">
+      <label for="appointment-day">${esc(uiText("วันที่สะดวก", "Preferred day"))}</label>
+      <select id="appointment-day">${appointmentFieldOptions(preferredDay, [
+        { value: "weekdays", label: uiText("วันจันทร์–ศุกร์", "Weekdays") },
+        { value: "weekends", label: uiText("วันเสาร์–อาทิตย์", "Weekends") },
+        { value: "any", label: uiText("วันใดก็ได้", "Any day") }
+      ])}</select>
+    </div>
+    <div class="field">
+      <label for="appointment-time">${esc(uiText("ช่วงเวลาที่สะดวก", "Preferred time"))}</label>
+      <select id="appointment-time">${appointmentFieldOptions(preferredTime, [
+        { value: "morning", label: uiText("ช่วงเช้า", "Morning") },
+        { value: "afternoon", label: uiText("ช่วงบ่าย", "Afternoon") },
+        { value: "evening", label: uiText("ช่วงเย็น", "Evening") },
+        { value: "any", label: uiText("เวลาใดก็ได้", "Any time") }
+      ])}</select>
+    </div>
+    <div class="field">
+      <label for="appointment-accessibility">${esc(uiText(
+        "ความต้องการด้านการเข้าถึงหรือหมายเหตุ (ไม่บังคับ)",
+        "Accessibility needs or note (optional)"
+      ))}</label>
+      <textarea id="appointment-accessibility" rows="3" maxlength="1000">${esc(existing?.accessibilityNote || "")}</textarea>
+    </div>
+    <label class="check-row">
+      <input id="appointment-include-factors" type="checkbox" ${existing?.includeFactorSummary ? "checked" : ""}
+        onchange="document.getElementById('appointment-factor-preview').hidden=!this.checked">
+      <span><b>${esc(uiText(
+        "ใส่สรุปปัจจัยจากแบบประเมินในเอกสาร",
+        "Include the assessment factor summary in the document"
+      ))}</b><br><span class="tiny">${esc(uiText(
+        "ปิดไว้เป็นค่าเริ่มต้น เลือกเฉพาะเมื่อคุณต้องการให้ข้อมูลนี้ปรากฏในเอกสาร",
+        "Off by default. Select only if you want this health information to appear in the document."
+      ))}</span></span>
+    </label>
+    <div id="appointment-factor-preview" class="q-note mt" ${existing?.includeFactorSummary ? "" : "hidden"}>
+      <b>${esc(uiText("ปัจจัยที่จะรวม", "Factors that will be included"))}</b>
+      ${factorNames.length
+        ? `<ul class="plain-list">${factorNames.map(name => `<li>${esc(name)}</li>`).join("")}</ul>`
+        : `<p class="tiny">${esc(uiText("ไม่มีรายการปัจจัยให้รวม", "No factor items are available to include."))}</p>`}
+    </div>
+    <button class="btn btn-primary mt" onclick="reviewAppointmentRequest('${facility.id}','${existing?.id || ""}')">${esc(uiText(
+      "ตรวจทานก่อนบันทึก",
+      "Review before saving"
+    ))}</button>
+    <a class="btn btn-ghost mt" href="${existing ? `#appointment-request=${existing.id}` : "#clinics=appointment"}">${esc(uiText("ยกเลิก", "Cancel"))}</a>
+  </div>`);
+}
+
+function reviewAppointmentRequest(facilityId, existingId = "") {
+  const existing = state.appointmentRequests.find(item => item.id === existingId) || null;
+  const includeFactorSummary = $("#appointment-include-factors").checked;
+  const sourceFactors = existing
+    ? existing.factorCodes
+    : (state.result?.factors || []).map(factor => factor.code);
+  const now = new Date().toISOString();
+  pendingAppointmentRequest = {
+    schema: "appointment_request_v1",
+    id: existing?.id || "",
+    facilityId,
+    status: "draft_unconfirmed",
+    name: $("#appointment-name").value.trim().slice(0, 120),
+    contactMethod: $("#appointment-contact-method").value,
+    contactValue: $("#appointment-contact-value").value.trim().slice(0, 200),
+    preferredDay: $("#appointment-day").value,
+    preferredTime: $("#appointment-time").value,
+    accessibilityNote: $("#appointment-accessibility").value.trim().slice(0, 1000),
+    includeFactorSummary,
+    factorCodes: includeFactorSummary ? [...new Set(sourceFactors)].slice(0, 20) : [],
+    resultBandKey: "professional_review",
+    engineVersion: existing?.engineVersion || state.result?.model_version || ENGINE_VERSION,
+    createdAt: existing?.createdAt || now,
+    updatedAt: now,
+    consentAt: now
+  };
+  const facility = FACILITIES.find(item => item.id === facilityId);
+  const factorNames = appointmentFactorNames(pendingAppointmentRequest);
+  modal(`<h2>${esc(uiText("ตรวจทานร่างคำขอ", "Review the request draft"))}</h2>
+    <div class="q-note"><b>${esc(uiText(
+      "ยังไม่ได้ส่งให้โรงพยาบาลและไม่ใช่ใบนัดที่ยืนยันแล้ว",
+      "This has not been sent to a hospital and is not a confirmed appointment."
+    ))}</b></div>
+    <dl class="summary-list">
+      <div><dt>${esc(uiText("สถานพยาบาลต้นแบบ", "Prototype facility"))}</dt><dd>${esc(facility?.name || facilityId)}</dd></div>
+      <div><dt>${esc(uiText("ชื่อ", "Name"))}</dt><dd>${esc(pendingAppointmentRequest.name || uiText("ไม่ได้ระบุ", "Not provided"))}</dd></div>
+      <div><dt>${esc(uiText("ข้อมูลติดต่อ", "Contact"))}</dt><dd>${esc(pendingAppointmentRequest.contactValue || uiText("ไม่ได้ระบุ", "Not provided"))}</dd></div>
+      <div><dt>${esc(uiText("วันที่สะดวก", "Preferred day"))}</dt><dd>${esc(appointmentDayLabel(pendingAppointmentRequest.preferredDay))}</dd></div>
+      <div><dt>${esc(uiText("เวลาที่สะดวก", "Preferred time"))}</dt><dd>${esc(appointmentTimeLabel(pendingAppointmentRequest.preferredTime))}</dd></div>
+      <div><dt>${esc(uiText("สรุปปัจจัย", "Factor summary"))}</dt><dd>${esc(
+        pendingAppointmentRequest.includeFactorSummary
+          ? (factorNames.join(", ") || uiText("ไม่มีรายการ", "No items"))
+          : uiText("ไม่รวม", "Not included")
+      )}</dd></div>
+    </dl>
+    <label class="check-row mt">
+      <input id="appointment-draft-consent" type="checkbox" onchange="document.getElementById('save-appointment-draft').disabled=!this.checked">
+      <span>${esc(uiText(
+        "ฉันตรวจทานข้อมูลแล้วและยินยอมให้บันทึกร่างนี้ไว้บนอุปกรณ์นี้ ฉันเข้าใจว่ายังไม่มีการส่งข้อมูลให้โรงพยาบาล",
+        "I reviewed the information and consent to saving this draft on this device. I understand that nothing is sent to a hospital."
+      ))}</span>
+    </label>
+    <button id="save-appointment-draft" class="btn btn-primary mt" disabled onclick="confirmAppointmentRequestDraft()">${esc(uiText(
+      "ยืนยันและบันทึกร่าง",
+      "Confirm and save draft"
+    ))}</button>`);
+}
+
+function appointmentDraftId() {
+  const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+  const bytes = new Uint8Array(2);
+  if (globalThis.crypto?.getRandomValues) globalThis.crypto.getRandomValues(bytes);
+  else {
+    const fallback = Date.now() % 65536;
+    bytes[0] = fallback >> 8;
+    bytes[1] = fallback & 255;
+  }
+  return `DRAFT-${date}-${[...bytes].map(value => value.toString(16).padStart(2, "0")).join("").toUpperCase()}`;
+}
+
+function confirmAppointmentRequestDraft() {
+  if (!pendingAppointmentRequest || !$("#appointment-draft-consent")?.checked) return;
+  const request = { ...pendingAppointmentRequest };
+  if (!request.id) request.id = appointmentDraftId();
+  state.appointmentRequests ||= [];
+  const existingIndex = state.appointmentRequests.findIndex(item => item.id === request.id);
+  if (existingIndex >= 0) state.appointmentRequests[existingIndex] = request;
+  else state.appointmentRequests.unshift(request);
+  state.appointmentRequests = state.appointmentRequests.slice(0, MAX_LOCAL_APPOINTMENT_REQUESTS);
+  if (!save()) return;
+  track(existingIndex >= 0 ? "appointment_request_updated" : "appointment_request_saved");
+  pendingAppointmentRequest = null;
+  closeModal();
+  location.hash = `#appointment-request=${request.id}`;
+}
+
+function renderSavedAppointmentRequest(request) {
+  const facility = FACILITIES.find(item => item.id === request.facilityId);
+  const factors = appointmentFactorNames(request);
+  const createdTh = new Intl.DateTimeFormat("th-TH", { dateStyle: "medium", timeStyle: "short" }).format(new Date(request.createdAt));
+  const createdEn = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(request.createdAt));
+  view(`<div class="appointment-print card" data-no-localize>
+    <div class="appointment-draft-banner">
+      <strong>ร่างคำขอนัดหมาย — ยังไม่ได้รับการยืนยัน</strong>
+      <strong>Appointment request draft — not confirmed</strong>
+    </div>
+    <h1>รู้ทันปอด · LungLens</h1>
+    <p><b>เลขอ้างอิงร่างในอุปกรณ์ / Local draft reference:</b> ${esc(request.id)}</p>
+    <p><b>สถานะ / Status:</b> ยังไม่ได้ส่งหรือยืนยัน / Not sent or confirmed</p>
+    <hr>
+    <dl class="summary-list">
+      <div><dt>สถานพยาบาลต้นแบบ / Prototype facility</dt><dd>${esc(facility?.name || request.facilityId)}</dd></div>
+      <div><dt>ชื่อ / Name</dt><dd>${esc(request.name || "—")}</dd></div>
+      <div><dt>ช่องทางติดต่อ / Contact method</dt><dd>${esc(appointmentContactLabel(request.contactMethod, "th"))} / ${esc(appointmentContactLabel(request.contactMethod, "en"))}</dd></div>
+      <div><dt>ข้อมูลติดต่อ / Contact details</dt><dd>${esc(request.contactValue || "—")}</dd></div>
+      <div><dt>วันที่สะดวก / Preferred day</dt><dd>${esc(appointmentDayLabel(request.preferredDay, "th"))} / ${esc(appointmentDayLabel(request.preferredDay, "en"))}</dd></div>
+      <div><dt>เวลาที่สะดวก / Preferred time</dt><dd>${esc(appointmentTimeLabel(request.preferredTime, "th"))} / ${esc(appointmentTimeLabel(request.preferredTime, "en"))}</dd></div>
+      <div><dt>ความต้องการด้านการเข้าถึงหรือหมายเหตุ / Accessibility needs or note</dt><dd>${esc(request.accessibilityNote || "—")}</dd></div>
+      <div><dt>วันที่สร้างร่าง / Draft created</dt><dd>${esc(createdTh)} / ${esc(createdEn)}</dd></div>
+    </dl>
+    ${request.includeFactorSummary ? `<section class="appointment-factor-summary">
+      <h2>สรุปปัจจัยที่ผู้ใช้เลือกให้รวม / User-approved factor summary</h2>
+      ${factors.length
+        ? `<ul>${factors.map(factor => `<li>${esc(factor)}</li>`).join("")}</ul>`
+        : `<p>ไม่มีรายการ / No items</p>`}
+      <p class="tiny">ผลปัจจัยไม่ใช่การวินิจฉัยหรือความน่าจะเป็นของมะเร็ง / The factor result is not a diagnosis or cancer probability.</p>
+    </section>` : ""}
+    <div class="appointment-print-warning">
+      <b>เอกสารนี้สร้างบนอุปกรณ์ของผู้ใช้ ไม่มีการส่งให้โรงพยาบาล และไม่ใช่ใบนัด ใบส่งตัว หรือการยืนยันบริการ</b><br>
+      <b>This document was created on the user’s device. It was not sent to a hospital and is not an appointment, referral, or service confirmation.</b>
+    </div>
+  </div>
+  <div class="card no-print">
+    <h2>${esc(uiText("จัดการร่างคำขอ", "Manage request draft"))}</h2>
+    <p class="muted">${esc(uiText(
+      "ใช้คำสั่งพิมพ์ของเบราว์เซอร์ แล้วเลือก “บันทึกเป็น PDF” หากต้องการไฟล์ PDF",
+      "Use the browser print dialog and choose “Save as PDF” if you need a PDF file."
+    ))}</p>
+    <button class="btn btn-primary" onclick="printAppointmentRequest('${request.id}')">${esc(uiText(
+      "พิมพ์หรือบันทึกเป็น PDF",
+      "Print or save as PDF"
+    ))}</button>
+    <a class="btn btn-secondary mt" href="#appointment-request=edit-${request.id}">${esc(uiText("แก้ไขร่าง", "Edit draft"))}</a>
+    <button class="btn btn-ghost mt" onclick="confirmDeleteAppointmentRequest('${request.id}')">${esc(uiText("ลบร่างจากอุปกรณ์นี้", "Delete draft from this device"))}</button>
+    <a class="btn btn-ghost mt" href="#result">${esc(uiText("กลับไปหน้าผล", "Back to result"))}</a>
+  </div>`);
+}
+
+function renderAppointmentRequest(arg) {
+  state.appointmentRequests ||= [];
+  if (arg?.startsWith("new-")) {
+    renderAppointmentRequestForm(arg.slice(4));
+    return;
+  }
+  if (arg?.startsWith("edit-")) {
+    const request = state.appointmentRequests.find(item => item.id === arg.slice(5));
+    if (request) {
+      renderAppointmentRequestForm(request.facilityId, request);
+      return;
+    }
+  }
+  const request = state.appointmentRequests.find(item => item.id === arg);
+  if (request) {
+    renderSavedAppointmentRequest(request);
+    return;
+  }
+  view(`<div class="card center">
+    <h2>${esc(uiText("ไม่พบร่างคำขอนัดหมาย", "Appointment-request draft not found"))}</h2>
+    <p class="muted">${esc(uiText(
+      "ร่างอาจถูกลบหรืออยู่ในเบราว์เซอร์หรืออุปกรณ์อื่น",
+      "The draft may have been deleted or saved in another browser or device."
+    ))}</p>
+    <a class="btn btn-primary mt" href="#result">${esc(uiText("กลับไปหน้าผล", "Back to result"))}</a>
+  </div>`);
+}
+
+function printAppointmentRequest(id) {
+  const request = state.appointmentRequests.find(item => item.id === id);
+  if (!request) return;
+  track("appointment_request_printed");
+  window.print();
+}
+
+function confirmDeleteAppointmentRequest(id) {
+  const request = state.appointmentRequests.find(item => item.id === id);
+  if (!request) return;
+  modal(`<h2>${esc(uiText("ลบร่างคำขอนัดหมายหรือไม่", "Delete appointment-request draft?"))}</h2>
+    <p class="muted">${esc(uiText(
+      "การลบจะนำร่างออกจากเบราว์เซอร์นี้เท่านั้น และไม่กระทบโรงพยาบาลใด เพราะร่างไม่เคยถูกส่ง",
+      "This removes the draft only from this browser. It cannot affect a hospital because the draft was never sent."
+    ))}</p>
+    <button class="btn btn-primary mt" onclick="deleteAppointmentRequest('${id}')">${esc(uiText("ยืนยันการลบ", "Confirm deletion"))}</button>`);
+}
+
+function deleteAppointmentRequest(id) {
+  const index = state.appointmentRequests.findIndex(item => item.id === id);
+  if (index < 0) return;
+  state.appointmentRequests.splice(index, 1);
+  save();
+  track("appointment_request_deleted");
+  closeModal();
+  location.hash = "#result";
 }
 
 /* =====================================================================

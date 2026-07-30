@@ -160,6 +160,11 @@ and passed as an environment variable at run time. **Never write it into a file.
   without estimating pack-years, never creates LDCT eligibility from missing values,
   preserves the separately reported smoking factor, and displays an unresolved
   smoking-screening context in Thai and English.
+- **Continuous safety validation** — `.github/workflows/validate.yml` now runs every
+  syntax, engine, privacy, i18n, accessibility, state-recovery, trust-boundary and UI
+  contract on each push and pull request. `.gitignore` plus
+  `tests/repository-safety.cjs` block common secret, credential, export and test-artifact
+  mistakes before they enter the repository.
 - **Live LINE Official Account** — **LungLens** (`@794hkqhs`) with Messaging API enabled
   under provider **Longview**, Auto-response OFF, a concise bilingual non-diagnostic
   greeting, and the bilingual 6-button rich menu installed as the default.
