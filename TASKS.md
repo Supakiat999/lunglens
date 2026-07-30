@@ -103,6 +103,12 @@ Status legend:
   location, assessment progress/options, results, and facility cards now use the
   same visual patterns as the main app; language and text-size switches preserve
   the currently selected but not-yet-submitted form values.
+- ✅ Machine interface-quality pass `0.1.2`: fixed explicit mobile-header placement,
+  raised header controls to kiosk-safe targets, improved secondary-text contrast,
+  repaired bilingual feature-card wrapping, added state-aware navigation feedback,
+  unified appointment/draft controls with the shared LungLens design system,
+  expanded large-text coverage, removed stale CSS, and stopped simulated names from
+  being copied automatically into appointment drafts.
 - ✅ Add fictional card profiles and a no-card fallback that collects only the
   minimum assessment details; never request or store a real 13-digit ID number.
 - ✅ Add three environmental-location choices and timestamped simulated PM2.5,

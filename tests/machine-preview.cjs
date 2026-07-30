@@ -16,7 +16,7 @@ assert.equal(data.APP_VERSION, "prototype_0.15.1", "The regular app version must
 assert.equal(data.STORE_KEY, "lunglens-v1", "The regular app storage key must remain unchanged");
 assert.equal(model.MACHINE_STORE_KEY, "lunglens-machine-v1");
 assert.notEqual(model.MACHINE_STORE_KEY, data.STORE_KEY);
-assert.equal(model.MACHINE_PREVIEW_VERSION, "machine_preview_0.1.1");
+assert.equal(model.MACHINE_PREVIEW_VERSION, "machine_preview_0.1.2");
 assert.equal(model.SESSION_TIMEOUT_MS, 120000);
 assert.equal(model.SESSION_WARNING_MS, 30000);
 
@@ -43,6 +43,10 @@ assert.match(app, /emergencyNoDraft/);
 assert.match(app, /function captureVisibleFormDraft\(\)/);
 assert.match(app, /language-toggle"\)\.addEventListener\("click", \(\) => \{\s+captureVisibleFormDraft\(\)/);
 assert.match(app, /text-toggle"\)\.addEventListener\("click", \(\) => \{\s+captureVisibleFormDraft\(\)/);
+assert.match(app, /function navAvailability\(route\)/, "Machine nav must expose route readiness");
+assert.match(app, /setAttribute\("aria-disabled", "true"\)/, "Unavailable machine routes must be announced");
+assert.ok(!app.includes("state.identity?.name"),
+  "A simulated identity name must not be copied into the appointment draft automatically");
 
 const youngBangkok = structuredClone(data.PERSONAS.find(persona => persona.id === "P3").answers);
 youngBangkok.AGE = "ต่ำกว่า 40 ปี";
@@ -144,5 +148,10 @@ assert.match(css, /@media print/);
 assert.match(css, /The shared LungLens interface/);
 assert.match(css, /var\(--brand\)/);
 assert.match(css, /body\.big/);
+assert.match(css, /--ink-3:\s*#64748b/, "Machine secondary text must meet normal-text contrast");
+assert.match(css, /header\.app #text-toggle/, "Machine header controls need explicit grid selectors");
+assert.match(css, /\.machine-benefits/, "Machine benefit cards need a dedicated responsive layout");
+assert.ok(!css.includes(".button {"), "Machine preview must reuse the shared LungLens button system");
+assert.ok(!css.includes(".question-card"), "Unused pre-alignment question styles should stay removed");
 
 console.log("Machine-preview checks passed: isolated storage, unchanged v0.15.1 engine, three display colors, urgent separation, simulated identity/sensors, local-only drafts, and safety wording.");

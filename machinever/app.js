@@ -24,6 +24,10 @@ const COPY = {
     navResult: "My result",
     navClinics: "Clinics",
     navDraft: "My draft",
+    navLockedAssess: "Complete ID, consent, and location before opening the assessment.",
+    navLockedResult: "Complete the assessment before opening your result.",
+    navLockedClinics: "The facility directory is available only after a red professional-review result.",
+    navLockedDraft: "Create an appointment-request draft before opening this page.",
     publicDemo: "Machine preview · demonstration only",
     strip: "Demo only — no real identity, live sensor, hospital appointment, or benefit connection.",
     footer: "Based on engine 0.15.1 · Not clinically validated",
@@ -201,6 +205,10 @@ const COPY = {
     navResult: "ผลของฉัน",
     navClinics: "สถานพยาบาล",
     navDraft: "ร่างของฉัน",
+    navLockedAssess: "กรอกข้อมูลบัตร ให้ความยินยอม และเลือกตำแหน่งก่อนเปิดแบบประเมิน",
+    navLockedResult: "ทำแบบประเมินให้เสร็จก่อนเปิดผลของคุณ",
+    navLockedClinics: "เปิดรายชื่อสถานพยาบาลได้หลังผลสีแดงที่แนะนำให้บุคลากรทางการแพทย์ทบทวนเท่านั้น",
+    navLockedDraft: "สร้างร่างคำขอนัดหมายก่อนเปิดหน้านี้",
     publicDemo: "ตัวอย่างเครื่อง · โหมดสาธิต",
     strip: "โหมดสาธิตเท่านั้น — ไม่เชื่อมต่อข้อมูลตัวตน เซนเซอร์ โรงพยาบาล หรือสิทธิประโยชน์จริง",
     footer: "ใช้เครื่องมือประเมินเวอร์ชัน 0.15.1 · ยังไม่ผ่านการรับรองทางคลินิก",
@@ -539,6 +547,31 @@ function allowedRoute(requested) {
   return requested;
 }
 
+function navAvailability(route) {
+  if (route === "welcome" || route === "identity") return { available: true };
+  if (route === "assessment") {
+    return {
+      available: Object.values(state.consent || {}).every(Boolean) && !!state.answers.PROVINCE,
+      messageKey: "navLockedAssess"
+    };
+  }
+  if (route === "result") {
+    return { available: !!state.result, messageKey: "navLockedResult" };
+  }
+  if (route === "facilities") {
+    return {
+      available: !!state.result &&
+        state.result.symptom_pathway !== "urgent" &&
+        M.machineBandKey(state.result) === "red",
+      messageKey: "navLockedClinics"
+    };
+  }
+  if (route === "draft") {
+    return { available: !!state.appointmentDraft, messageKey: "navLockedDraft" };
+  }
+  return { available: false, messageKey: "navLockedAssess" };
+}
+
 function syncShell() {
   document.documentElement.lang = state.lang;
   document.body.classList.toggle("big", !!state.largeText);
@@ -568,9 +601,20 @@ function syncShell() {
     : state.route;
   document.querySelectorAll("nav.bottom [data-nav]").forEach(link => {
     const active = link.dataset.nav === navRoute;
+    const availability = navAvailability(link.dataset.nav);
     link.classList.toggle("active", active);
     if (active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
+    if (availability.available) {
+      link.removeAttribute("aria-disabled");
+      link.removeAttribute("title");
+      delete link.dataset.blockedMessage;
+    } else {
+      const message = c(availability.messageKey);
+      link.setAttribute("aria-disabled", "true");
+      link.setAttribute("title", message);
+      link.dataset.blockedMessage = availability.messageKey;
+    }
   });
   document.title = state.lang === "en"
     ? "LungLens Machine Preview"
@@ -618,11 +662,11 @@ function featureCard(icon, title, body) {
 function renderIdentity() {
   const profiles = M.MOCK_IDENTITIES.map(profile => `
     <article class="card">
-      <p class="eyebrow">${esc(c("fictional"))}</p>
+      <span class="section-tag">${esc(c("fictional"))}</span>
       <h3>${esc(profile.displayName[state.lang])}</h3>
       <p>${esc(tr(profile.age, state.lang))} · ${esc(tr(profile.sex, state.lang))}</p>
       <p class="small">${esc(tr(profile.registeredProvince, state.lang))}<br>${esc(c("cardHasNoNumber"))}</p>
-      <button class="button secondary wide" type="button" data-action="select-demo-profile" data-profile="${attr(profile.id)}">${esc(c("useProfile"))}</button>
+      <button class="btn btn-secondary mt" type="button" data-action="select-demo-profile" data-profile="${attr(profile.id)}">${esc(c("useProfile"))}</button>
     </article>`).join("");
   return routeShell(`
     <section class="card">
@@ -990,9 +1034,9 @@ function renderAppointment() {
   if (!facility) return `<p>${esc(c("chooseFacilityFirst"))}</p>`;
   const draft = state.pendingAppointment || state.appointmentDraft || {};
   return routeShell(`
-    <p class="eyebrow">${esc(c("appointmentEyebrow"))}</p>
-    <h1>${esc(c("appointmentTitle"))}</h1>
-    <p class="lede">${esc(c("appointmentLead"))}</p>
+    <span class="section-tag">${esc(c("appointmentEyebrow"))}</span>
+    <h1 class="q-title">${esc(c("appointmentTitle"))}</h1>
+    <p class="muted">${esc(c("appointmentLead"))}</p>
     <div class="draft-warning">${esc(c("draftTitle"))}<br>${esc(c("draftTitleTh"))}</div>
     <form id="appointment-form" class="card" style="margin-top:22px" novalidate>
       <div class="notice warning">
@@ -1002,7 +1046,7 @@ function renderAppointment() {
       <div class="field-grid">
         <div class="field">
           <label for="draft-name">${esc(c("optionalName"))}</label>
-          <input id="draft-name" name="name" autocomplete="off" maxlength="120" value="${attr(draft.name || state.identity?.name || "")}">
+          <input id="draft-name" name="name" autocomplete="off" maxlength="120" value="${attr(draft.name || "")}">
         </div>
         <div class="field">
           <label for="draft-contact">${esc(c("optionalContact"))}</label>
@@ -1041,8 +1085,8 @@ function renderAppointment() {
       </label>
       <p id="draft-error" class="field-error" role="alert" hidden>${esc(c("draftError"))}</p>
       <div class="button-row">
-        <button class="button quiet" type="button" data-route="facilities">${esc(c("back"))}</button>
-        <button class="button primary" type="submit">${esc(c("saveDraft"))}</button>
+        <button class="btn btn-ghost" type="button" data-route="facilities">${esc(c("back"))}</button>
+        <button class="btn btn-primary" type="submit">${esc(c("saveDraft"))}</button>
       </div>
     </form>
   `);
@@ -1070,12 +1114,12 @@ function renderDraft() {
   ];
   return routeShell(`
     <section class="print-page-warning">
-      <p class="eyebrow">${esc(c("draftEyebrow"))}</p>
+      <span class="section-tag">${esc(c("draftEyebrow"))}</span>
       <div class="draft-warning">
         ${esc(c("draftTitle"))}<br>
         ${esc(c("draftTitleTh"))}
       </div>
-      <h1 style="margin-top:24px">${esc(c("draftTitle"))}</h1>
+      <h1 class="q-title mt">${esc(c("draftTitle"))}</h1>
       <dl class="review-list">
         ${rows.map(([label, value]) => `<div class="review-row"><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}
       </dl>
@@ -1085,10 +1129,10 @@ function renderDraft() {
       </div>
       <p class="small">${esc(c("noNetwork"))} ${esc(c("printWarning"))}</p>
       <div class="button-row no-print">
-        <button class="button primary" type="button" data-action="print">${esc(c("print"))}</button>
-        <button class="button secondary" type="button" data-route="appointment">${esc(c("editDraft"))}</button>
-        <button class="button quiet" type="button" data-action="delete-draft">${esc(c("deleteDraft"))}</button>
-        <button class="button danger" type="button" data-action="finish">${esc(c("finishErase"))}</button>
+        <button class="btn btn-primary" type="button" data-action="print">${esc(c("print"))}</button>
+        <button class="btn btn-secondary" type="button" data-route="appointment">${esc(c("editDraft"))}</button>
+        <button class="btn btn-ghost" type="button" data-action="delete-draft">${esc(c("deleteDraft"))}</button>
+        <button class="btn btn-urgent" type="button" data-action="finish">${esc(c("finishErase"))}</button>
       </div>
     </section>
   `);
@@ -1209,8 +1253,13 @@ function captureVisibleFormDraft() {
 }
 
 document.addEventListener("click", event => {
-  const button = event.target.closest("button, [data-route]");
+  const button = event.target.closest("button, [data-route], [data-nav]");
   if (!button) return;
+  if (button.matches("nav.bottom [data-nav]") && button.getAttribute("aria-disabled") === "true") {
+    event.preventDefault();
+    showToast(c(button.dataset.blockedMessage || "navLockedAssess"));
+    return;
+  }
   const route = button.dataset.route;
   if (route) {
     event.preventDefault();

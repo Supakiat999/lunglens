@@ -6,7 +6,7 @@
   "use strict";
 
   const MACHINE_STORE_KEY = "lunglens-machine-v1";
-  const MACHINE_PREVIEW_VERSION = "machine_preview_0.1.1";
+  const MACHINE_PREVIEW_VERSION = "machine_preview_0.1.2";
   const SESSION_TIMEOUT_MS = 120000;
   const SESSION_WARNING_MS = 30000;
 
