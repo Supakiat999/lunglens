@@ -17,10 +17,17 @@ focused initially on Asian women who have never smoked but may have other risk f
 |---|---|
 | 🟢 **Open in LINE** | https://liff.line.me/2010756823-yiuPlaT0 |
 | 🟢 **Open in browser** | https://supakiat999.github.io/lunglens/ |
+| 🟡 **Machine preview** | https://supakiat999.github.io/lunglens/machinever/ |
 | 🟢 **LINE Official Account** | **LungLens** · Basic ID `@794hkqhs` |
 
 The browser link is public and does **not** require a LINE account or LINE login.
 LINE sign-in is optional and is used only for LINE-specific profile and sharing features.
+
+The separate machine preview is an English-first, bilingual public demonstration built
+on the unchanged `prototype_0.15.1` engine. It uses fictional card profiles, simulated
+environmental readings, automatic shared-device deletion, and local-only unconfirmed
+appointment drafts. It is not connected to an ID reader, hospital, government benefit,
+or live sensor.
 
 | Phase | State |
 |---|---|

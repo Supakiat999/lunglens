@@ -1,6 +1,6 @@
 # TASKS.md — LungLens / รู้ทันปอด roadmap
 
-Last reviewed: **2026-07-29**
+Last reviewed: **2026-07-30**
 
 Status legend:
 
@@ -89,6 +89,41 @@ Status legend:
   model version, clinical-validation status, and unchanged result bands
 - ✅ English-coverage test for public canonical data and interface copy
 - ✅ Source and documentation pushed to GitHub `main`
+
+## Machine preview — `/machinever/`
+
+- ✅ Keep the regular `/lunglens/` application, `prototype_0.15.1` engine, and
+  `lunglens-v1` data unchanged.
+- ✅ Add an isolated English-first bilingual shared-machine journey under
+  `/lunglens/machinever/` with the separate `lunglens-machine-v1` storage key.
+- ✅ Add fictional card profiles and a no-card fallback that collects only the
+  minimum assessment details; never request or store a real 13-digit ID number.
+- ✅ Add three environmental-location choices and timestamped simulated PM2.5,
+  PM10, temperature, and humidity readings that cannot affect factor banding or
+  LDCT context.
+- ✅ Reuse the existing canonical Thai answers and risk engine while presenting
+  green, yellow, and red machine result labels without points, probability, or
+  diagnosis language.
+- ✅ Keep urgent symptoms outside factor scoring, show a separate 1669 emergency
+  pathway, and suppress the routine appointment-draft action for urgent symptoms.
+- ✅ Add an explicitly unverified facility directory and local-only bilingual
+  appointment-request draft for red professional-review results.
+- ✅ Label the proposed 40% pilot support as inactive, unverified, and not
+  guaranteed; never calculate a discount or determine eligibility.
+- ✅ Add browser Print/Save as PDF, a warning that the draft is unconfirmed, and
+  automatic shared-machine deletion after two minutes without activity.
+- ✅ Add machine-preview regression, privacy, copy, responsive, print, and
+  repository-safety contracts.
+- 🧱 Replace fictional card profiles with a secured local card-reader bridge only
+  after explicit institutional authorisation and privacy/security review.
+- 🧱 Replace simulated readings only after sensors are calibrated and a signed
+  device-data contract defines units, timestamps, failure states, and maintenance.
+- 🧱 Add real appointment delivery only after participating facilities, a protected
+  backend, authentication, audit logging, consent governance, and failure handling exist.
+- 🩺 Obtain clinician approval for the machine wording, urgent pathway, assessment
+  rules, and screening context before any healthcare deployment.
+- 🩺 Obtain written government/funder confirmation before activating or advertising
+  any percentage subsidy or benefit.
 
 ## Recommended order of work
 

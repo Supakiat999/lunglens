@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b5563">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="A bilingual demonstration of a shared-machine LungLens journey. No real identity, hospital booking, or government benefit is connected.">
+  <title>LungLens Machine Preview</title>
+  <link rel="stylesheet" href="styles.css?v=0.1.0">
+</head>
+<body>
+  <a class="skip-link" href="#machine-main">Skip to main content</a>
+
+  <header class="machine-header">
+    <a class="brand" href="#welcome" aria-label="LungLens Machine Preview home">
+      <span class="brand-mark" aria-hidden="true">LL</span>
+      <span>
+        <strong>LungLens</strong>
+        <small id="brand-subtitle">Machine Preview</small>
+      </span>
+    </a>
+    <div class="header-actions">
+      <button id="text-toggle" class="header-button" type="button" aria-pressed="false">A+</button>
+      <button id="language-toggle" class="header-button language-button" type="button" aria-label="เปลี่ยนเป็นภาษาไทย">ไทย</button>
+    </div>
+  </header>
+
+  <div id="prototype-strip" class="prototype-strip" role="status">
+    <strong>Public demonstration</strong>
+    <span>No real ID card, live sensor, hospital booking, or government benefit is connected.</span>
+  </div>
+
+  <main id="machine-main" tabindex="-1"></main>
+
+  <footer class="machine-footer">
+    <span>LungLens Machine Preview</span>
+    <span>Based on engine 0.15.1 · Not clinically validated</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div id="timeout-modal" class="modal-backdrop" hidden>
+    <section class="timeout-dialog" role="alertdialog" aria-modal="true" aria-labelledby="timeout-title" aria-describedby="timeout-description">
+      <div class="timer-ring" aria-hidden="true"><span id="timeout-seconds">30</span></div>
+      <h2 id="timeout-title">Still using this machine?</h2>
+      <p id="timeout-description">For privacy, this session will be erased from this shared machine unless you continue.</p>
+      <button id="continue-session" class="button primary wide" type="button">Continue session</button>
+      <button id="end-session-now" class="button quiet wide" type="button">Erase now</button>
+    </section>
+  </div>
+
+  <script defer src="../js/data.js?v=0.15.1"></script>
+  <script defer src="../js/engine.js?v=0.15.1"></script>
+  <script defer src="../js/validation.js?v=0.15.1"></script>
+  <script defer src="../js/i18n.js?v=0.15.1"></script>
+  <script defer src="model.js?v=0.1.0"></script>
+  <script defer src="app.js?v=0.1.0"></script>
+</body>
+</html>
