@@ -16,21 +16,26 @@ const ROUTES = new Set([
 const COPY = {
   en: {
     machinePreview: "Machine Preview",
-    brandSubtitle: "LungLens — Machine preliminary assessment",
-    demoBadge: "MACHINE PREVIEW · DEMO DATA",
+    brandSubtitle: "Machine preview — preliminary factor awareness",
+    demoBadge: "MACHINE PREVIEW · DEMO",
     navHome: "Home",
     navIdentity: "ID",
     navAssess: "Assess",
     navResult: "My result",
     navClinics: "Clinics",
     navDraft: "My draft",
-    publicDemo: "Public demonstration",
-    strip: "No real ID card, live sensor, hospital booking, or government benefit is connected.",
+    publicDemo: "Machine preview · demonstration only",
+    strip: "Demo only — no real identity, live sensor, hospital appointment, or benefit connection.",
     footer: "Based on engine 0.15.1 · Not clinically validated",
     welcomeEyebrow: "Shared-machine preview",
     welcomeTitle: "Not smoking does not mean no risk",
     welcomeLead: "Lung cancer does not affect only people who smoke. Family history, existing lung conditions, work exposures, smoke and other factors may all deserve attention. This machine preview does not diagnose disease.",
     begin: "Take the machine assessment",
+    howTitle: "How this machine journey works",
+    howIdentity: "Choose a fictional demo card or continue without a card.",
+    howQuestions: "Answer the same clear LungLens health-factor questions.",
+    howResult: "See an explained result and appropriate next steps.",
+    machineDisclosure: "This separate machine preview uses the LungLens 0.15.1 assessment engine, but all identity, sensor, facility, appointment and benefit functions are demonstrations. It does not diagnose disease.",
     simulatedIdentity: "Simulated identity",
     simulatedIdentityBody: "Try a fictional card profile. No real Thai national ID number is requested or stored.",
     sensorContext: "Environmental context",
@@ -69,6 +74,8 @@ const COPY = {
     locationEyebrow: "Step 3 of 4 · Environment",
     locationTitle: "Which location should provide environmental context?",
     locationLead: "Location and today’s simulated sensor reading never change your factor color or screening context.",
+    environmentDetails: "Selected location details",
+    chooseLocationPrompt: "Choose one location option above to continue.",
     machineArea: "Near this machine",
     machineAreaBody: "Use the demonstration machine’s fixed Bangkok location and simulated sensor snapshot.",
     registeredAddress: "Registered address from demo card",
@@ -91,6 +98,8 @@ const COPY = {
     assessmentEyebrow: "Step 4 of 4 · Assessment",
     question: "Question",
     of: "of",
+    finalQuestion: "Final question",
+    remainingQuestions: "questions remaining",
     whyAsk: "Why this is asked",
     previous: "Previous",
     next: "Next question",
@@ -184,21 +193,26 @@ const COPY = {
   },
   th: {
     machinePreview: "เวอร์ชันเครื่องสาธิต",
-    brandSubtitle: "LungLens — แบบประเมินเบื้องต้นสำหรับเครื่องสาธิต",
-    demoBadge: "MACHINE PREVIEW · ข้อมูลจำลอง",
+    brandSubtitle: "ตัวอย่างเครื่อง — การรับรู้ปัจจัยเบื้องต้น",
+    demoBadge: "ตัวอย่างเครื่อง · สาธิต",
     navHome: "หน้าแรก",
     navIdentity: "บัตร",
     navAssess: "ประเมิน",
     navResult: "ผลของฉัน",
     navClinics: "สถานพยาบาล",
     navDraft: "ร่างของฉัน",
-    publicDemo: "การสาธิตสาธารณะ",
-    strip: "ยังไม่เชื่อมบัตรประชาชน เซนเซอร์จริง ระบบนัดโรงพยาบาล หรือสิทธิภาครัฐ",
+    publicDemo: "ตัวอย่างเครื่อง · โหมดสาธิต",
+    strip: "โหมดสาธิตเท่านั้น — ไม่เชื่อมต่อข้อมูลตัวตน เซนเซอร์ โรงพยาบาล หรือสิทธิประโยชน์จริง",
     footer: "ใช้เครื่องมือประเมินเวอร์ชัน 0.15.1 · ยังไม่ผ่านการรับรองทางคลินิก",
     welcomeEyebrow: "ต้นแบบสำหรับเครื่องที่ใช้ร่วมกัน",
     welcomeTitle: "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง",
     welcomeLead: "มะเร็งปอดไม่ได้เกิดเฉพาะกับผู้สูบบุหรี่ ประวัติครอบครัว โรคปอดเดิม การสัมผัสจากงาน ควัน และปัจจัยอื่นอาจควรได้รับความสำคัญ เครื่องสาธิตนี้ไม่วินิจฉัยโรค",
     begin: "ทำแบบประเมินบนเครื่อง",
+    howTitle: "ขั้นตอนการใช้งานบนเครื่อง",
+    howIdentity: "เลือกบัตรบุคคลสมมติ หรือทำต่อโดยไม่ใช้บัตร",
+    howQuestions: "ตอบคำถามปัจจัยสุขภาพแบบเดียวกับ LungLens",
+    howResult: "ดูผลที่อธิบายได้และขั้นตอนถัดไปที่เหมาะสม",
+    machineDisclosure: "ตัวอย่างเครื่องนี้แยกจากเว็บไซต์หลักและใช้กลไกแบบประเมิน LungLens 0.15.1 แต่ข้อมูลตัวตน เซนเซอร์ สถานพยาบาล คำขอนัด และสิทธิประโยชน์ทั้งหมดเป็นข้อมูลสาธิต ไม่ใช่การวินิจฉัยโรค",
     simulatedIdentity: "ข้อมูลตัวตนจำลอง",
     simulatedIdentityBody: "ทดลองใช้บุคคลสมมติ โดยไม่ขอหรือบันทึกเลขบัตรประชาชนจริง",
     sensorContext: "บริบทสิ่งแวดล้อม",
@@ -237,6 +251,8 @@ const COPY = {
     locationEyebrow: "ขั้นตอน 3 จาก 4 · สิ่งแวดล้อม",
     locationTitle: "ต้องการใช้ตำแหน่งใดเป็นบริบทสิ่งแวดล้อม",
     locationLead: "ตำแหน่งและค่าเซนเซอร์จำลองวันนี้ไม่เปลี่ยนสีผลปัจจัยหรือบริบทการคัดกรอง",
+    environmentDetails: "รายละเอียดตำแหน่งที่เลือก",
+    chooseLocationPrompt: "เลือกตำแหน่งหนึ่งตัวเลือกด้านบนเพื่อทำต่อ",
     machineArea: "ใกล้บริเวณเครื่องนี้",
     machineAreaBody: "ใช้ตำแหน่งเครื่องสาธิตในกรุงเทพฯ และค่าจำลองจากเซนเซอร์",
     registeredAddress: "ที่อยู่ตามบัตรจำลอง",
@@ -259,6 +275,8 @@ const COPY = {
     assessmentEyebrow: "ขั้นตอน 4 จาก 4 · แบบประเมิน",
     question: "ข้อ",
     of: "จาก",
+    finalQuestion: "คำถามสุดท้าย",
+    remainingQuestions: "คำถามที่เหลือ",
     whyAsk: "เหตุผลที่ถาม",
     previous: "ข้อก่อนหน้า",
     next: "ข้อถัดไป",
@@ -382,6 +400,7 @@ function freshState() {
     identity: null,
     consent: { process: false, notDiagnosis: false, demo: false },
     locationMode: null,
+    locationProvinceDraft: "",
     locationDistrict: "",
     locationConfirmed: false,
     sensorSnapshot: null,
@@ -389,8 +408,23 @@ function freshState() {
     stepIndex: 0,
     result: null,
     selectedFacilityId: null,
+    pendingAppointment: null,
     appointmentDraft: null,
     lastActivityAt: Date.now()
+  };
+}
+
+function sanitizePendingAppointment(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  return {
+    name: String(value.name || "").slice(0, 120),
+    contact: String(value.contact || "").slice(0, 160),
+    preferredDay: String(value.preferredDay || "").slice(0, 40),
+    preferredTime: String(value.preferredTime || "").slice(0, 40),
+    contactMethod: String(value.contactMethod || "").slice(0, 40),
+    accessibilityNote: String(value.accessibilityNote || "").slice(0, 500),
+    includeFactors: value.includeFactors === true,
+    draftConsent: value.draftConsent === true
   };
 }
 
@@ -416,7 +450,12 @@ function safeLoad() {
       ...freshState(),
       ...parsed,
       consent: { ...freshState().consent, ...(parsed.consent || {}) },
-      answers: parsed.answers || {}
+      answers: parsed.answers || {},
+      locationProvinceDraft: typeof parsed.locationProvinceDraft === "string"
+        ? parsed.locationProvinceDraft.slice(0, 120) : "",
+      locationDistrict: typeof parsed.locationDistrict === "string"
+        ? parsed.locationDistrict.slice(0, 100) : "",
+      pendingAppointment: sanitizePendingAppointment(parsed.pendingAppointment)
     };
   } catch (error) {
     try { localStorage.removeItem(M.MACHINE_STORE_KEY); } catch (ignored) {}
@@ -512,7 +551,7 @@ function syncShell() {
   document.getElementById("brand-subtitle").textContent = c("brandSubtitle");
   document.getElementById("machine-demo-badge").textContent = c("demoBadge");
   const strip = document.getElementById("prototype-strip");
-  strip.innerHTML = `<strong>${esc(c("publicDemo"))}</strong><span>${esc(c("strip"))}</span>`;
+  strip.innerHTML = `<div><strong>${esc(c("publicDemo"))}</strong><span>${esc(c("strip"))}</span></div>`;
   const navLabels = {
     home: c("navHome"),
     identity: c("navIdentity"),
@@ -545,26 +584,34 @@ function routeShell(content) {
 function renderWelcome() {
   return routeShell(`
     <section class="hero">
-      <p class="eyebrow">${esc(c("welcomeEyebrow"))}</p>
       <h1>${esc(c("welcomeTitle"))}</h1>
       <p class="lede">${esc(c("welcomeLead"))}</p>
       <div class="hero-actions">
-        <button class="button primary" type="button" data-action="start">${esc(c("begin"))}</button>
+        <button class="btn btn-primary" type="button" data-action="start">${esc(c("begin"))}</button>
       </div>
     </section>
-    <section class="feature-grid" aria-label="${attr(c("publicDemo"))}">
+    <section class="benefits machine-benefits" aria-label="${attr(c("publicDemo"))}">
       ${featureCard("ID", c("simulatedIdentity"), c("simulatedIdentityBody"))}
       ${featureCard("PM", c("sensorContext"), c("sensorContextBody"))}
-      ${featureCard("02", c("secureReset"), c("secureResetBody"))}
+      ${featureCard("02:00", c("secureReset"), c("secureResetBody"))}
     </section>
+    <section class="card machine-journey mt">
+      <h2>${esc(c("howTitle"))}</h2>
+      <ol>
+        <li><span>1</span><p>${esc(c("howIdentity"))}</p></li>
+        <li><span>2</span><p>${esc(c("howQuestions"))}</p></li>
+        <li><span>3</span><p>${esc(c("howResult"))}</p></li>
+      </ol>
+    </section>
+    <div class="disclaimer machine-disclaimer">${esc(c("machineDisclosure"))}</div>
   `);
 }
 
 function featureCard(icon, title, body) {
-  return `<article class="card feature-card">
-    <span class="icon" aria-hidden="true">${esc(icon)}</span>
-    <h2>${esc(title)}</h2>
-    <p class="small">${esc(body)}</p>
+  return `<article class="benefit feature-card">
+    <span class="em machine-feature-icon" aria-hidden="true">${esc(icon)}</span>
+    <b>${esc(title)}</b>
+    <p class="muted">${esc(body)}</p>
   </article>`;
 }
 
@@ -578,26 +625,26 @@ function renderIdentity() {
       <button class="button secondary wide" type="button" data-action="select-demo-profile" data-profile="${attr(profile.id)}">${esc(c("useProfile"))}</button>
     </article>`).join("");
   return routeShell(`
-    <p class="eyebrow">${esc(c("identityEyebrow"))}</p>
-    <h1>${esc(c("identityTitle"))}</h1>
-    <p class="lede">${esc(c("identityLead"))}</p>
-    <section class="choice-grid">
-      <button class="card choice-card" type="button" data-action="show-demo-profiles">
-        <span class="icon" aria-hidden="true">ID</span>
-        <h2>${esc(c("useDemoCard"))}</h2>
-        <p class="small">${esc(c("useDemoCardBody"))}</p>
+    <section class="card">
+      <span class="section-tag">${esc(c("identityEyebrow"))}</span>
+      <h1 class="q-title">${esc(c("identityTitle"))}</h1>
+      <p class="muted">${esc(c("identityLead"))}</p>
+      <div class="opts machine-choice-list">
+      <button class="opt machine-choice" type="button" data-action="show-demo-profiles">
+        <span class="machine-choice-icon" aria-hidden="true">ID</span>
+        <span><b>${esc(c("useDemoCard"))}</b><small>${esc(c("useDemoCardBody"))}</small></span>
       </button>
-      <button class="card choice-card" type="button" data-action="manual-identity">
-        <span class="icon" aria-hidden="true">—</span>
-        <h2>${esc(c("withoutCard"))}</h2>
-        <p class="small">${esc(c("withoutCardBody"))}</p>
+      <button class="opt machine-choice" type="button" data-action="manual-identity">
+        <span class="machine-choice-icon" aria-hidden="true">—</span>
+        <span><b>${esc(c("withoutCard"))}</b><small>${esc(c("withoutCardBody"))}</small></span>
       </button>
+      </div>
     </section>
     <section id="demo-profiles" ${state.showDemoProfiles ? "" : "hidden"}>
-      <h2 style="margin-top:32px">${esc(c("chooseDemo"))}</h2>
+      <h2>${esc(c("chooseDemo"))}</h2>
       <div class="identity-grid">${profiles}</div>
     </section>
-    <div class="button-row"><button class="button quiet" type="button" data-route="welcome">${esc(c("back"))}</button></div>
+    <div class="assess-nav"><button class="btn btn-ghost" type="button" data-route="welcome">${esc(c("back"))}</button></div>
   `);
 }
 
@@ -613,10 +660,10 @@ function optionsMarkup(options, selected, blankLabel = c("choose")) {
 
 function renderManualIdentity() {
   return routeShell(`
-    <p class="eyebrow">${esc(c("identityEyebrow"))}</p>
-    <h1>${esc(c("manualTitle"))}</h1>
-    <p class="lede">${esc(c("manualLead"))}</p>
-    <form id="manual-identity-form" class="card" style="margin-top:28px" novalidate>
+    <form id="manual-identity-form" class="card" novalidate>
+      <span class="section-tag">${esc(c("identityEyebrow"))}</span>
+      <h1 class="q-title">${esc(c("manualTitle"))}</h1>
+      <p class="muted">${esc(c("manualLead"))}</p>
       <div class="field-grid">
         <div class="field">
           <label for="manual-age">${esc(c("ageRange"))}</label>
@@ -628,9 +675,9 @@ function renderManualIdentity() {
         </div>
       </div>
       <p id="manual-error" class="field-error" role="alert" hidden>${esc(c("required"))}</p>
-      <div class="button-row">
-        <button class="button quiet" type="button" data-route="identity">${esc(c("back"))}</button>
-        <button class="button primary" type="submit">${esc(c("continue"))}</button>
+      <div class="assess-nav">
+        <button class="btn btn-ghost" type="button" data-route="identity">${esc(c("back"))}</button>
+        <button class="btn btn-primary" type="submit">${esc(c("continue"))}</button>
       </div>
     </form>
   `);
@@ -639,30 +686,30 @@ function renderManualIdentity() {
 function renderConsent() {
   const consent = state.consent;
   return routeShell(`
-    <p class="eyebrow">${esc(c("consentEyebrow"))}</p>
-    <h1>${esc(c("consentTitle"))}</h1>
-    <p class="lede">${esc(c("consentLead"))}</p>
-    <div class="notice warning">
-      <strong>${esc(c("privacyTitle"))}</strong>
-      ${esc(c("privacyBody"))}
-    </div>
-    <form id="consent-form" novalidate>
-      <div class="consent-list">
+    <form id="consent-form" class="card" novalidate>
+      <span class="section-tag">${esc(c("consentEyebrow"))}</span>
+      <h1 class="q-title">${esc(c("consentTitle"))}</h1>
+      <p class="muted">${esc(c("consentLead"))}</p>
+      <div class="q-note machine-privacy-note">
+        <strong>${esc(c("privacyTitle"))}</strong><br>
+        ${esc(c("privacyBody"))}
+      </div>
+      <div class="opts">
         ${consentCheckbox("process", c("consentProcess"), consent.process)}
         ${consentCheckbox("notDiagnosis", c("consentNotDiagnosis"), consent.notDiagnosis)}
         ${consentCheckbox("demo", c("consentDemo"), consent.demo)}
       </div>
       <p id="consent-error" class="field-error" role="alert" hidden>${esc(c("consentError"))}</p>
-      <div class="button-row">
-        <button class="button quiet" type="button" data-route="identity">${esc(c("back"))}</button>
-        <button class="button primary" type="submit">${esc(c("agreeContinue"))}</button>
+      <div class="assess-nav">
+        <button class="btn btn-ghost" type="button" data-route="identity">${esc(c("back"))}</button>
+        <button class="btn btn-primary" type="submit">${esc(c("agreeContinue"))}</button>
       </div>
     </form>
   `);
 }
 
 function consentCheckbox(key, label, checked) {
-  return `<label class="consent-item">
+  return `<label class="opt ${checked ? "sel" : ""}">
     <input type="checkbox" name="${attr(key)}" ${checked ? "checked" : ""}>
     <span>${esc(label)}</span>
   </label>`;
@@ -693,22 +740,25 @@ function renderLocation() {
   const hasRegistered = state.identityMode === "demo_card" && state.identity?.registeredProvince;
   const selected = state.locationMode;
   const provinceOptions = PROVINCE_META.map(p =>
-    `<option value="${attr(p.th)}" ${state.answers.PROVINCE === p.th && selected === "other" ? "selected" : ""}>${esc(state.lang === "en" ? p.en : p.th)}</option>`
+    `<option value="${attr(p.th)}" ${state.locationProvinceDraft === p.th && selected === "other" ? "selected" : ""}>${esc(state.lang === "en" ? p.en : p.th)}</option>`
   ).join("");
   return routeShell(`
-    <p class="eyebrow">${esc(c("locationEyebrow"))}</p>
-    <h1>${esc(c("locationTitle"))}</h1>
-    <p class="lede">${esc(c("locationLead"))}</p>
     <form id="location-form" novalidate>
-      <div class="choice-grid">
-        ${locationChoice("machine", c("machineArea"), c("machineAreaBody"), "PM", selected)}
-        ${hasRegistered ? locationChoice("registered", c("registeredAddress"), `${c("registeredAddressBody")} (${tr(state.identity.registeredProvince, state.lang)})`, "ID", selected) : ""}
-        ${locationChoice("other", c("otherPlace"), c("otherPlaceBody"), "…", selected)}
-      </div>
-      <div id="location-detail" class="card" style="margin-top:18px">
+      <section class="card">
+        <span class="section-tag">${esc(c("locationEyebrow"))}</span>
+        <h1 class="q-title">${esc(c("locationTitle"))}</h1>
+        <p class="q-note">${esc(c("locationLead"))}</p>
+        <div class="opts">
+          ${locationChoice("machine", c("machineArea"), c("machineAreaBody"), "PM", selected)}
+          ${hasRegistered ? locationChoice("registered", c("registeredAddress"), `${c("registeredAddressBody")} (${tr(state.identity.registeredProvince, state.lang)})`, "ID", selected) : ""}
+          ${locationChoice("other", c("otherPlace"), c("otherPlaceBody"), "…", selected)}
+        </div>
+      </section>
+      <div id="location-detail" class="card">
+        <h2>${esc(c("environmentDetails"))}</h2>
         ${selected === "machine" ? renderSensorPanel() : ""}
         ${selected === "registered" ? `
-          <label class="consent-item">
+          <label class="opt">
             <input id="confirm-registered" type="checkbox" ${state.locationConfirmed ? "checked" : ""}>
             <span>${esc(c("confirmAddress"))}</span>
           </label>` : ""}
@@ -723,23 +773,22 @@ function renderLocation() {
               <input id="other-district" maxlength="100" placeholder="${attr(c("districtPlaceholder"))}" value="${attr(state.locationDistrict || "")}">
             </div>
           </div>` : ""}
-        ${!selected ? `<p class="small">${esc(c("locationLead"))}</p>` : ""}
+        ${!selected ? `<p class="muted">${esc(c("chooseLocationPrompt"))}</p>` : ""}
       </div>
       <p id="location-error" class="field-error" role="alert" hidden>${esc(c("locationError"))}</p>
-      <div class="button-row">
-        <button class="button quiet" type="button" data-route="consent">${esc(c("back"))}</button>
-        <button class="button primary" type="submit">${esc(c("useLocation"))}</button>
+      <div class="assess-nav">
+        <button class="btn btn-ghost" type="button" data-route="consent">${esc(c("back"))}</button>
+        <button class="btn btn-primary" type="submit">${esc(c("useLocation"))}</button>
       </div>
     </form>
   `);
 }
 
 function locationChoice(value, title, body, icon, selected) {
-  return `<label class="card choice-card ${selected === value ? "selected" : ""}">
+  return `<label class="opt machine-choice ${selected === value ? "sel" : ""}">
     <input class="visually-hidden" type="radio" name="location-mode" value="${attr(value)}" ${selected === value ? "checked" : ""}>
-    <span class="icon" aria-hidden="true">${esc(icon)}</span>
-    <h2>${esc(title)}</h2>
-    <p class="small">${esc(body)}</p>
+    <span class="machine-choice-icon" aria-hidden="true">${esc(icon)}</span>
+    <span><b>${esc(title)}</b><small>${esc(body)}</small></span>
   </label>`;
 }
 
@@ -754,26 +803,26 @@ function renderAssessment() {
   if (!step) return `<p>${esc(c("answerError"))}</p>`;
   const progress = Math.round(((state.stepIndex + 1) / steps.length) * 100);
   return routeShell(`
-    <div class="step-header">
-      <div>
-        <p class="eyebrow">${esc(c("assessmentEyebrow"))}</p>
-        <span class="progress-label">${esc(c("question"))} ${state.stepIndex + 1} ${esc(c("of"))} ${steps.length}</span>
+    <div class="progress-wrap">
+      <div class="progress-txt">
+        <span>${esc(c("question"))} ${state.stepIndex + 1} ${esc(c("of"))} ${steps.length}</span>
+        <span>${esc(tr(step.section, state.lang))}</span>
       </div>
-      <strong>${progress}%</strong>
-      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}" aria-label="${attr(c("assessmentEyebrow"))}">
-        <div class="progress-fill" style="width:${progress}%"></div>
+      <div class="progress-remaining">${state.stepIndex === steps.length - 1 ? esc(c("finalQuestion")) : `${steps.length - state.stepIndex - 1} ${esc(c("remainingQuestions"))}`}</div>
+      <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}" aria-label="${attr(c("assessmentEyebrow"))}">
+        <div style="width:${progress}%"></div>
       </div>
     </div>
-    <form id="assessment-form" class="question-card" data-step-id="${attr(step.id)}" novalidate>
-      <p class="eyebrow">${esc(tr(step.section, state.lang))}</p>
-      <h1>${esc(tr(step.title, state.lang))}</h1>
-      ${step.why ? `<p class="question-note"><strong>${esc(c("whyAsk"))}:</strong> ${esc(tr(step.why, state.lang))}</p>` : ""}
-      ${step.note ? `<p class="notice">${esc(tr(step.note, state.lang))}</p>` : ""}
+    <form id="assessment-form" class="card" data-step-id="${attr(step.id)}" novalidate>
+      <span class="section-tag">${esc(tr(step.section, state.lang))}</span>
+      <h1 class="q-title">${esc(tr(step.title, state.lang))}</h1>
+      ${step.why ? `<p class="q-note"><strong>${esc(c("whyAsk"))}:</strong> ${esc(tr(step.why, state.lang))}</p>` : ""}
+      ${step.note ? `<p class="q-note">${esc(tr(step.note, state.lang))}</p>` : ""}
       ${renderQuestionControl(step)}
       <p id="assessment-error" class="field-error" role="alert" hidden>${esc(c("answerError"))}</p>
-      <div class="button-row">
-        <button class="button quiet" type="button" data-action="previous-question">${esc(c("previous"))}</button>
-        <button class="button primary" type="submit">${esc(state.stepIndex === steps.length - 1 ? c("seeResult") : c("next"))}</button>
+      <div class="assess-nav">
+        <button class="btn btn-ghost" type="button" data-action="previous-question">${esc(c("previous"))}</button>
+        <button class="btn btn-primary" type="submit">${esc(state.stepIndex === steps.length - 1 ? c("seeResult") : c("next"))}</button>
       </div>
     </form>
   `);
@@ -782,11 +831,11 @@ function renderAssessment() {
 function renderQuestionControl(step) {
   const value = state.answers[step.id];
   if (step.type === "choice") {
-    return `<div class="options">${step.options.map(option => optionControl(step, option, value === option, "radio")).join("")}</div>`;
+    return `<div class="opts">${step.options.map(option => optionControl(step, option, value === option, "radio")).join("")}</div>`;
   }
   if (step.type === "multi" || step.type === "symptoms") {
     const selected = Array.isArray(value) ? value : [];
-    return `<div class="options">${step.options.map(option => optionControl(step, option, selected.includes(option), "checkbox")).join("")}</div>`;
+    return `<div class="opts">${step.options.map(option => optionControl(step, option, selected.includes(option), "checkbox")).join("")}</div>`;
   }
   if (step.type === "numbers") {
     const current = value && typeof value === "object" ? value : {};
@@ -811,7 +860,7 @@ function renderQuestionControl(step) {
 }
 
 function optionControl(step, option, checked, type) {
-  return `<label class="option">
+  return `<label class="opt ${checked ? "sel" : ""}">
     <input type="${type}" name="${attr(step.id)}" value="${attr(option)}" ${checked ? "checked" : ""}>
     <span>${esc(tr(option, state.lang))}</span>
   </label>`;
@@ -822,8 +871,8 @@ function renderGroupField(step, field, current) {
     const selected = Array.isArray(current) ? current : [];
     return `<fieldset class="field" style="grid-column:1/-1">
       <legend>${esc(tr(field.label, state.lang))}</legend>
-      <div class="options">${field.options.map(option => `
-        <label class="option">
+      <div class="opts">${field.options.map(option => `
+        <label class="opt ${selected.includes(option) ? "sel" : ""}">
           <input type="checkbox" name="${attr(field.key)}" value="${attr(option)}" ${selected.includes(option) ? "checked" : ""}>
           <span>${esc(tr(option, state.lang))}</span>
         </label>`).join("")}</div>
@@ -842,61 +891,58 @@ function resultContent(result, band) {
     red: { label: c("redLabel"), title: c("redTitle"), body: c("redBody"), next: c("redNext") }
   };
   const copy = map[band];
+  const bandClass = band === "green" ? "band-green" : band === "yellow" ? "band-amber" : "band-urgent";
   const factors = result.factors?.length
-    ? `<ul class="factor-list">${result.factors.map(factor => `<li class="factor-item">
-        <strong>${esc(tr(factor.name, state.lang))}</strong>
-        <span>${esc(tr(factor.explain, state.lang))}</span>
-      </li>`).join("")}</ul>`
+    ? `<div class="factor-list">${result.factors.map(factor => `<div class="factor machine-factor">
+        <h4>${esc(tr(factor.name, state.lang))}</h4>
+        <p class="muted">${esc(tr(factor.explain, state.lang))}</p>
+      </div>`).join("")}</div>`
     : `<p>${esc(c("noFactors"))}</p>`;
   return `
-    <section class="result-card result-${band}">
-      <div class="result-head">
-        <span class="result-label">${esc(copy.label)}</span>
-        <h1>${esc(copy.title)}</h1>
-        <p class="lede">${esc(copy.body)}</p>
+    <section class="band ${bandClass} machine-result-band">
+      <span class="result-label">${esc(copy.label)}</span>
+      <h2>${esc(copy.title)}</h2>
+      <p>${esc(copy.body)}</p>
+    </section>
+    <section class="card">
+      <h2>${esc(c("factors"))}</h2>
+      ${factors}
+      <h2 class="mt">${esc(c("whatNext"))}</h2>
+      <p>${esc(copy.next)}</p>
+      <div class="q-note machine-screening-note">
+        <strong>${esc(c("screeningTitle"))}</strong><br>
+        ${esc(tr(result.screening_context?.label || "", state.lang))}
+        <p class="muted">${esc(tr(result.screening_context?.summary || "", state.lang))}</p>
       </div>
-      <div class="result-body">
-        <h2>${esc(c("factors"))}</h2>
-        ${factors}
-        <h2 style="margin-top:30px">${esc(c("whatNext"))}</h2>
-        <p>${esc(copy.next)}</p>
-        <div class="notice">
-          <strong>${esc(c("screeningTitle"))}</strong>
-          ${esc(tr(result.screening_context?.label || "", state.lang))}
-          <p class="small">${esc(tr(result.screening_context?.summary || "", state.lang))}</p>
-        </div>
-        <p class="small">${esc(c("notDiagnosis"))}</p>
-        <div class="button-row no-print">
-          ${band === "red" ? `<button class="button danger" type="button" data-route="facilities">${esc(c("browseFacilities"))}</button>` : ""}
-          <button class="button quiet" type="button" data-action="finish">${esc(c("restart"))}</button>
-        </div>
-      </div>
-    </section>`;
+      <p class="tiny">${esc(c("notDiagnosis"))}</p>
+    </section>
+    <div class="assess-nav no-print">
+      ${band === "red" ? `<button class="btn btn-primary" type="button" data-route="facilities">${esc(c("browseFacilities"))}</button>` : ""}
+      <button class="btn btn-ghost" type="button" data-action="finish">${esc(c("restart"))}</button>
+    </div>`;
 }
 
 function renderEmergency() {
   const result = state.result;
   const band = M.machineBandKey(result);
   return routeShell(`
-    <section class="emergency-screen">
-      <div class="emergency-inner">
-        <span class="emergency-badge">${esc(c("emergencyLabel"))}</span>
-        <h1>${esc(c("emergencyTitle"))}</h1>
-        <p class="lede">${esc(c("emergencyBody"))}</p>
-        <div class="notice danger">
-          <strong>${esc(c("emergencyCall"))}</strong>
-          ${esc(c("emergencyAction"))}
-        </div>
-        <p>${esc(c("emergencyNoDraft"))}</p>
-        <div class="button-row">
-          <a class="button emergency-call" href="tel:1669">${esc(c("call1669"))}</a>
-          <button class="button quiet" style="color:#fff;border-color:#fff" type="button" data-action="finish">${esc(c("restart"))}</button>
-        </div>
+    <section class="band band-urgent emergency-screen">
+      <span class="emergency-badge">${esc(c("emergencyLabel"))}</span>
+      <h2>${esc(c("emergencyTitle"))}</h2>
+      <p>${esc(c("emergencyBody"))}</p>
+      <div class="q-note machine-emergency-note">
+        <strong>${esc(c("emergencyCall"))}</strong><br>
+        ${esc(c("emergencyAction"))}
       </div>
+      <p>${esc(c("emergencyNoDraft"))}</p>
     </section>
-    <section class="card" style="margin-top:22px">
+    <div class="assess-nav">
+      <a class="btn btn-urgent" href="tel:1669">${esc(c("call1669"))}</a>
+      <button class="btn btn-ghost" type="button" data-action="finish">${esc(c("restart"))}</button>
+    </div>
+    <section class="card mt">
       <strong>${esc(c("factorsUnaffected"))}</strong>
-      <p class="small">${esc(c("notDiagnosis"))}</p>
+      <p class="muted">${esc(c("notDiagnosis"))}</p>
       <span class="result-label">${esc(band === "green" ? c("greenLabel") : band === "yellow" ? c("yellowLabel") : c("redLabel"))}</span>
     </section>
   `);
@@ -905,31 +951,33 @@ function renderEmergency() {
 function renderResult() {
   if (state.result?.symptom_pathway === "urgent") return renderEmergency();
   return routeShell(`
-    <p class="eyebrow">${esc(c("resultEyebrow"))}</p>
+    <span class="section-tag">${esc(c("resultEyebrow"))}</span>
     ${resultContent(state.result, M.machineBandKey(state.result))}
   `);
 }
 
 function renderFacilities() {
   const cards = FACILITIES.filter(facility => facility.public).map(facility => `
-    <article class="card facility-card">
-      <p class="eyebrow">${esc(tr(facility.type, state.lang))}</p>
-      <h2>${esc(tr(facility.name, state.lang))}</h2>
+    <article class="fac facility-card">
+      <span class="section-tag">${esc(tr(facility.type, state.lang))}</span>
+      <h4>${esc(tr(facility.name, state.lang))}</h4>
       <p class="facility-meta">${esc(tr(facility.province, state.lang))} · ${esc(tr(facility.district, state.lang))}</p>
       <p class="small">${esc(tr(facility.services.join(" · "), state.lang))}</p>
       <p class="micro">${esc(tr(facility.verified, state.lang))}</p>
-      <button class="button secondary wide" type="button" data-action="select-facility" data-facility="${attr(facility.id)}">${esc(c("selectFacility"))}</button>
+      <button class="btn btn-secondary mt" type="button" data-action="select-facility" data-facility="${attr(facility.id)}">${esc(c("selectFacility"))}</button>
     </article>`).join("");
   return routeShell(`
-    <p class="eyebrow">${esc(c("facilityEyebrow"))}</p>
-    <h1>${esc(c("facilityTitle"))}</h1>
-    <p class="lede">${esc(c("facilityLead"))}</p>
-    <div class="notice warning">
+    <section class="card">
+      <span class="section-tag">${esc(c("facilityEyebrow"))}</span>
+      <h1 class="q-title">${esc(c("facilityTitle"))}</h1>
+      <p class="muted">${esc(c("facilityLead"))}</p>
+    </section>
+    <div class="disclaimer">
       <strong>${esc(c("subsidyTitle"))}</strong>
       ${esc(c("subsidyBody"))}
     </div>
     <section class="facility-grid">${cards}</section>
-    <div class="button-row"><button class="button quiet" type="button" data-route="result">${esc(c("back"))}</button></div>
+    <div class="assess-nav"><button class="btn btn-ghost" type="button" data-route="result">${esc(c("back"))}</button></div>
   `);
 }
 
@@ -940,7 +988,7 @@ function selectedFacility() {
 function renderAppointment() {
   const facility = selectedFacility();
   if (!facility) return `<p>${esc(c("chooseFacilityFirst"))}</p>`;
-  const draft = state.appointmentDraft || {};
+  const draft = state.pendingAppointment || state.appointmentDraft || {};
   return routeShell(`
     <p class="eyebrow">${esc(c("appointmentEyebrow"))}</p>
     <h1>${esc(c("appointmentTitle"))}</h1>
@@ -988,7 +1036,7 @@ function renderAppointment() {
         <span><strong>${esc(c("includeFactors"))}</strong><br><span class="small">${esc(c("includeFactorsHelp"))}</span></span>
       </label>
       <label class="consent-item">
-        <input type="checkbox" name="draftConsent">
+        <input type="checkbox" name="draftConsent" ${draft.draftConsent ? "checked" : ""}>
         <span>${esc(c("draftConsent"))}</span>
       </label>
       <p id="draft-error" class="field-error" role="alert" hidden>${esc(c("draftError"))}</p>
@@ -1111,6 +1159,55 @@ function collectAssessmentAnswer(form, step) {
   pruneInactiveAnswers(state.answers, STEPS);
 }
 
+function captureVisibleFormDraft() {
+  const assessmentForm = document.getElementById("assessment-form");
+  if (assessmentForm) {
+    const step = STEPS.find(item => item.id === assessmentForm.dataset.stepId);
+    if (step) collectAssessmentAnswer(assessmentForm, step);
+  }
+
+  const manualForm = document.getElementById("manual-identity-form");
+  if (manualForm) {
+    state.answers.AGE = document.getElementById("manual-age")?.value || "";
+    state.answers.SEX = document.getElementById("manual-sex")?.value || "";
+  }
+
+  const consentForm = document.getElementById("consent-form");
+  if (consentForm) {
+    state.consent = {
+      process: consentForm.elements.process.checked,
+      notDiagnosis: consentForm.elements.notDiagnosis.checked,
+      demo: consentForm.elements.demo.checked
+    };
+  }
+
+  const locationForm = document.getElementById("location-form");
+  if (locationForm) {
+    const provinceField = document.getElementById("other-province");
+    const districtField = document.getElementById("other-district");
+    if (provinceField) state.locationProvinceDraft = provinceField.value;
+    if (districtField) state.locationDistrict = districtField.value.trim();
+    if (state.locationMode === "registered") {
+      state.locationConfirmed = document.getElementById("confirm-registered")?.checked === true;
+    }
+  }
+
+  const appointmentForm = document.getElementById("appointment-form");
+  if (appointmentForm) {
+    state.pendingAppointment = {
+      name: appointmentForm.elements.name.value,
+      contact: appointmentForm.elements.contact.value,
+      preferredDay: appointmentForm.elements.preferredDay.value,
+      preferredTime: appointmentForm.elements.preferredTime.value,
+      contactMethod: appointmentForm.elements.contactMethod.value,
+      accessibilityNote: appointmentForm.elements.accessibilityNote.value,
+      includeFactors: appointmentForm.elements.includeFactors.checked,
+      draftConsent: appointmentForm.elements.draftConsent.checked
+    };
+  }
+  save();
+}
+
 document.addEventListener("click", event => {
   const button = event.target.closest("button, [data-route]");
   if (!button) return;
@@ -1160,11 +1257,13 @@ document.addEventListener("click", event => {
     }
   } else if (action === "select-facility") {
     state.selectedFacilityId = button.dataset.facility;
+    state.pendingAppointment = null;
     state.appointmentDraft = null;
     setRoute("appointment");
   } else if (action === "print") {
     window.print();
   } else if (action === "delete-draft") {
+    state.pendingAppointment = null;
     state.appointmentDraft = null;
     save();
     showToast(c("draftDeleted"));
@@ -1247,6 +1346,7 @@ document.addEventListener("submit", event => {
       province = state.locationConfirmed ? state.identity?.registeredProvince : "";
     } else if (mode === "other") {
       province = document.getElementById("other-province")?.value || "";
+      state.locationProvinceDraft = province;
       state.locationDistrict = document.getElementById("other-district")?.value.trim() || "";
       state.locationConfirmed = !!province && !!state.locationDistrict;
     }
@@ -1276,6 +1376,7 @@ document.addEventListener("submit", event => {
     } else {
       state.result = evaluateRisk(state.answers);
       state.selectedFacilityId = null;
+      state.pendingAppointment = null;
       state.appointmentDraft = null;
       setRoute("result");
     }
@@ -1303,16 +1404,19 @@ document.addEventListener("submit", event => {
       engineVersion: ENGINE_VERSION,
       consented: true
     });
+    state.pendingAppointment = null;
     setRoute("draft");
   }
 });
 
 document.getElementById("language-toggle").addEventListener("click", () => {
+  captureVisibleFormDraft();
   state.lang = state.lang === "en" ? "th" : "en";
   render();
 });
 
 document.getElementById("text-toggle").addEventListener("click", () => {
+  captureVisibleFormDraft();
   state.largeText = !state.largeText;
   render();
 });

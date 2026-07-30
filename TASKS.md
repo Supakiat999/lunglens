@@ -99,6 +99,10 @@ Status legend:
 - ✅ Reuse the complete public LungLens 0.15.1 interface system for the machine
   preview: header, typography, teal hero, cards, question controls, progress,
   large-text behavior, and six-item bottom navigation.
+- ✅ Machine interface-parity pass `0.1.1`: welcome benefits, identity, consent,
+  location, assessment progress/options, results, and facility cards now use the
+  same visual patterns as the main app; language and text-size switches preserve
+  the currently selected but not-yet-submitted form values.
 - ✅ Add fictional card profiles and a no-card fallback that collects only the
   minimum assessment details; never request or store a real 13-digit ID number.
 - ✅ Add three environmental-location choices and timestamped simulated PM2.5,

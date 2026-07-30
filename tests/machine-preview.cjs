@@ -16,6 +16,7 @@ assert.equal(data.APP_VERSION, "prototype_0.15.1", "The regular app version must
 assert.equal(data.STORE_KEY, "lunglens-v1", "The regular app storage key must remain unchanged");
 assert.equal(model.MACHINE_STORE_KEY, "lunglens-machine-v1");
 assert.notEqual(model.MACHINE_STORE_KEY, data.STORE_KEY);
+assert.equal(model.MACHINE_PREVIEW_VERSION, "machine_preview_0.1.1");
 assert.equal(model.SESSION_TIMEOUT_MS, 120000);
 assert.equal(model.SESSION_WARNING_MS, 30000);
 
@@ -39,6 +40,9 @@ assert.equal(urgentResult.score, standardResult.score, "Urgent symptoms must not
 assert.equal(urgentResult.band.key, standardResult.band.key, "Urgent symptoms must not alter factor band");
 assert.match(app, /state\.result\?\.symptom_pathway === "urgent"/);
 assert.match(app, /emergencyNoDraft/);
+assert.match(app, /function captureVisibleFormDraft\(\)/);
+assert.match(app, /language-toggle"\)\.addEventListener\("click", \(\) => \{\s+captureVisibleFormDraft\(\)/);
+assert.match(app, /text-toggle"\)\.addEventListener\("click", \(\) => \{\s+captureVisibleFormDraft\(\)/);
 
 const youngBangkok = structuredClone(data.PERSONAS.find(persona => persona.id === "P3").answers);
 youngBangkok.AGE = "ต่ำกว่า 40 ปี";
