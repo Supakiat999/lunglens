@@ -108,6 +108,10 @@ for (const required of [
   assert.ok(html.includes(required), `Machine HTML missing ${required}`);
 }
 
+assert.ok(!html.includes('href="../"'), "Machine HTML must not link to the regular LungLens app");
+assert.ok(!app.includes('href="../"'), "Machine UI must not link to the regular LungLens app");
+assert.ok(!app.includes("Open regular LungLens"), "Machine copy must not invite users to the regular app");
+
 for (const required of [
   "Proposed 40% pilot support — demonstration only",
   "not currently active, verified, or guaranteed",

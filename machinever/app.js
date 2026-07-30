@@ -31,7 +31,6 @@ const COPY = {
     welcomeTitle: "Not smoking does not mean no risk",
     welcomeLead: "Lung cancer does not affect only people who smoke. Family history, existing lung conditions, work exposures, smoke and other factors may all deserve attention. This machine preview does not diagnose disease.",
     begin: "Take the machine assessment",
-    originalApp: "Open regular LungLens 0.15.1",
     simulatedIdentity: "Simulated identity",
     simulatedIdentityBody: "Try a fictional card profile. No real Thai national ID number is requested or stored.",
     sensorContext: "Environmental context",
@@ -200,7 +199,6 @@ const COPY = {
     welcomeTitle: "ไม่สูบ ไม่ได้แปลว่าไม่เสี่ยง",
     welcomeLead: "มะเร็งปอดไม่ได้เกิดเฉพาะกับผู้สูบบุหรี่ ประวัติครอบครัว โรคปอดเดิม การสัมผัสจากงาน ควัน และปัจจัยอื่นอาจควรได้รับความสำคัญ เครื่องสาธิตนี้ไม่วินิจฉัยโรค",
     begin: "ทำแบบประเมินบนเครื่อง",
-    originalApp: "เปิด LungLens ปกติ 0.15.1",
     simulatedIdentity: "ข้อมูลตัวตนจำลอง",
     simulatedIdentityBody: "ทดลองใช้บุคคลสมมติ โดยไม่ขอหรือบันทึกเลขบัตรประชาชนจริง",
     sensorContext: "บริบทสิ่งแวดล้อม",
@@ -552,7 +550,6 @@ function renderWelcome() {
       <p class="lede">${esc(c("welcomeLead"))}</p>
       <div class="hero-actions">
         <button class="button primary" type="button" data-action="start">${esc(c("begin"))}</button>
-        <a class="button secondary" href="../">${esc(c("originalApp"))}</a>
       </div>
     </section>
     <section class="feature-grid" aria-label="${attr(c("publicDemo"))}">
