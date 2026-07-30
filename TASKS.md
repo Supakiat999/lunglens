@@ -109,6 +109,10 @@ Status legend:
   unified appointment/draft controls with the shared LungLens design system,
   expanded large-text coverage, removed stale CSS, and stopped simulated names from
   being copied automatically into appointment drafts.
+- ✅ Machine wide-screen framing pass `0.1.3`: aligned header, status strip, and
+  six-item navigation to a responsive 640→700→840→920 px content shell; improved
+  benefit-card titles and hero CTA proportions; softened journey steps and the
+  demonstration disclaimer while leaving phone and portrait-touch layouts intact.
 - ✅ Add fictional card profiles and a no-card fallback that collects only the
   minimum assessment details; never request or store a real 13-digit ID number.
 - ✅ Add three environmental-location choices and timestamped simulated PM2.5,

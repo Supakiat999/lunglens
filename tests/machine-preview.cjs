@@ -16,7 +16,7 @@ assert.equal(data.APP_VERSION, "prototype_0.15.1", "The regular app version must
 assert.equal(data.STORE_KEY, "lunglens-v1", "The regular app storage key must remain unchanged");
 assert.equal(model.MACHINE_STORE_KEY, "lunglens-machine-v1");
 assert.notEqual(model.MACHINE_STORE_KEY, data.STORE_KEY);
-assert.equal(model.MACHINE_PREVIEW_VERSION, "machine_preview_0.1.2");
+assert.equal(model.MACHINE_PREVIEW_VERSION, "machine_preview_0.1.3");
 assert.equal(model.SESSION_TIMEOUT_MS, 120000);
 assert.equal(model.SESSION_WARNING_MS, 30000);
 
@@ -151,6 +151,9 @@ assert.match(css, /body\.big/);
 assert.match(css, /--ink-3:\s*#64748b/, "Machine secondary text must meet normal-text contrast");
 assert.match(css, /header\.app #text-toggle/, "Machine header controls need explicit grid selectors");
 assert.match(css, /\.machine-benefits/, "Machine benefit cards need a dedicated responsive layout");
+assert.match(css, /--machine-shell/, "Machine chrome must align with its responsive content shell");
+assert.match(css, /header\.app,\s*nav\.bottom,\s*\.machine-status/, "Machine chrome must share one frame inset");
+assert.match(css, /@media \(min-width: 1200px\)/, "Machine shell must scale for wide displays");
 assert.ok(!css.includes(".button {"), "Machine preview must reuse the shared LungLens button system");
 assert.ok(!css.includes(".question-card"), "Unused pre-alignment question styles should stay removed");
 

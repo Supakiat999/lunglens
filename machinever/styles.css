@@ -5,6 +5,25 @@
 :root {
   /* Accessible slate for secondary labels: 4.76:1 against white. */
   --ink-3: #64748b;
+  --machine-gutter: 16px;
+  --machine-shell: 640px;
+  --machine-frame-inset: max(
+    var(--machine-gutter),
+    calc((100% - var(--machine-shell)) / 2 + var(--machine-gutter))
+  );
+}
+
+@media (min-width: 700px) {
+  :root { --machine-shell: 700px; }
+  body { background: linear-gradient(180deg, #ecfeff 0, var(--bg) 360px) fixed; }
+}
+
+@media (min-width: 960px) {
+  :root { --machine-shell: 840px; }
+}
+
+@media (min-width: 1200px) {
+  :root { --machine-shell: 920px; }
 }
 
 .machine-logo {
@@ -17,6 +36,13 @@ header.app #language-toggle {
   min-height: 48px;
   min-width: 52px;
   padding-inline: 14px;
+}
+
+/* Keep full-bleed chrome, but align its contents to the machine page shell. */
+header.app,
+nav.bottom,
+.machine-status {
+  padding-inline: var(--machine-frame-inset);
 }
 
 @media (max-width: 420px) {
@@ -72,6 +98,7 @@ nav.bottom a[aria-disabled="true"] .ic {
 }
 
 #machine-main {
+  max-width: var(--machine-shell);
   min-height: calc(100vh - 150px);
 }
 
@@ -135,6 +162,13 @@ nav.bottom a[aria-disabled="true"] .ic {
   flex: 1 1 180px;
 }
 
+.hero-actions .btn {
+  flex: 0 1 400px;
+  max-width: 400px;
+  min-width: min(240px, 100%);
+  width: auto;
+}
+
 .identity-grid,
 .facility-grid {
   display: grid;
@@ -163,22 +197,22 @@ nav.bottom a[aria-disabled="true"] .ic {
 
 .feature-card {
   align-content: start;
-  display: grid;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
   font-size: 14px;
-  gap: 8px 10px;
-  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
   margin-bottom: 0;
   padding: 14px;
 }
 
 .feature-card > b {
-  align-self: center;
   line-height: 1.4;
   min-width: 0;
+  text-wrap: balance;
 }
 
 .feature-card .muted {
-  grid-column: 1 / -1;
   margin: 0;
 }
 
@@ -213,9 +247,10 @@ nav.bottom a[aria-disabled="true"] .ic {
 
 .machine-journey li > span {
   align-items: center;
-  background: var(--brand);
+  background: var(--brand-soft);
+  border: 2px solid var(--brand);
   border-radius: 50%;
-  color: #fff;
+  color: var(--brand-deep);
   display: inline-flex;
   font-size: 13px;
   font-weight: 700;
@@ -230,6 +265,9 @@ nav.bottom a[aria-disabled="true"] .ic {
 }
 
 .machine-disclaimer {
+  background: var(--card);
+  border-color: #fcd34d;
+  border-left: 4px solid var(--warn);
   margin-bottom: 14px;
   margin-top: 14px;
 }
@@ -694,6 +732,8 @@ body.big header.app #language-toggle {
   .button-row .btn,
   .hero-actions .btn {
     flex-basis: 100%;
+    max-width: none;
+    width: 100%;
   }
 
   .review-row {
