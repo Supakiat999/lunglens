@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-01T17:13:37.218Z",
+  "fetched_at": "2026-08-01T18:10:52.975Z",
   "station_count": 174,
   "stations": [
     {
@@ -13,10 +13,10 @@
       "area_en": "Pak Nam Subdistrict, Mueang District, Krabi",
       "latitude": 8.0506237,
       "longitude": 98.9180489,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 6,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 6.5,
       "pm10": null,
-      "aqi": 16,
+      "aqi": 14,
       "color_id": 1
     },
     {
@@ -27,8 +27,8 @@
       "area_en": "Hiran Ruchi, Khet Thon Buri, Bangkok",
       "latitude": 13.732846,
       "longitude": 100.487662,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 10,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 10.1,
       "pm10": null,
       "aqi": 17,
       "color_id": 1
@@ -1133,10 +1133,10 @@
       "area_en": "Ban Nuea, Mueang, Kanchanaburi",
       "latitude": 14.022376,
       "longitude": 99.536195,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 13.4,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 13.5,
       "pm10": null,
-      "aqi": 22,
+      "aqi": 23,
       "color_id": 1
     },
     {
@@ -1581,8 +1581,8 @@
       "area_en": "Pratu Chai, Phra Nakhon Si Ayutthaya",
       "latitude": 14.35222,
       "longitude": 100.565325,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 5.2,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 5.1,
       "pm10": null,
       "aqi": 9,
       "color_id": 1
@@ -1707,8 +1707,8 @@
       "area_en": "Betong, Yala",
       "latitude": 5.763873,
       "longitude": 101.067903,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 5.6,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 5.4,
       "pm10": null,
       "aqi": 9,
       "color_id": 1
@@ -1805,8 +1805,8 @@
       "area_en": "Taphong, Mueang, Rayong",
       "latitude": 12.648576,
       "longitude": 101.32245,
-      "observed_at": "2026-08-01T22:00:00+07:00",
-      "pm25": 3.6,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 3.7,
       "pm10": null,
       "aqi": 6,
       "color_id": 1
@@ -1819,10 +1819,10 @@
       "area_en": "Na Mueang, Mueang, Ratchaburi",
       "latitude": 13.52344,
       "longitude": 99.814082,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 13.3,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 13.8,
       "pm10": null,
-      "aqi": 22,
+      "aqi": 23,
       "color_id": 1
     },
     {
@@ -2057,8 +2057,8 @@
       "area_en": "Bang Sao Thong, Bang Sao Thong, Samut Prakan",
       "latitude": 13.5705,
       "longitude": 100.7862867,
-      "observed_at": "2026-08-01T23:00:00+07:00",
-      "pm25": 10.2,
+      "observed_at": "2026-08-02T00:00:00+07:00",
+      "pm25": 10.1,
       "pm10": null,
       "aqi": 17,
       "color_id": 1
