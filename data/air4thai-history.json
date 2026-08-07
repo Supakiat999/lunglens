@@ -2,10 +2,10 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "generated_at": "2026-08-07T15:08:15.608Z",
+  "generated_at": "2026-08-07T16:08:30.064Z",
   "retention_hours": 48,
   "station_count": 173,
-  "point_count": 3026,
+  "point_count": 3025,
   "latest_observed_at": "2026-08-07T14:00:00.000Z",
   "stations": [
     {
@@ -391,12 +391,6 @@
       "latitude": 12.6095704,
       "longitude": 102.1040804,
       "points": [
-        {
-          "observed_at": "2026-08-05T16:00:00.000Z",
-          "pm25": 9.5,
-          "pm10": 29,
-          "aqi": 16
-        },
         {
           "observed_at": "2026-08-06T00:00:00.000Z",
           "pm25": 9.1,
