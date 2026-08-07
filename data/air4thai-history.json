@@ -2,10 +2,10 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "generated_at": "2026-08-07T19:14:05.678Z",
+  "generated_at": "2026-08-07T19:59:31.473Z",
   "retention_hours": 48,
   "station_count": 173,
-  "point_count": 3195,
+  "point_count": 3201,
   "latest_observed_at": "2026-08-07T19:00:00.000Z",
   "stations": [
     {
@@ -134,6 +134,12 @@
         {
           "observed_at": "2026-08-07T18:00:00.000Z",
           "pm25": 8,
+          "pm10": null,
+          "aqi": 13
+        },
+        {
+          "observed_at": "2026-08-07T19:00:00.000Z",
+          "pm25": 7.9,
           "pm10": null,
           "aqi": 13
         }
@@ -4034,6 +4040,12 @@
           "pm25": 7,
           "pm10": null,
           "aqi": 12
+        },
+        {
+          "observed_at": "2026-08-07T19:00:00.000Z",
+          "pm25": 6.9,
+          "pm10": null,
+          "aqi": 12
         }
       ]
     },
@@ -4163,6 +4175,12 @@
         {
           "observed_at": "2026-08-07T18:00:00.000Z",
           "pm25": 16.8,
+          "pm10": 28,
+          "aqi": 30
+        },
+        {
+          "observed_at": "2026-08-07T19:00:00.000Z",
+          "pm25": 16.9,
           "pm10": 28,
           "aqi": 30
         }
@@ -8787,6 +8805,12 @@
           "pm25": 6.6,
           "pm10": 11,
           "aqi": 11
+        },
+        {
+          "observed_at": "2026-08-07T19:00:00.000Z",
+          "pm25": 6.4,
+          "pm10": 11,
+          "aqi": 11
         }
       ]
     },
@@ -9781,6 +9805,12 @@
           "pm25": 17.7,
           "pm10": null,
           "aqi": 32
+        },
+        {
+          "observed_at": "2026-08-07T19:00:00.000Z",
+          "pm25": 17.7,
+          "pm10": null,
+          "aqi": 32
         }
       ]
     },
@@ -10507,6 +10537,12 @@
           "pm25": 6.8,
           "pm10": null,
           "aqi": 11
+        },
+        {
+          "observed_at": "2026-08-07T19:00:00.000Z",
+          "pm25": 6.9,
+          "pm10": null,
+          "aqi": 12
         }
       ]
     },
