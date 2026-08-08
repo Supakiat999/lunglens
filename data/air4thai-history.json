@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "generated_at": "2026-08-08T15:45:03.719Z",
+  "generated_at": "2026-08-08T16:50:45.650Z",
   "retention_hours": 48,
   "station_count": 172,
   "point_count": 4320,
