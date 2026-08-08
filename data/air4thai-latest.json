@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-08T13:11:22.016Z",
+  "fetched_at": "2026-08-08T13:55:51.800Z",
   "station_count": 174,
   "stations": [
     {
@@ -13,10 +13,10 @@
       "area_en": "Pak Nam Subdistrict, Mueang District, Krabi",
       "latitude": 8.0506237,
       "longitude": 98.9180489,
-      "observed_at": "2026-08-08T19:00:00+07:00",
+      "observed_at": "2026-08-08T20:00:00+07:00",
       "pm25": 6.6,
       "pm10": null,
-      "aqi": 19,
+      "aqi": 18,
       "color_id": 1
     },
     {
@@ -27,7 +27,7 @@
       "area_en": "Hiran Ruchi, Khet Thon Buri, Bangkok",
       "latitude": 13.732846,
       "longitude": 100.487662,
-      "observed_at": "2026-08-08T19:00:00+07:00",
+      "observed_at": "2026-08-08T20:00:00+07:00",
       "pm25": 8.4,
       "pm10": null,
       "aqi": 14,
@@ -1133,7 +1133,7 @@
       "area_en": "Ban Nuea, Mueang, Kanchanaburi",
       "latitude": 14.022376,
       "longitude": 99.536195,
-      "observed_at": "2026-08-08T19:00:00+07:00",
+      "observed_at": "2026-08-08T20:00:00+07:00",
       "pm25": 21,
       "pm10": null,
       "aqi": 40,
@@ -1203,10 +1203,10 @@
       "area_en": "Wang Yen, Plaeng Yao, Chachoengsao",
       "latitude": 13.5885,
       "longitude": 101.2863333,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 14,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 14.2,
       "pm10": null,
-      "aqi": 23,
+      "aqi": 24,
       "color_id": 1
     },
     {
@@ -1217,8 +1217,8 @@
       "area_en": "Bo Win, Si Racha, Chon buri",
       "latitude": 13.054551,
       "longitude": 101.098128,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 5.9,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 5.8,
       "pm10": null,
       "aqi": 10,
       "color_id": 1
@@ -1245,8 +1245,8 @@
       "area_en": "Thung Sukhla, Si Racha, Chon buri",
       "latitude": 13.11923333,
       "longitude": 100.91855,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 7,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 6.9,
       "pm10": null,
       "aqi": 12,
       "color_id": 1
@@ -1259,10 +1259,10 @@
       "area_en": "Ban Kluai Subdistrict, Mueang District, Chai Nat",
       "latitude": 15.173475,
       "longitude": 100.132105,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 12.9,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 12.5,
       "pm10": null,
-      "aqi": 22,
+      "aqi": 21,
       "color_id": 1
     },
     {
@@ -1287,8 +1287,8 @@
       "area_en": "Tha Taphao, Mueang, Chumphon",
       "latitude": 10.495142389105824,
       "longitude": 99.18935409512319,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 6.6,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 6.4,
       "pm10": null,
       "aqi": 11,
       "color_id": 1
@@ -1525,10 +1525,10 @@
       "area_en": "Khlong Nueng, Khlong Luang, Pathum Thani",
       "latitude": 14.03742,
       "longitude": 100.605216,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 15.7,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 15.9,
       "pm10": 26,
-      "aqi": 27,
+      "aqi": 28,
       "color_id": 2
     },
     {
@@ -1567,10 +1567,10 @@
       "area_en": "Mueang, Pattanee",
       "latitude": 6.890637,
       "longitude": 101.250888,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 7.5,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 7.9,
       "pm10": null,
-      "aqi": 15,
+      "aqi": 14,
       "color_id": 1
     },
     {
@@ -1609,10 +1609,10 @@
       "area_en": "Khao Chiak Subdistrict, Mueang District, Phatthalung",
       "latitude": 7.6156514,
       "longitude": 100.0480234,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 7.4,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 7.7,
       "pm10": null,
-      "aqi": 18,
+      "aqi": 17,
       "color_id": 1
     },
     {
@@ -1707,7 +1707,7 @@
       "area_en": "Betong, Yala",
       "latitude": 5.763873,
       "longitude": 101.067903,
-      "observed_at": "2026-08-08T19:00:00+07:00",
+      "observed_at": "2026-08-08T20:00:00+07:00",
       "pm25": 6.9,
       "pm10": null,
       "aqi": 12,
@@ -1805,10 +1805,10 @@
       "area_en": "Taphong, Mueang, Rayong",
       "latitude": 12.648576,
       "longitude": 101.32245,
-      "observed_at": "2026-08-08T18:00:00+07:00",
-      "pm25": 8.1,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 7.9,
       "pm10": null,
-      "aqi": 14,
+      "aqi": 13,
       "color_id": 1
     },
     {
@@ -1819,7 +1819,7 @@
       "area_en": "Na Mueang, Mueang, Ratchaburi",
       "latitude": 13.52344,
       "longitude": 99.814082,
-      "observed_at": "2026-08-08T19:00:00+07:00",
+      "observed_at": "2026-08-08T20:00:00+07:00",
       "pm25": 15.1,
       "pm10": null,
       "aqi": 26,
@@ -1847,10 +1847,10 @@
       "area_en": "Talay Chupson Subdistrict, Mueang District, Lopburi",
       "latitude": 14.800032,
       "longitude": 100.628548,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 9.6,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 9.4,
       "pm10": 23,
-      "aqi": 22,
+      "aqi": 23,
       "color_id": 1
     },
     {
@@ -1917,9 +1917,9 @@
       "area_en": "ฺBan Klang, Mueang, Lamphun",
       "latitude": 18.567194,
       "longitude": 99.038639,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 8.3,
-      "pm10": 17,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 8.4,
+      "pm10": 16,
       "aqi": 14,
       "color_id": 1
     },
@@ -2085,10 +2085,10 @@
       "area_en": "Om Noi, Krathum Baen, Samut Sakhon",
       "latitude": 13.7054879,
       "longitude": 100.315622,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 15.4,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 15.3,
       "pm10": null,
-      "aqi": 27,
+      "aqi": 26,
       "color_id": 2
     },
     {
@@ -2141,9 +2141,9 @@
       "area_en": "Aranyaprathet, Aranyaprathet, Sa Kaeo",
       "latitude": 13.691047,
       "longitude": 102.510442,
-      "observed_at": "2026-08-08T19:00:00+07:00",
+      "observed_at": "2026-08-08T20:00:00+07:00",
       "pm25": 6.1,
-      "pm10": 13,
+      "pm10": 14,
       "aqi": 10,
       "color_id": 1
     },
@@ -2169,10 +2169,10 @@
       "area_en": "Don Kamyan, Mueang, Suphun Buri",
       "latitude": 14.476214,
       "longitude": 100.086095,
-      "observed_at": "2026-08-08T13:00:00+07:00",
-      "pm25": 8.8,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 7.7,
       "pm10": null,
-      "aqi": 15,
+      "aqi": 13,
       "color_id": 1
     },
     {
@@ -2323,11 +2323,11 @@
       "area_en": "Yan Sue Subdistrict, Mueang Ang Thong District Ang Thong Province",
       "latitude": 14.606306,
       "longitude": 100.453589,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 8.2,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 8,
       "pm10": 23,
-      "aqi": 26,
-      "color_id": 2
+      "aqi": 24,
+      "color_id": 1
     },
     {
       "station_id": "57t",
@@ -2407,8 +2407,8 @@
       "area_en": "Kut Pong Subdistrict, Mueang District, Loei",
       "latitude": 17.48462,
       "longitude": 101.732734,
-      "observed_at": "2026-08-08T19:00:00+07:00",
-      "pm25": 5.6,
+      "observed_at": "2026-08-08T20:00:00+07:00",
+      "pm25": 5.5,
       "pm10": 15,
       "aqi": 9,
       "color_id": 1
