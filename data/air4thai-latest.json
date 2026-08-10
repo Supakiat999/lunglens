@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-10T19:15:48.599Z",
+  "fetched_at": "2026-08-10T20:03:22.280Z",
   "station_count": 174,
   "stations": [
     {
@@ -13,8 +13,8 @@
       "area_en": "Pak Nam Subdistrict, Mueang District, Krabi",
       "latitude": 8.0506237,
       "longitude": 98.9180489,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 6.5,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 6.3,
       "pm10": null,
       "aqi": 15,
       "color_id": 1
@@ -27,8 +27,8 @@
       "area_en": "Hiran Ruchi, Khet Thon Buri, Bangkok",
       "latitude": 13.732846,
       "longitude": 100.487662,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 10,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 10.1,
       "pm10": null,
       "aqi": 17,
       "color_id": 1
@@ -83,8 +83,8 @@
       "area_en": "Rama IV Rd. Khet Pathum Wan, Bangkok",
       "latitude": 13.729852,
       "longitude": 100.536501,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 13.9,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 14,
       "pm10": null,
       "aqi": 23,
       "color_id": 1
@@ -1133,10 +1133,10 @@
       "area_en": "Ban Nuea, Mueang, Kanchanaburi",
       "latitude": 14.022376,
       "longitude": 99.536195,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 15.3,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 15.4,
       "pm10": null,
-      "aqi": 26,
+      "aqi": 27,
       "color_id": 2
     },
     {
@@ -1203,7 +1203,7 @@
       "area_en": "Wang Yen, Plaeng Yao, Chachoengsao",
       "latitude": 13.5885,
       "longitude": 101.2863333,
-      "observed_at": "2026-08-11T01:00:00+07:00",
+      "observed_at": "2026-08-11T02:00:00+07:00",
       "pm25": 17.7,
       "pm10": null,
       "aqi": 32,
@@ -1245,8 +1245,8 @@
       "area_en": "Thung Sukhla, Si Racha, Chon buri",
       "latitude": 13.11923333,
       "longitude": 100.91855,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 7.8,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 7.6,
       "pm10": null,
       "aqi": 13,
       "color_id": 1
@@ -1749,11 +1749,11 @@
       "area_en": "Map Ta Phut, Meuang, Rayong",
       "latitude": 12.70865,
       "longitude": 101.1659833,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 15.1,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 15,
       "pm10": 44,
-      "aqi": 26,
-      "color_id": 2
+      "aqi": 25,
+      "color_id": 1
     },
     {
       "station_id": "30t",
@@ -1805,8 +1805,8 @@
       "area_en": "Taphong, Mueang, Rayong",
       "latitude": 12.648576,
       "longitude": 101.32245,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 7.6,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 7.8,
       "pm10": null,
       "aqi": 13,
       "color_id": 1
@@ -2057,8 +2057,8 @@
       "area_en": "Bang Sao Thong, Bang Sao Thong, Samut Prakan",
       "latitude": 13.5705,
       "longitude": 100.7862867,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 11.8,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 11.7,
       "pm10": null,
       "aqi": 20,
       "color_id": 1
@@ -2309,10 +2309,10 @@
       "area_en": "Mueang, Ubon Ratchathani",
       "latitude": 15.245413,
       "longitude": 104.846219,
-      "observed_at": "2026-08-11T01:00:00+07:00",
-      "pm25": 7.4,
+      "observed_at": "2026-08-11T02:00:00+07:00",
+      "pm25": 7.5,
       "pm10": 17,
-      "aqi": 12,
+      "aqi": 13,
       "color_id": 1
     },
     {
