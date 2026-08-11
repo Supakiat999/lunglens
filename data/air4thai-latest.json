@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-11T10:10:07.606Z",
+  "fetched_at": "2026-08-11T11:04:04.151Z",
   "station_count": 174,
   "stations": [
     {
@@ -27,8 +27,8 @@
       "area_en": "Hiran Ruchi, Khet Thon Buri, Bangkok",
       "latitude": 13.732846,
       "longitude": 100.487662,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 11.6,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 11.4,
       "pm10": null,
       "aqi": 19,
       "color_id": 1
@@ -182,7 +182,7 @@
       "latitude": 13.859911,
       "longitude": 100.704002,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 15,
+      "pm25": 14.8,
       "pm10": 27,
       "aqi": 25,
       "color_id": 1
@@ -209,7 +209,7 @@
       "area_en": "Charansanitwong Roadside, Bangkok",
       "latitude": 13.793965,
       "longitude": 100.504956,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 12.5,
       "pm10": null,
       "aqi": 21,
@@ -224,9 +224,9 @@
       "latitude": 13.696314,
       "longitude": 100.409049,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 12.9,
+      "pm25": 12.6,
       "pm10": 28,
-      "aqi": 22,
+      "aqi": 21,
       "color_id": 1
     },
     {
@@ -237,10 +237,10 @@
       "area_en": "RamaII Roadside,  Bang Khun Thian, Bangkok",
       "latitude": 13.659908,
       "longitude": 100.435902,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 16.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 16,
       "pm10": null,
-      "aqi": 29,
+      "aqi": 28,
       "color_id": 2
     },
     {
@@ -251,10 +251,10 @@
       "area_en": "Lumpini park, Pathum Wan, Bangkok",
       "latitude": 13.732225,
       "longitude": 100.5448381,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 8.7,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.5,
       "pm10": null,
-      "aqi": 15,
+      "aqi": 14,
       "color_id": 1
     },
     {
@@ -265,8 +265,8 @@
       "area_en": "Wacchirabenchatat Park, Chatuchak, Bangkok",
       "latitude": 13.8118516,
       "longitude": 100.5535825,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 9,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.9,
       "pm10": null,
       "aqi": 15,
       "color_id": 1
@@ -279,7 +279,7 @@
       "area_en": "Chatuchak Park, Chatuchak, Bangkok",
       "latitude": 13.802546,
       "longitude": 100.5509191,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 9.5,
       "pm10": null,
       "aqi": 16,
@@ -293,7 +293,7 @@
       "area_en": "Suan Luang Rama IX, Pravet, Bangkok",
       "latitude": 13.6881393,
       "longitude": 100.6579657,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 8.5,
       "pm10": null,
       "aqi": 14,
@@ -307,7 +307,7 @@
       "area_en": "60th Anniversary of Queen Sirikit Park, Lat Krabang, Bangkok",
       "latitude": 13.7631141,
       "longitude": 100.7302101,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 17.2,
       "pm10": null,
       "aqi": 31,
@@ -321,8 +321,8 @@
       "area_en": "Benchasiri Park, Klong Toei, Bangkok",
       "latitude": 13.7304916,
       "longitude": 100.5684634,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 10.7,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 10.6,
       "pm10": null,
       "aqi": 18,
       "color_id": 1
@@ -335,8 +335,8 @@
       "area_en": "Rommani Thungsikan Park, Don Mueang, Bangkok",
       "latitude": 13.9288678,
       "longitude": 100.5684666,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 10.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 10.1,
       "pm10": null,
       "aqi": 17,
       "color_id": 1
@@ -349,8 +349,8 @@
       "area_en": "Thonburirom Park, Thung Khru, Bangkok",
       "latitude": 13.6502295,
       "longitude": 100.4909771,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 8.8,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.9,
       "pm10": null,
       "aqi": 15,
       "color_id": 1
@@ -363,8 +363,8 @@
       "area_en": "Benjakitti Park, Khlong Toei, Bangkok",
       "latitude": 13.7328791,
       "longitude": 100.5600172,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 8.5,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.6,
       "pm10": null,
       "aqi": 14,
       "color_id": 1
@@ -377,8 +377,8 @@
       "area_en": "Queen Sirikit Park, Chatuchak, Bangkok",
       "latitude": 13.8055472,
       "longitude": 100.5488338,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 9.5,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 9.4,
       "pm10": null,
       "aqi": 16,
       "color_id": 1
@@ -391,10 +391,10 @@
       "area_en": "80th Anniversary Commemoration Park, Bangkok Noi, Bangkok",
       "latitude": 13.7716446,
       "longitude": 100.4681128,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 16.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 16,
       "pm10": null,
-      "aqi": 29,
+      "aqi": 28,
       "color_id": 2
     },
     {
@@ -405,10 +405,10 @@
       "area_en": "Serithai Park, Bueng Kum, Bangkok",
       "latitude": 13.7855673,
       "longitude": 100.6733359,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 16.2,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 15.9,
       "pm10": null,
-      "aqi": 29,
+      "aqi": 28,
       "color_id": 2
     },
     {
@@ -419,8 +419,8 @@
       "area_en": "Bang Khae Phirom Park, Bang Khae, Bangkok",
       "latitude": 13.6863478,
       "longitude": 100.3844036,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 12.7,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 12.6,
       "pm10": null,
       "aqi": 21,
       "color_id": 1
@@ -433,8 +433,8 @@
       "area_en": "Thawee Wanarom Park, Thawi Watthana, Bangkok",
       "latitude": 13.7435329,
       "longitude": 100.3526893,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 14.4,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 14.3,
       "pm10": null,
       "aqi": 24,
       "color_id": 1
@@ -447,7 +447,7 @@
       "area_en": "Phra Nakhon Park, Lat Krabang, Bangkok",
       "latitude": 13.7201042,
       "longitude": 100.7807077,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 9.9,
       "pm10": null,
       "aqi": 17,
@@ -461,7 +461,7 @@
       "area_en": "Nong Chok Park, Nong Chok, Bangkok",
       "latitude": 13.855656,
       "longitude": 100.8585539,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 10.9,
       "pm10": null,
       "aqi": 18,
@@ -475,8 +475,8 @@
       "area_en": "Ramintra Sports Park, Bang Khen, Bangkok",
       "latitude": 13.8778763,
       "longitude": 100.6207085,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 9.2,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.9,
       "pm10": null,
       "aqi": 15,
       "color_id": 1
@@ -489,8 +489,8 @@
       "area_en": "Public Park to commemorate the sixth anniversary of His Majesty the King, Bang Kho Laem, Bangkok",
       "latitude": 13.685524189587932,
       "longitude": 100.51830028147444,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 8.9,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 9,
       "pm10": null,
       "aqi": 15,
       "color_id": 1
@@ -503,8 +503,8 @@
       "area_en": "Rama VIII Park, Bang Plad, Bangkok",
       "latitude": 13.7693437,
       "longitude": 100.4945337,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 11.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 11.1,
       "pm10": null,
       "aqi": 19,
       "color_id": 1
@@ -574,7 +574,7 @@
       "latitude": 13.776664,
       "longitude": 100.520982,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 11.4,
+      "pm25": 11.2,
       "pm10": 39,
       "aqi": 20,
       "color_id": 1
@@ -700,7 +700,7 @@
       "latitude": 13.722096,
       "longitude": 100.584559,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 9.8,
+      "pm25": 9.5,
       "pm10": 32,
       "aqi": 16,
       "color_id": 1
@@ -728,9 +728,9 @@
       "latitude": 13.667987,
       "longitude": 100.635313,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 19.1,
+      "pm25": 24.2,
       "pm10": 51,
-      "aqi": 36,
+      "aqi": 48,
       "color_id": 2
     },
     {
@@ -741,10 +741,10 @@
       "area_en": "Kasertsart Intersection, Chatuchak, Bangkok",
       "latitude": 13.839923,
       "longitude": 100.575632,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 14.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 14,
       "pm10": null,
-      "aqi": 24,
+      "aqi": 23,
       "color_id": 1
     },
     {
@@ -770,9 +770,9 @@
       "latitude": 13.896035,
       "longitude": 100.660628,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 15.3,
+      "pm25": 15.6,
       "pm10": 41,
-      "aqi": 26,
+      "aqi": 27,
       "color_id": 2
     },
     {
@@ -783,8 +783,8 @@
       "area_en": "Navamin Roadside, Bang Kapi, Bangkok",
       "latitude": 13.766478,
       "longitude": 100.647785,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 9.7,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 9.6,
       "pm10": null,
       "aqi": 16,
       "color_id": 1
@@ -798,9 +798,9 @@
       "latitude": 13.813844,
       "longitude": 100.686594,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 11.7,
+      "pm25": 11.5,
       "pm10": 30,
-      "aqi": 20,
+      "aqi": 19,
       "color_id": 1
     },
     {
@@ -826,7 +826,7 @@
       "latitude": 13.813578,
       "longitude": 100.73208,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 19.1,
+      "pm25": 19.4,
       "pm10": 36,
       "aqi": 36,
       "color_id": 2
@@ -840,7 +840,7 @@
       "latitude": 13.855362,
       "longitude": 100.86267,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 17.8,
+      "pm25": 18,
       "pm10": 58,
       "aqi": 33,
       "color_id": 2
@@ -854,7 +854,7 @@
       "latitude": 13.695561,
       "longitude": 100.647615,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 23.5,
+      "pm25": 23.3,
       "pm10": 73,
       "aqi": 46,
       "color_id": 2
@@ -896,9 +896,9 @@
       "latitude": 13.729431,
       "longitude": 100.474373,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 19.9,
+      "pm25": 19.4,
       "pm10": 38,
-      "aqi": 38,
+      "aqi": 36,
       "color_id": 2
     },
     {
@@ -924,10 +924,10 @@
       "latitude": 13.780778,
       "longitude": 100.426727,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 15.3,
+      "pm25": 15,
       "pm10": 29,
-      "aqi": 26,
-      "color_id": 2
+      "aqi": 25,
+      "color_id": 1
     },
     {
       "station_id": "bkp87t",
@@ -938,7 +938,7 @@
       "latitude": 13.746257,
       "longitude": 100.355099,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 11.4,
+      "pm25": 11.2,
       "pm10": 26,
       "aqi": 19,
       "color_id": 1
@@ -966,9 +966,9 @@
       "latitude": 13.705582,
       "longitude": 100.343164,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 17.6,
+      "pm25": 17.3,
       "pm10": 49,
-      "aqi": 32,
+      "aqi": 31,
       "color_id": 2
     },
     {
@@ -994,7 +994,7 @@
       "latitude": 13.651004,
       "longitude": 100.496673,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 9.5,
+      "pm25": 9.4,
       "pm10": 39,
       "aqi": 20,
       "color_id": 1
@@ -1022,7 +1022,7 @@
       "latitude": 13.77682,
       "longitude": 100.579543,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 10.3,
+      "pm25": 10,
       "pm10": 33,
       "aqi": 17,
       "color_id": 1
@@ -1035,8 +1035,8 @@
       "area_en": "Khlong Toei, Bangkok",
       "latitude": 13.708488,
       "longitude": 100.583747,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 15.5,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 15.4,
       "pm10": null,
       "aqi": 27,
       "color_id": 2
@@ -1063,8 +1063,8 @@
       "area_en": "Ladphrao, Bangkok",
       "latitude": 13.803587,
       "longitude": 100.607535,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 11.9,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 11.7,
       "pm10": 25,
       "aqi": 20,
       "color_id": 1
@@ -1077,7 +1077,7 @@
       "area_en": "Thung Song Hong, Lak Si, Bangkok",
       "latitude": 13.887395,
       "longitude": 100.579247,
-      "observed_at": "2026-08-11T16:00:00+07:00",
+      "observed_at": "2026-08-11T17:00:00+07:00",
       "pm25": 13.7,
       "pm10": null,
       "aqi": 23,
@@ -1106,7 +1106,7 @@
       "latitude": 13.768892,
       "longitude": 100.685743,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 13.3,
+      "pm25": 13.1,
       "pm10": 22,
       "aqi": 22,
       "color_id": 1
@@ -1133,8 +1133,8 @@
       "area_en": "Ban Nuea, Mueang, Kanchanaburi",
       "latitude": 14.022376,
       "longitude": 99.536195,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 13.7,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 13.9,
       "pm10": null,
       "aqi": 23,
       "color_id": 1
@@ -1189,8 +1189,8 @@
       "area_en": "Wat Mai Subdistrict, Mueang District, Chanthaburi",
       "latitude": 12.6095704,
       "longitude": 102.1040804,
-      "observed_at": "2026-08-11T16:00:00+07:00",
-      "pm25": 4.6,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 4.5,
       "pm10": 33,
       "aqi": 17,
       "color_id": 1
@@ -1399,8 +1399,8 @@
       "area_en": "Khlang, Mueang, Nakhon Si Thammarat",
       "latitude": 8.426923,
       "longitude": 99.961469,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.5,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 7.7,
       "pm10": 15,
       "aqi": 13,
       "color_id": 1
@@ -1455,10 +1455,10 @@
       "area_en": "Bang Nak, Mueang, Narathiwat",
       "latitude": 6.426853,
       "longitude": 101.823388,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.4,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 7.6,
       "pm10": null,
-      "aqi": 12,
+      "aqi": 13,
       "color_id": 1
     },
     {
@@ -1651,10 +1651,10 @@
       "area_en": "Talat Yai, Mueang, Phuket",
       "latitude": 7.884488,
       "longitude": 98.391283,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 8,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.2,
       "pm10": null,
-      "aqi": 13,
+      "aqi": 14,
       "color_id": 1
     },
     {
@@ -1693,8 +1693,8 @@
       "area_en": "Sateng, Mueang, Yala",
       "latitude": 6.546205,
       "longitude": 101.283137,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.2,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 7.4,
       "pm10": null,
       "aqi": 12,
       "color_id": 1
@@ -1861,8 +1861,8 @@
       "area_en": "Phra Bat, Meuang, Lampang",
       "latitude": 18.2783333,
       "longitude": 99.5064666,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 8.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.5,
       "pm10": null,
       "aqi": 14,
       "color_id": 1
@@ -1875,10 +1875,10 @@
       "area_en": "Sop Pat, Mae Mo, Lampang",
       "latitude": 18.2508166,
       "longitude": 99.76395,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.9,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8,
       "pm10": null,
-      "aqi": 16,
+      "aqi": 20,
       "color_id": 1
     },
     {
@@ -1889,8 +1889,8 @@
       "area_en": "Ban Dong, Mae Mo, Lampang",
       "latitude": 18.4267833,
       "longitude": 99.7576333,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.7,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 7.9,
       "pm10": null,
       "aqi": 13,
       "color_id": 1
@@ -1904,7 +1904,7 @@
       "latitude": 18.2826333,
       "longitude": 99.6598166,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 8.3,
+      "pm25": 8.2,
       "pm10": null,
       "aqi": 14,
       "color_id": 1
@@ -1918,7 +1918,7 @@
       "latitude": 18.567194,
       "longitude": 99.038639,
       "observed_at": "2026-08-11T17:00:00+07:00",
-      "pm25": 9.6,
+      "pm25": 9.5,
       "pm10": 20,
       "aqi": 16,
       "color_id": 1
@@ -1973,8 +1973,8 @@
       "area_en": "Hat Yai, Songkhla",
       "latitude": 7.020434,
       "longitude": 100.484088,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 8.3,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 8.4,
       "pm10": null,
       "aqi": 14,
       "color_id": 1
@@ -1987,8 +1987,8 @@
       "area_en": "Phiman, Mueang, Satun",
       "latitude": 6.624747,
       "longitude": 100.066159,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.5,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 7.7,
       "pm10": null,
       "aqi": 13,
       "color_id": 1
@@ -2183,8 +2183,8 @@
       "area_en": "Makham Tia, Mueang, Surat Thani",
       "latitude": 9.126017,
       "longitude": 99.325145,
-      "observed_at": "2026-08-11T15:00:00+07:00",
-      "pm25": 7.6,
+      "observed_at": "2026-08-11T17:00:00+07:00",
+      "pm25": 7.8,
       "pm10": null,
       "aqi": 13,
       "color_id": 1
