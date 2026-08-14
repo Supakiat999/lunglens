@@ -2,10 +2,10 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "generated_at": "2026-08-14T15:06:29.282Z",
+  "generated_at": "2026-08-14T16:05:29.508Z",
   "retention_hours": 48,
   "station_count": 173,
-  "point_count": 4882,
+  "point_count": 4864,
   "latest_observed_at": "2026-08-14T14:00:00.000Z",
   "stations": [
     {
@@ -17,12 +17,6 @@
       "latitude": 13.732846,
       "longitude": 100.487662,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 11.8,
-          "pm10": null,
-          "aqi": 20
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 12,
@@ -3610,12 +3604,6 @@
       "longitude": 100.453589,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 8.8,
-          "pm10": 22,
-          "aqi": 16
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 8.8,
           "pm10": 22,
@@ -4182,12 +4170,6 @@
       "latitude": 8.0506237,
       "longitude": 98.9180489,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 8.2,
-          "pm10": null,
-          "aqi": 14
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 7.8,
@@ -5704,12 +5686,6 @@
       "longitude": 100.7862867,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 10.9,
-          "pm10": null,
-          "aqi": 18
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 11.3,
           "pm10": null,
@@ -5901,12 +5877,6 @@
       "longitude": 100.605216,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 20.1,
-          "pm10": 30,
-          "aqi": 38
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 19.7,
           "pm10": 30,
@@ -6091,12 +6061,6 @@
       "latitude": 14.35222,
       "longitude": 100.565325,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 11.1,
-          "pm10": null,
-          "aqi": 19
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 10.9,
@@ -14115,12 +14079,6 @@
       "longitude": 99.536195,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 17.9,
-          "pm10": null,
-          "aqi": 33
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 17.9,
           "pm10": null,
@@ -16943,12 +16901,6 @@
       "longitude": 100.322756,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 16,
-          "pm10": 28,
-          "aqi": 28
-        },
-        {
           "observed_at": "2026-08-12T18:00:00.000Z",
           "pm25": 15.4,
           "pm10": 27,
@@ -19031,12 +18983,6 @@
       "latitude": 13.732225,
       "longitude": 100.5448381,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 8,
-          "pm10": null,
-          "aqi": 13
-        },
         {
           "observed_at": "2026-08-12T18:00:00.000Z",
           "pm25": 7.9,
@@ -21407,12 +21353,6 @@
       "longitude": 100.3526893,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 17.1,
-          "pm10": null,
-          "aqi": 31
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 17.1,
           "pm10": null,
@@ -21597,12 +21537,6 @@
       "latitude": 13.7201042,
       "longitude": 100.7807077,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 9.2,
-          "pm10": null,
-          "aqi": 15
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 9.4,
@@ -21789,12 +21723,6 @@
       "longitude": 100.8585539,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 15.1,
-          "pm10": null,
-          "aqi": 26
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 15.1,
           "pm10": null,
@@ -21979,12 +21907,6 @@
       "latitude": 13.8778763,
       "longitude": 100.6207085,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 11.5,
-          "pm10": null,
-          "aqi": 19
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 11.2,
@@ -22171,12 +22093,6 @@
       "longitude": 100.51830028147444,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 10.6,
-          "pm10": null,
-          "aqi": 18
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 10.7,
           "pm10": null,
@@ -22361,12 +22277,6 @@
       "latitude": 13.7693437,
       "longitude": 100.4945337,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 11.4,
-          "pm10": null,
-          "aqi": 19
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 11.3,
@@ -25560,12 +25470,6 @@
       "latitude": 13.839923,
       "longitude": 100.575632,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 13.7,
-          "pm10": null,
-          "aqi": 23
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 13.9,
@@ -30849,12 +30753,6 @@
       "longitude": 100.91855,
       "points": [
         {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 10.2,
-          "pm10": null,
-          "aqi": 17
-        },
-        {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 10.3,
           "pm10": null,
@@ -31021,12 +30919,6 @@
       "latitude": 12.648576,
       "longitude": 101.32245,
       "points": [
-        {
-          "observed_at": "2026-08-12T16:00:00.000Z",
-          "pm25": 10.2,
-          "pm10": null,
-          "aqi": 17
-        },
         {
           "observed_at": "2026-08-12T17:00:00.000Z",
           "pm25": 10.6,
