@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-15T14:37:50.381Z",
+  "fetched_at": "2026-08-15T15:33:51.869Z",
   "station_count": 174,
   "stations": [
     {
@@ -995,7 +995,7 @@
       "longitude": 100.496673,
       "observed_at": "2026-08-15T21:00:00+07:00",
       "pm25": 12.8,
-      "pm10": 50,
+      "pm10": 49,
       "aqi": 25,
       "color_id": 1
     },
