@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-16T16:40:54.886Z",
+  "fetched_at": "2026-08-16T17:32:41.913Z",
   "station_count": 174,
   "stations": [
     {
