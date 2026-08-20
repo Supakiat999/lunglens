@@ -2,10 +2,10 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "generated_at": "2026-08-20T13:10:18.818Z",
+  "generated_at": "2026-08-20T13:57:49.785Z",
   "retention_hours": 48,
   "station_count": 173,
-  "point_count": 6959,
+  "point_count": 6969,
   "latest_observed_at": "2026-08-20T13:00:00.000Z",
   "stations": [
     {
@@ -283,6 +283,12 @@
         },
         {
           "observed_at": "2026-08-20T12:00:00.000Z",
+          "pm25": 10.8,
+          "pm10": null,
+          "aqi": 18
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
           "pm25": 10.8,
           "pm10": null,
           "aqi": 18
@@ -5264,6 +5270,12 @@
           "pm25": 6.3,
           "pm10": 16,
           "aqi": 19
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 6.2,
+          "pm10": 16,
+          "aqi": 18
         }
       ]
     },
@@ -6071,6 +6083,12 @@
           "pm25": 7.7,
           "pm10": null,
           "aqi": 18
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 7.5,
+          "pm10": null,
+          "aqi": 17
         }
       ]
     },
@@ -9791,6 +9809,12 @@
         },
         {
           "observed_at": "2026-08-20T12:00:00.000Z",
+          "pm25": 13.5,
+          "pm10": null,
+          "aqi": 23
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
           "pm25": 13.5,
           "pm10": null,
           "aqi": 23
@@ -14259,6 +14283,12 @@
         },
         {
           "observed_at": "2026-08-20T12:00:00.000Z",
+          "pm25": 14.4,
+          "pm10": null,
+          "aqi": 24
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
           "pm25": 14.4,
           "pm10": null,
           "aqi": 24
@@ -19741,6 +19771,12 @@
           "pm25": 14.5,
           "pm10": null,
           "aqi": 24
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 14.5,
+          "pm10": null,
+          "aqi": 24
         }
       ]
     },
@@ -20672,6 +20708,12 @@
           "observed_at": "2026-08-20T12:00:00.000Z",
           "pm25": 7.3,
           "pm10": 15,
+          "aqi": 12
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 7.1,
+          "pm10": 14,
           "aqi": 12
         }
       ]
@@ -36029,6 +36071,12 @@
           "pm25": 14.4,
           "pm10": null,
           "aqi": 24
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 14.2,
+          "pm10": null,
+          "aqi": 24
         }
       ]
     },
@@ -43405,6 +43453,12 @@
           "pm25": 7.9,
           "pm10": null,
           "aqi": 13
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 8,
+          "pm10": null,
+          "aqi": 13
         }
       ]
     },
@@ -43660,6 +43714,12 @@
         {
           "observed_at": "2026-08-20T12:00:00.000Z",
           "pm25": 7.7,
+          "pm10": null,
+          "aqi": 13
+        },
+        {
+          "observed_at": "2026-08-20T13:00:00.000Z",
+          "pm25": 7.6,
           "pm10": null,
           "aqi": 13
         }
