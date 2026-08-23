@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-23T03:14:34.678Z",
+  "fetched_at": "2026-08-23T04:01:38.810Z",
   "station_count": 173,
   "stations": [
     {
@@ -1133,10 +1133,10 @@
       "area_en": "Ban Nuea, Mueang, Kanchanaburi",
       "latitude": 14.022376,
       "longitude": 99.536195,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 15.3,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 15.6,
       "pm10": null,
-      "aqi": 26,
+      "aqi": 27,
       "color_id": 2
     },
     {
@@ -1162,7 +1162,7 @@
       "latitude": 16.475374,
       "longitude": 99.525425,
       "observed_at": "2026-08-23T10:00:00+07:00",
-      "pm25": 9.5,
+      "pm25": 9.4,
       "pm10": 19,
       "aqi": 16,
       "color_id": 1
@@ -1399,10 +1399,10 @@
       "area_en": "Khlang, Mueang, Nakhon Si Thammarat",
       "latitude": 8.426923,
       "longitude": 99.961469,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 23.3,
-      "pm10": 41,
-      "aqi": 46,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 23.9,
+      "pm10": 42,
+      "aqi": 47,
       "color_id": 2
     },
     {
@@ -1455,10 +1455,10 @@
       "area_en": "Bang Nak, Mueang, Narathiwat",
       "latitude": 6.426853,
       "longitude": 101.823388,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 22.3,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 22.8,
       "pm10": null,
-      "aqi": 43,
+      "aqi": 45,
       "color_id": 2
     },
     {
@@ -1596,7 +1596,7 @@
       "latitude": 19.200226,
       "longitude": 99.893048,
       "observed_at": "2026-08-23T10:00:00+07:00",
-      "pm25": 8.9,
+      "pm25": 9.1,
       "pm10": null,
       "aqi": 15,
       "color_id": 1
@@ -1651,10 +1651,10 @@
       "area_en": "Talat Yai, Mueang, Phuket",
       "latitude": 7.884488,
       "longitude": 98.391283,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 24,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 24.6,
       "pm10": null,
-      "aqi": 48,
+      "aqi": 49,
       "color_id": 2
     },
     {
@@ -1693,10 +1693,10 @@
       "area_en": "Sateng, Mueang, Yala",
       "latitude": 6.546205,
       "longitude": 101.283137,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 22.2,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 22.7,
       "pm10": null,
-      "aqi": 43,
+      "aqi": 44,
       "color_id": 2
     },
     {
@@ -1959,11 +1959,11 @@
       "area_en": "Hat Yai, Songkhla",
       "latitude": 7.020434,
       "longitude": 100.484088,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 24.7,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 25.3,
       "pm10": null,
-      "aqi": 49,
-      "color_id": 2
+      "aqi": 52,
+      "color_id": 3
     },
     {
       "station_id": "80t",
@@ -1973,10 +1973,10 @@
       "area_en": "Phiman, Mueang, Satun",
       "latitude": 6.624747,
       "longitude": 100.066159,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 23.4,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 23.9,
       "pm10": null,
-      "aqi": 46,
+      "aqi": 47,
       "color_id": 2
     },
     {
@@ -2085,8 +2085,8 @@
       "area_en": "Maha Chai, Mueang, Samut Sakhon",
       "latitude": 13.5502631,
       "longitude": 100.2647676,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 14.3,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 14.2,
       "pm10": null,
       "aqi": 24,
       "color_id": 1
@@ -2169,10 +2169,10 @@
       "area_en": "Makham Tia, Mueang, Surat Thani",
       "latitude": 9.126017,
       "longitude": 99.325145,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 23.5,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 24.1,
       "pm10": null,
-      "aqi": 46,
+      "aqi": 48,
       "color_id": 2
     },
     {
@@ -2267,8 +2267,8 @@
       "area_en": "Tha It, Mueang, Uttaradit",
       "latitude": 17.631352,
       "longitude": 100.09896,
-      "observed_at": "2026-08-23T09:00:00+07:00",
-      "pm25": 9.4,
+      "observed_at": "2026-08-23T10:00:00+07:00",
+      "pm25": 9.5,
       "pm10": 19,
       "aqi": 16,
       "color_id": 1
