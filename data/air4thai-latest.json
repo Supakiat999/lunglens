@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "Air4Thai — Thailand Pollution Control Department",
   "source_url": "https://air4thai.pcd.go.th/services/getNewAQI_JSON.php",
-  "fetched_at": "2026-08-26T13:16:00.834Z",
+  "fetched_at": "2026-08-26T14:05:07.534Z",
   "station_count": 173,
   "stations": [
     {
@@ -27,8 +27,8 @@
       "area_en": "Hiran Ruchi, Khet Thon Buri, Bangkok",
       "latitude": 13.732846,
       "longitude": 100.487662,
-      "observed_at": "2026-08-26T19:00:00+07:00",
-      "pm25": 9.4,
+      "observed_at": "2026-08-26T20:00:00+07:00",
+      "pm25": 9.3,
       "pm10": null,
       "aqi": 16,
       "color_id": 1
@@ -83,10 +83,10 @@
       "area_en": "Rama IV Rd. Khet Pathum Wan, Bangkok",
       "latitude": 13.729852,
       "longitude": 100.536501,
-      "observed_at": "2026-08-26T19:00:00+07:00",
-      "pm25": 12.3,
+      "observed_at": "2026-08-26T20:00:00+07:00",
+      "pm25": 12.2,
       "pm10": null,
-      "aqi": 21,
+      "aqi": 20,
       "color_id": 1
     },
     {
@@ -1217,10 +1217,10 @@
       "area_en": "Bo Win, Si Racha, Chon buri",
       "latitude": 13.054551,
       "longitude": 101.098128,
-      "observed_at": "2026-08-26T19:00:00+07:00",
-      "pm25": 8.5,
+      "observed_at": "2026-08-26T20:00:00+07:00",
+      "pm25": 8,
       "pm10": null,
-      "aqi": 14,
+      "aqi": 13,
       "color_id": 1
     },
     {
@@ -2043,10 +2043,10 @@
       "area_en": "Bang Sao Thong, Bang Sao Thong, Samut Prakan",
       "latitude": 13.5705,
       "longitude": 100.7862867,
-      "observed_at": "2026-08-26T19:00:00+07:00",
-      "pm25": 11.9,
+      "observed_at": "2026-08-26T20:00:00+07:00",
+      "pm25": 11.3,
       "pm10": null,
-      "aqi": 20,
+      "aqi": 19,
       "color_id": 1
     },
     {
